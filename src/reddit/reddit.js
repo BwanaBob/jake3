@@ -1,26 +1,39 @@
-const schedule = require("node-schedule");
-// const { info: logEnter } = require("../logger/logger.js");
-let pollingJob;
-let pollingInterval = "*/7 * * * * *"; // Default polling interval: every 7 seconds
+const EventEmitter = require('events')
+const schedule = require('node-schedule')
 
-async function startPolling() {
-  schedulePollingJob();
+class Reddit extends EventEmitter {
+    constructor() {
+        super()
+        this.pollingInterval = '0/7 * * * * *' // Default polling interval: every 7 seconds
+        this.pollingJob = null
+    }
+
+    async startPolling() {
+        this._schedulePollingJob()
+    }
+
+    setPollingInterval(newInterval) {
+        this.pollingInterval = newInterval
+        logger.info({
+            emoji: '⏲️',
+            module: 'Scheduler',
+            feature: 'Set Interval',
+            message: `${this.pollingInterval}`,
+        })
+        this._schedulePollingJob()
+    }
+
+    _schedulePollingJob() {
+        if (this.pollingJob) {
+            this.pollingJob.cancel()
+        }
+        this.pollingJob = schedule.scheduleJob(
+            this.pollingInterval,
+            async () => {
+                this.emit('pollingIteration')
+            }
+        )
+    }
 }
 
-function schedulePollingJob() {
-  if (pollingJob) {
-    pollingJob.cancel();
-  }
-  pollingJob = schedule.scheduleJob(pollingInterval, async () => {
-    logger.info({
-      emoji: "⏲️",
-      module: "CRON",
-      feature: "Polling Job",
-      message: `CRON job executed`,
-    });
-  });
-}
-
-module.exports = {
-  startPolling,
-};
+module.exports = Reddit
