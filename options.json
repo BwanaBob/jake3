@@ -1,0 +1,51 @@
+{
+    "snooPoll": {
+      "frequency": 27000
+    },
+    "commentEmbedColor": "#3498db",
+    "spamCommentEmbedColor": "#e91e63",
+    "submissionEmbedColor": "#2ecc71",
+    "spamSubmissionEmbedColor": "#e91e63",
+    "modQueueCommentEmbedColor": "#f1c40f",
+    "reportedCommentEmbedColor": "#c40ff1",
+    "modQueuePostEmbedColor": "f1c40f",
+    "reportedPostEmbedColor":"#c40ff1",
+    "modMailEmbedColor": "#aa44cc",
+    "commentSize": 800,
+    "subreddits": {
+      "OnPatrolLive": {
+          "channelId": "1121307801453596722",
+          "modQueueNotifyRole": "1171955876609937564",
+          "streamComments": true,
+          "streamSubmissions": true
+      },
+      "LAFireandRescue": {
+          "channelId": "1121279878570967040",
+          "modQueueNotifyRole": "1119424005175246992",
+          "streamComments": true,
+          "streamSubmissions": true
+      },
+      "OPLTesting": {
+          "channelId": "1121273754857775114",
+          "modQueueNotifyRole": "391837678967980035",
+          "streamComments": true,
+          "streamSubmissions": true
+      },
+      "Police247": {
+        "channelId": "1121307801453596722",
+        "modQueueNotifyRole": "1171955876609937564",
+        "streamComments": true,
+        "streamSubmissions": true
+      }
+  },
+    "logger": {
+      "logLength": 140,
+      "dateLength": 23,
+      "moduleLength": 17,
+      "featureLength": 15,
+      "userLength": 20,
+      "guildLength": 12,
+      "channelLength": 15
+    }
+  }
+  
