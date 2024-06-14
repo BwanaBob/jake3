@@ -9,12 +9,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.7.2",
+    "axios-rate-limit": "^1.4.0",
     "dotenv": "^16.4.5",
-    "node-schedule": "^2.1.1"
+    "node-schedule": "^2.1.1",
+    "qs": "^6.12.1"
   },
   "prettier": {
     "trailingComma": "es5",
-    "tabWidth": 4,
+    "tabWidth": 3,
     "semi": false,
     "singleQuote": true
   }
