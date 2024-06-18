@@ -24,22 +24,14 @@ const logger = new Logger();
 
 scheduler.on('jobScheduled', (name, cronExpression) => {
   // console.log(`Job "${name}" scheduled with cron expression "${cronExpression}"`);
-  logger.info({
-    emoji: '⏲️',
-    module: 'Scheduler',
-    feature: 'Schedule Job',
-    channel: name,
-    message: cronExpression,
-  })
+  logger.info(["Scheduler", "Schedule Job", name, cronExpression]);
 });
 
 scheduler.on('jobCancelled', (name) => {
   // console.log(`Job "${name}" cancelled`);
   logger.info({
     emoji: '⏲️',
-    module: 'Scheduler',
-    feature: 'Cancel Job',
-    channel: name,
+    columns: ['Scheduler', 'Cancel Job', name ]
   })
 });
 
