@@ -34,11 +34,11 @@ class Reddit {
       if (rateLimitRemaining !== null && rateLimitReset !== null) {
          const perMilliseconds = rateLimitReset * 1000 // Convert seconds to milliseconds
          const maxRequests = rateLimitRemaining
-         console.log(
-            `Reddit API: Setting rate limit to ${maxRequests} per ${
-               perMilliseconds / 1000
-            } seconds (Reddit provided)`
-         )
+         // console.log(
+         //    `Reddit API: Setting rate limit to ${maxRequests} per ${
+         //       perMilliseconds / 1000
+         //    } seconds (Reddit provided)`
+         // )
          this.http = axiosRateLimit(axios.create(), {
             maxRequests,
             perMilliseconds,

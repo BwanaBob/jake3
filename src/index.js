@@ -35,6 +35,11 @@ scheduler.on('jobCancelled', (name) => {
   })
 });
 
+scheduler.on('jobCompleted', (name, result) => {
+  logger.info(["Scheduler", "Job Complete", name]);
+  // console.log(result);
+})
+
 const jobsFolderPath = path.join(__dirname, 'jobs');
 scheduler.loadJobsFromFolder(jobsFolderPath, { reddit, logger });
 

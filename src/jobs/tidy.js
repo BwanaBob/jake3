@@ -4,17 +4,15 @@ module.exports = ({ reddit, logger }) => ({
    // cronExpression: '*/20 * * * * *', // Every 20 seconds (testing)
    cronExpression: '0 0 23 * * FRI,SAT', // Every Friday and Saturday at 11pm (live)
    jobFunction: async () => {
-      const subreddit = 'OPLTesting' // Replace with the target subreddit
-      const searchString = 'Live Thread' // Replace with the target string in the title
-      const targetFlairName = 'Past Live Thread' // Replace with the target flair name
-      const searchFlairName = '🚨 Live Thread 🚨'
+      const subreddit = 'OPLTesting' // subreddit to search
+      const searchString = 'Live Thread' // Post title to locate
+      const searchFlairName = '🚨 Live Thread 🚨' // Post flair to locate and change
+      const targetFlairName = 'Past Live Thread' // Post flair to change to
+      let result = { status: 'failed' }
 
-      logger.info({
-         emoji: '🧹',
-         columns: ['tidy', `Find Post`, subreddit, searchString],
-      })
+      // logger.info({ emoji: '🧹', columns: ['tidy', `Find Post`, subreddit, searchString], })
       try {
-         const posts = await reddit.searchPosts(subreddit, searchString, 5) // Search for the latest 20 posts
+         const posts = await reddit.searchPosts(subreddit, searchString, 20) // Search for the latest 20 posts
          // console.log(posts);
          const post = posts.find(
             (post) =>
@@ -23,10 +21,7 @@ module.exports = ({ reddit, logger }) => ({
          ) // Narrow results using flair
 
          if (post) {
-            logger.info({
-               emoji: '🧹',
-               columns: ['tidy', `Found Post`, subreddit, post.data.title],
-            })
+            // logger.info({ emoji: '🧹', columns: ['tidy', `Found Post`, subreddit, post.data.title], })
 
             // Look up the flair ID by name
             const flairs = await reddit.getSubredditFlairs(subreddit)
@@ -39,29 +34,23 @@ module.exports = ({ reddit, logger }) => ({
             }
 
             const targetFlairId = targetFlair.id
-            logger.info({
-               emoji: '🧹',
-               columns: [
-                  'tidy',
-                  `Found Flair`,
-                  subreddit,
-                  targetFlairName,
-                  targetFlairId,
-               ],
-            })
+            // logger.info({ emoji: '🧹', columns: ['tidy', `Found Flair`, subreddit, targetFlairName, targetFlairId, ], })
 
             await reddit.updatePostFlair(post.data.id, targetFlairId)
             await reddit.updatePostSticky(post.data.id, false)
-            logger.info({
-               emoji: '🧹',
-               columns: ['tidy', `Processed Post`, subreddit, post.data.title],
-            })
+            result.status = 'Processed'
+            result.data = {
+               id: post.data.id,
+               subreddit: post.data.subreddit,
+               title: post.data.title,
+               url: post.data.url,
+            }
+            // logger.info({ emoji: '🧹', columns: ['tidy', `Processed Post`, subreddit, post.data.title], })
          } else {
-            logger.info({
-               emoji: '🧹',
-               columns: ['tidy', `Post Not Found`, subreddit, searchString],
-            })
+            result.status = 'not found'
+            // logger.info({ emoji: '🧹', columns: ['tidy', `Post Not Found`, subreddit, searchString], })
          }
+         return result
       } catch (error) {
          console.error('Error updating post flair and sticky:', error.message)
       }

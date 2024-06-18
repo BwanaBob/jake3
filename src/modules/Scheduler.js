@@ -14,14 +14,14 @@ class Scheduler extends EventEmitter {
    async scheduleJob(name, cronExpression, jobFunction) {
       const job = schedule.scheduleJob(cronExpression, async () => {
          try {
-            const result = await jobFunction();
-            this.emit("jobCompleted", name, result);
+            const result = await jobFunction()
+            this.emit('jobCompleted', name, result)
          } catch (error) {
-            this.emit("jobError", name, error);
+            this.emit('jobError', name, error)
          }
-      });
-      this.jobs[name] = job;
-      this.emit("jobScheduled", name, cronExpression);
+      })
+      this.jobs[name] = job
+      this.emit('jobScheduled', name, cronExpression)
    }
 
    cancelJob(name) {
@@ -29,7 +29,7 @@ class Scheduler extends EventEmitter {
          this.jobs[name].cancel()
          delete this.jobs[name]
          // this.logger.info(`Job "${name}" cancelled`)
-         this.emit("jobCancelled", name)
+         this.emit('jobCancelled', name)
       }
    }
 
