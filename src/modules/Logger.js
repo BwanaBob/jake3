@@ -1,6 +1,6 @@
 const config = require('../config')
 
-class Logger2 {
+class Logger {
    info(logData) {
       const nowDate = new Date().toLocaleString()
       if (typeof logData === 'string' || logData instanceof String) {
@@ -73,4 +73,4 @@ class Logger2 {
    }
 }
 
-module.exports = Logger2
+module.exports = Logger

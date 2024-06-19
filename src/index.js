@@ -3,14 +3,14 @@ const Scheduler = require('./modules/Scheduler');
 const Reddit = require('./modules/Reddit');
 const { channel } = require('diagnostics_channel');
 const Logger = require('./modules/Logger');
-// const Discord = require('./modules/Discord');
-// const { discordToken } = require('./config');
+const Discord = require('./modules/Discord');
+const { discordToken } = require('./config');
 
 const scheduler = new Scheduler();
 const reddit = new Reddit();
 const logger = new Logger();
 
-// const discord = new Discord(discordToken);
+const discord = new Discord(discordToken);
 
 // discord.client.on('ready', () => {
 //   console.log(`Logged in as ${discord.client.user.tag}!`);
@@ -40,10 +40,10 @@ scheduler.on('jobCompleted', (name, result) => {
 const jobsFolderPath = path.join(__dirname, 'jobs');
 scheduler.loadJobsFromFolder(jobsFolderPath, { reddit, logger });
 
-// (async () => {
-//   try {
-//     await discord.login();
-//   } catch (error) {
-//     console.error('Error logging into Discord:', error);
-//   }
-// })();
+(async () => {
+  try {
+    await discord.login();
+  } catch (error) {
+    console.error('Error logging into Discord:', error);
+  }
+})();
