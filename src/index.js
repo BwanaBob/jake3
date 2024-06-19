@@ -5,6 +5,7 @@ const { channel } = require('diagnostics_channel');
 const Logger = require('./modules/Logger');
 const Discord = require('./modules/Discord');
 const { discordToken } = require('./config');
+const { processDiscordMessage } = require("./utils/message-broker")
 
 const scheduler = new Scheduler();
 const reddit = new Reddit();
@@ -34,6 +35,7 @@ scheduler.on('jobCancelled', (name) => {
 
 scheduler.on('jobCompleted', (name, result) => {
   logger.info({ emoji: '⏰', columns: ['Scheduler', 'Job Complete', name ]})
+  const discordResult = processDiscordMessage(discord.client, name, result)
   // console.log(result);
 });
 
