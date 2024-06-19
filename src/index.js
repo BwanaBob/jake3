@@ -24,21 +24,18 @@ const logger = new Logger();
 
 scheduler.on('jobScheduled', (name, cronExpression) => {
   // console.log(`Job "${name}" scheduled with cron expression "${cronExpression}"`);
-  logger.info(["Scheduler", "Schedule Job", name, cronExpression]);
+  logger.info({emoji: '⏰', columns: ["Scheduler", "Schedule Job", name, cronExpression]});
 });
 
 scheduler.on('jobCancelled', (name) => {
   // console.log(`Job "${name}" cancelled`);
-  logger.info({
-    emoji: '⏲️',
-    columns: ['Scheduler', 'Cancel Job', name ]
-  })
+  logger.info({ emoji: '⏰', columns: ['Scheduler', 'Cancel Job', name ]})
 });
 
 scheduler.on('jobCompleted', (name, result) => {
-  logger.info(["Scheduler", "Job Complete", name]);
+  logger.info({ emoji: '⏰', columns: ['Scheduler', 'Job Complete', name ]})
   // console.log(result);
-})
+});
 
 const jobsFolderPath = path.join(__dirname, 'jobs');
 scheduler.loadJobsFromFolder(jobsFolderPath, { reddit, logger });
