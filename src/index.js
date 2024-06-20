@@ -4,24 +4,13 @@ const Reddit = require('./modules/Reddit');
 const { channel } = require('diagnostics_channel');
 const Logger = require('./modules/Logger');
 const Discord = require('./modules/Discord');
-const { discordToken } = require('./config');
-const { processDiscordMessage } = require("./utils/message-broker")
 
+const { discordToken } = require('./config');
 const scheduler = new Scheduler();
 const reddit = new Reddit();
 const logger = new Logger();
-
 const discord = new Discord(discordToken);
-
-// discord.client.on('ready', () => {
-//   console.log(`Logged in as ${discord.client.user.tag}!`);
-// });
-
-// discord.client.on('messageCreate', (message) => {
-//   if (message.content === '!ping') {
-//     message.channel.send('Pong!');
-//   }
-// });
+const broker = require('./utils/message-broker')
 
 scheduler.on('jobScheduled', (name, cronExpression) => {
   // console.log(`Job "${name}" scheduled with cron expression "${cronExpression}"`);
@@ -35,7 +24,7 @@ scheduler.on('jobCancelled', (name) => {
 
 scheduler.on('jobCompleted', (name, result) => {
   logger.info({ emoji: '⏰', columns: ['Scheduler', 'Job Complete', name ]})
-  const discordResult = processDiscordMessage(discord.client, name, result)
+  const discordResult = broker.processDiscordMessage(discord.client, name, result)
   // console.log(result);
 });
 
@@ -44,8 +33,11 @@ scheduler.loadJobsFromFolder(jobsFolderPath, { reddit, logger });
 
 (async () => {
   try {
+    console.log("logging in")
     await discord.login();
   } catch (error) {
     console.error('Error logging into Discord:', error);
   }
 })();
+
+// broker.setChannels(discord.client);
