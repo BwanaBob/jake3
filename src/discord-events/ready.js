@@ -52,10 +52,9 @@ module.exports = {
          console.error("Failed to locate discord channel")
       }
 
-      console.log(oplChannel.guild.name, oplChannel.name, oplChannel.id);
+      // console.log(oplChannel.guild.name, oplChannel.name, oplChannel.id);
       client.params = new Collection();
       client.params.set("oplChannelId", oplChannel.id);
-
 
 
       // Turn this into a loop using config items

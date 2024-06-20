@@ -171,6 +171,15 @@ class Reddit {
       return data.data.children
    }
 
+   async getNewModQueue(subreddit, limit = 10) {
+      const data = await this.apiRequest(
+         `/r/${subreddit}/about/modqueue`,
+         'get',
+         { limit }
+      )
+      return data.data.children
+   }
+
    async searchPosts(subreddit, query, limit = 25) {
       const data = await this.apiRequest(`/r/${subreddit}/search.json`, 'get', {
          q: query,

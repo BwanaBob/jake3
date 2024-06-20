@@ -1,9 +1,5 @@
-const {
-   EmbedBuilder,
-   ThreadAutoArchiveDuration,
-   Collection,
-} = require('discord.js')
-const { commentEmbedColor, commentSize } = require('../config')
+const { EmbedBuilder } = require('discord.js')
+const config = require('../config')
 // const getNewComments = require('../jobs/get-new-comments')
 // let oplChannelId = ''
 // let oplTestingChannelId = ''
@@ -20,26 +16,37 @@ module.exports = {
    async processDiscordMessage(client, jobName, response) {
       // console.log("message broker activated");
       let message = `Job **${jobName}** executed.` // to be replaced
-      let sendChannel = ""
+      let sendChannel = ''
       switch (jobName) {
-         case 'logTopComments':
-            message += 'Top Comments:\n'
-            response.forEach((comment, index) => {
-               message += `**${index + 1}. ${comment.data.author}:** ${
-                  comment.data.body
-               } (Score: ${comment.averageScore.toFixed(2)})\n`
-            })
+         case 'getTopComments':
+            if (response.status == 'success') {
+               let embedDescription = ''
+               const cotnEmbed = new EmbedBuilder()
+                  .setColor(config.jobOutput.cotn.embedColor)
+                  .setTitle('COTN Candidates')
+               for (const comment of response.data) {
+                  embedDescription += `Score ~ ${comment.averageScore.toFixed(
+                     2
+                  )} [${comment.data.author}](<https://www.reddit.com${
+                     comment.data.permalink
+                  }>): ${comment.data.body
+                     .slice(0, 30)
+                     .replace(/(\r?\n|\r|#)/gm, ' ')} \n`
+               }
+               cotnEmbed.setDescription(embedDescription)
+               cotnEmbed.addFields({
+                  name: 'Post',
+                  value: `[${response.post.id}](<${response.post.url}>) ${response.post.title}`,
+               })
+               message = { embeds: [cotnEmbed] }
+               sendChannel = client.params.get('jobsChannelId')
+               this.sendMessage(client, sendChannel, message)
+            }
             break
          case 'tidy':
-            // const noticeImage = new AttachmentBuilder("./resources/thumb-wastebasket.png", {name: "thumb-wastebasket.png"});
             const tidyEmbed = new EmbedBuilder()
-               .setColor(commentEmbedColor)
+               .setColor(config.jobOutput.tidy.embedColor)
                .setTitle('!tidy Executed')
-            //   .setThumbnail("attachment://thumb-wastebasket.png")
-            //   .setAuthor({
-            //     name: `${message.member.displayName} (${message.author.tag})`,
-            //     iconURL: `${message.member.displayAvatarURL()}`,
-            //   });
             if (response.status == 'processed') {
                tidyEmbed.addFields({
                   name: 'Status',
@@ -93,14 +100,16 @@ module.exports = {
                   authorUser += ' [watch]'
                }
                const newCommentEmbed = new EmbedBuilder()
-                  .setColor(commentEmbedColor)
+                  .setColor(config.jobOutput.newComment.embedColor)
                   .setURL(`https://www.reddit.com${comment.permalink}`)
                   .setAuthor({
                      name: comment.author,
                      url: `https://www.reddit.com${comment.permalink}`,
                      iconURL: thisAvatarURL,
                   })
-                  .setDescription(`${comment.body.slice(0, commentSize)}`)
+                  .setDescription(
+                     `${comment.body.slice(0, config.commentSize)}`
+                  )
                message = { embeds: [newCommentEmbed] }
                sendChannel = client.params.get('streamChannelId')
                this.sendMessage(client, sendChannel, message)

@@ -1,8 +1,8 @@
 module.exports = ({ reddit, logger }) => ({
    name: 'tidy',
    // cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
-   cronExpression: '*/20 * * * * *', // Every 20 seconds (testing)
-   // cronExpression: '20 0 23 * * FRI,SAT', // Every Friday and Saturday at 11:00:02pm (live)
+   // cronExpression: '*/20 * * * * *', // Every 20 seconds (testing)
+   cronExpression: '20 0 23 * * FRI,SAT', // Every Friday and Saturday at 11:00:02pm (live)
    jobFunction: async () => {
       const subreddit = 'OPLTesting' // subreddit to search
       const searchString = 'Live Thread' // Post title to locate

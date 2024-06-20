@@ -33,11 +33,9 @@ scheduler.loadJobsFromFolder(jobsFolderPath, { reddit, logger });
 
 (async () => {
   try {
-    console.log("logging in")
+    // console.log("logging in")
     await discord.login();
   } catch (error) {
     console.error('Error logging into Discord:', error);
   }
 })();
-
-// broker.setChannels(discord.client);

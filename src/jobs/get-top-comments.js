@@ -83,10 +83,10 @@ module.exports = ({ reddit, logger }) => ({
                // console.log(comment.data)
             // })
 
-            return {result: "success", data: topComments}; // Return the top comments
+            return {status: "success", data: topComments, post: post.data}; // Return the top comments
          } else {
             logger.info('No matching posts found')
-            return {result: "failed"};
+            return {status: "failed"};
          }
       } catch (error) {
          console.error('Error fetching top comments:', error.message)
