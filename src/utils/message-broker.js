@@ -42,7 +42,7 @@ module.exports = {
       if (!post.is_self) {
          postEmoji = '🔗'
          if (post.post_hint !== 'image') {
-            postMessage += `\n[Link](${data.url})`
+            postMessage += `\n[Link](${post.url})`
          }
       }
       if (post.post_hint == 'rich:video' || post.is_video == true) {
@@ -263,6 +263,17 @@ module.exports = {
                }
             }
             break
+            case 'getNewPosts':
+               if (response.status == 'success') {
+                  let messageEmbed = ''
+                  for (const post of response.data) {
+                     messageEmbed = this._makePostEmbed(post)
+                     message = { embeds: [messageEmbed] }
+                     sendChannel = client.params.get('streamChannelId')
+                     this.sendMessage(client, sendChannel, message)
+                  }
+               }
+               break
          // Add more cases for different job names and their respective formatting
          default:
             message += 'Data:\n'

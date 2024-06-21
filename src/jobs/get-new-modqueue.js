@@ -5,8 +5,8 @@ const subreddit = 'OPLTesting' // Replace with the target subreddit
 module.exports = ({ reddit, logger }) => ({
    name: 'getNewModQueue',
 
-   //    cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
-   cronExpression: '*/15 * * * * *', // Every 15 seconds (live and testing)
+   cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
+   // cronExpression: '*/15 * * * * *', // Every 15 seconds (live and testing)
 
    jobFunction: async () => {
       // logger.info({emoji: '💬', columns: ['getNewModQueue', `Fetching`, subreddit]});
@@ -19,8 +19,8 @@ module.exports = ({ reddit, logger }) => ({
             const itemId = item.data.id
             // console.log(item.data.created_utc * 1000, startTime)
             if (
-               !loggedItemIds.has(itemId)
-               //  && new Date(item.data.created_utc * 1000) >= startTime
+               !loggedItemIds.has(itemId) &&
+               new Date(item.data.created_utc * 1000) >= startTime
             ) {
                // if (!loggedCommentIds.has(commentId) ) {
                logger.info({

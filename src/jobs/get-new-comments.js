@@ -21,7 +21,6 @@ module.exports = ({ reddit, logger }) => ({
                !loggedCommentIds.has(commentId) &&
                new Date(comment.data.created_utc * 1000) >= startTime
             ) {
-               // if (!loggedCommentIds.has(commentId) ) {
                logger.info({
                   emoji: '💬',
                   columns: [

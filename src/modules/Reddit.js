@@ -94,7 +94,7 @@ class Reddit {
 
    async ensureValidToken() {
       if (!this.token || Date.now() >= this.tokenExpiresAt) {
-         // console.warn(`Reddit API: Token expiring. Retrieving new token.`)
+         console.warn(`Reddit API: Token expiring. Retrieving new token.`)
          await this.getOAuthToken()
       }
    }
@@ -162,12 +162,58 @@ class Reddit {
       return await this.apiRequest(`/r/${subreddit}/about/edit`, 'get')
    }
 
+   // async getNewModMail(subreddit, limit = 5) {
+   //    const response = await this.apiRequest(`/api/mod/conversations`, 'get',  { entity: subreddit, sort: 'recent', state: 'all', limit })
+   //    console.log(response);
+   //    return response
+   // }
+
+   async fetchAllModmailConversations() {
+      try {
+         const response = await this.apiRequest(
+            '/api/mod/conversations',
+            'get',
+            { state: 'all' }
+         )
+         const { conversations, conversationIds } = response
+         return { conversations, conversationIds }
+      } catch (error) {
+         console.error('Error fetching modmail conversations:', error.message)
+         return { conversations: {}, conversationIds: [] }
+      }
+   }
+
+   async fetchModmailMessages(conversationId) {
+      try {
+         const response = await this.apiRequest(
+            `/api/mod/conversations/${conversationId}`,
+            'get'
+         )
+         // console.log(response);a
+         return response.messages
+      } catch (error) {
+         console.error(
+            `Error fetching messages for conversation ${conversationId}:`,
+            error.message
+         )
+         return []
+      }
+   }
+
    async getNewComments(subreddit, limit = 25) {
       const data = await this.apiRequest(
          `/r/${subreddit}/comments.json`,
          'get',
          { sort: 'new', limit }
       )
+      return data.data.children
+   }
+
+   async getNewPosts(subreddit, limit = 25) {
+      const data = await this.apiRequest(`/r/${subreddit}/new.json`, 'get', {
+         limit,
+      })
+      // console.log(data.data.children);
       return data.data.children
    }
 
