@@ -1,23 +1,200 @@
 const { EmbedBuilder } = require('discord.js')
 const config = require('../config')
-// const getNewComments = require('../jobs/get-new-comments')
-// let oplChannelId = ''
-// let oplTestingChannelId = ''
 
 module.exports = {
+   _makePostEmbed(post) {
+      let thisAvatarURL =
+         'https://www.redditstatic.com/avatars/defaults/v2/avatar_default_7.png'
+      let p24AvatarURL = 'https://i.imgur.com/TjABABi.png'
+      let oplAvatarURL = 'https://i.imgur.com/MbDgRbw.png'
+      let postMessage = ''
+      let authorUser = post.author
+
+      if (post.subreddit == 'OnPatrolLive' || post.subreddit == 'OPLTesting') {
+         thisAvatarURL = oplAvatarURL
+      } else if (post.subreddit == 'Police247') {
+         thisAvatarURL = p24AvatarURL
+      }
+      if (post.author_flair_css_class == 'shadow') {
+         thisAvatarURL = 'https://i.imgur.com/6eRa9QF.png'
+         authorUser += ' [shadow]'
+      }
+      if (post.author_flair_css_class == 'watch') {
+         thisAvatarURL = 'https://i.imgur.com/SQ8Yka8.png'
+         authorUser += ' [watch]'
+      }
+
+      const postEmbed = new EmbedBuilder()
+         .setColor(config.jobOutput.newPost.embedColor)
+         .setURL(`https://www.reddit.com${post.permalink}`)
+         .setAuthor({
+            name: authorUser,
+            url: `https://www.reddit.com${post.permalink}`,
+            iconURL: thisAvatarURL,
+         })
+
+      postMessage = `**${post.title.slice(0, config.postSize)}**`
+      if (post.selftext) {
+         postMessage += `\n${post.selftext.slice(0, config.postSize)}`
+      }
+
+      var postEmoji = '📌'
+      if (!post.is_self) {
+         postEmoji = '🔗'
+         if (post.post_hint !== 'image') {
+            postMessage += `\n[Link](${data.url})`
+         }
+      }
+      if (post.post_hint == 'rich:video' || post.is_video == true) {
+         postEmoji = '🎦'
+      }
+      if (post.post_hint == 'image') {
+         postEmoji = '📸'
+         postEmbed.setImage(post.url)
+      }
+      if (post.poll_data) {
+         postEmoji = '✅'
+      }
+
+      if (
+         post.thumbnail &&
+         post.thumbnail !== 'default' &&
+         post.thumbnail !== 'self' &&
+         post.thumbnail !== 'nsfw' &&
+         post.post_hint !== 'image'
+      ) {
+         try {
+            postEmbed.setThumbnail(post.thumbnail)
+         } catch (err) {
+            console.error(
+               `[ERROR] Setting Thumbnail ${post.thumbnail} -`,
+               err.message
+            )
+         }
+      }
+
+      postEmbed.setDescription(`${postEmoji}  ${postMessage}`)
+
+      if (
+         post.banned_at_utc != null &&
+         (post.author_flair_css_class == 'shadow' || post.spam)
+      ) {
+         postEmbed.setColor(config.jobOutput.spamPost.embedColor)
+         postEmbed.setTitle('Spam Post')
+         postEmbed.setURL(`https://www.reddit.com/r/OnPatrolLive/about/spam`)
+      } else if (
+         post.banned_at_utc != null &&
+         post.author_flair_css_class !== 'shadow' &&
+         !post.spam
+      ) {
+         if (post.num_reports && post.num_reports > 0) {
+            postEmbed.setColor(config.jobOutput.reportedPost.embedColor)
+            postEmbed.setTitle('Reported Post')
+         } else {
+            postEmbed.setColor(config.jobOutput.modQueuePost.embedColor)
+            postEmbed.setTitle('Mod Queue Post')
+         }
+         postEmbed.setURL(`https://www.reddit.com/mod/${post.subreddit}/queue`)
+      }
+      return postEmbed
+   },
+
+   _makeCommentEmbed(comment) {
+      let thisAvatarURL =
+         'https://www.redditstatic.com/avatars/defaults/v2/avatar_default_7.png'
+      let p24AvatarURL = 'https://i.imgur.com/TjABABi.png'
+      let oplAvatarURL = 'https://i.imgur.com/MbDgRbw.png'
+      let authorUser = comment.author
+
+      if (
+         comment.subreddit == 'OnPatrolLive' ||
+         comment.subreddit == 'OPLTesting'
+      ) {
+         thisAvatarURL = oplAvatarURL
+      } else if (comment.subreddit == 'Police247') {
+         thisAvatarURL = p24AvatarURL
+      }
+
+      if (comment.author_flair_css_class == 'shadow') {
+         thisAvatarURL = 'https://i.imgur.com/6eRa9QF.png'
+         authorUser += ' [shadow]'
+      }
+      if (comment.author_flair_css_class == 'watch') {
+         thisAvatarURL = 'https://i.imgur.com/SQ8Yka8.png'
+         authorUser += ' [watch]'
+      }
+
+      const commentEmbed = new EmbedBuilder()
+         .setColor(config.jobOutput.newComment.embedColor)
+         .setURL(`https://www.reddit.com${comment.permalink}`)
+         .setAuthor({
+            name: authorUser,
+            url: `https://www.reddit.com${comment.permalink}`,
+            iconURL: thisAvatarURL,
+         })
+         .setDescription(
+            `${comment.body
+               .slice(0, config.commentSize)
+               .replace(/(\r?\n|\r|#)/gm)}`
+         )
+
+      if (
+         comment.banned_at_utc != null &&
+         (comment.author_flair_css_class == 'shadow' ||
+            comment.spam ||
+            comment.body == '!tidy')
+      ) {
+         commentEmbed.setColor(config.jobOutput.spamComment.embedColor)
+      } else if (
+         comment.banned_at_utc != null &&
+         comment.author_flair_css_class !== 'shadow' &&
+         !comment.spam
+      ) {
+         if (comment.num_reports && comment.num_reports > 0) {
+            commentEmbed.setColor(config.jobOutput.reportedComment.embedColor)
+            commentEmbed.setTitle('Reported Comment')
+         } else {
+            commentEmbed.setColor(config.jobOutput.modQueueComment.embedColor)
+            commentEmbed.setTitle('Mod Queue Comment')
+         }
+         commentEmbed.setURL(
+            `https://www.reddit.com/mod/${comment.subreddit}/queue`
+         )
+      }
+      return commentEmbed
+   },
    async sendMessage(client, channelId, message) {
       // console.log(`Sending message from ${source} - ${subreddit}`)
       const channel = await client.channels.cache.get(channelId)
       const sentMessage = await channel.send(message).catch((err) => {
          console.error(`[ERROR] Sending message ${data.id} -`, err.message)
       })
-      console.log(`Sent Message: ${sentMessage.id}`)
+      // console.log(`Sent Message: ${sentMessage.id}`)
    },
    async processDiscordMessage(client, jobName, response) {
       // console.log("message broker activated");
       let message = `Job **${jobName}** executed.` // to be replaced
+      // console.log(jobName, response.status)
+      // console.log(response.data)
       let sendChannel = ''
       switch (jobName) {
+         case 'getNewModQueue':
+            if (response.status == 'success') {
+               let messageEmbed = ''
+               for (const item of response.data) {
+                  if (item.kind == 't3') {
+                     messageEmbed = this._makePostEmbed(item.data)
+                  } else if (item.kind == 't1') {
+                     messageEmbed = this._makeCommentEmbed(item.data)
+                  } else {
+                     break
+                  }
+                  message = { embeds: [messageEmbed] }
+                  sendChannel = client.params.get('queueChannelId')
+                  this.sendMessage(client, sendChannel, message)
+               }
+            }
+            break
          case 'getTopComments':
             if (response.status == 'success') {
                let embedDescription = ''
@@ -76,43 +253,14 @@ module.exports = {
             this.sendMessage(client, sendChannel, message)
             break
          case 'getNewComments':
-            // if ( response.data.size == 0 ){ break;}
-            let thisAvatarURL =
-               'https://www.redditstatic.com/avatars/defaults/v2/avatar_default_7.png'
-            let p24AvatarURL = 'https://i.imgur.com/TjABABi.png'
-            let oplAvatarURL = 'https://i.imgur.com/MbDgRbw.png'
-            for (const comment of response.data) {
-               // console.log(comment);
-               if (
-                  comment.subreddit == 'OnPatrolLive' ||
-                  comment.subreddit == 'OPLTesting'
-               ) {
-                  thisAvatarURL = oplAvatarURL
-               } else if (comment.subreddit == 'Police247') {
-                  thisAvatarURL = p24AvatarURL
+            if (response.status == 'success') {
+               let messageEmbed = ''
+               for (const comment of response.data) {
+                  messageEmbed = this._makeCommentEmbed(comment)
+                  message = { embeds: [messageEmbed] }
+                  sendChannel = client.params.get('streamChannelId')
+                  this.sendMessage(client, sendChannel, message)
                }
-               if (comment.author_flair_css_class == 'shadow') {
-                  thisAvatarURL = 'https://i.imgur.com/6eRa9QF.png'
-                  authorUser += ' [shadow]'
-               }
-               if (comment.author_flair_css_class == 'watch') {
-                  thisAvatarURL = 'https://i.imgur.com/SQ8Yka8.png'
-                  authorUser += ' [watch]'
-               }
-               const newCommentEmbed = new EmbedBuilder()
-                  .setColor(config.jobOutput.newComment.embedColor)
-                  .setURL(`https://www.reddit.com${comment.permalink}`)
-                  .setAuthor({
-                     name: comment.author,
-                     url: `https://www.reddit.com${comment.permalink}`,
-                     iconURL: thisAvatarURL,
-                  })
-                  .setDescription(
-                     `${comment.body.slice(0, config.commentSize)}`
-                  )
-               message = { embeds: [newCommentEmbed] }
-               sendChannel = client.params.get('streamChannelId')
-               this.sendMessage(client, sendChannel, message)
             }
             break
          // Add more cases for different job names and their respective formatting

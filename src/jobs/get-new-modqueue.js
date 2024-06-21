@@ -5,7 +5,7 @@ const subreddit = 'OPLTesting' // Replace with the target subreddit
 module.exports = ({ reddit, logger }) => ({
    name: 'getNewModQueue',
 
-//    cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
+   //    cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
    cronExpression: '*/15 * * * * *', // Every 15 seconds (live and testing)
 
    jobFunction: async () => {
@@ -14,12 +14,13 @@ module.exports = ({ reddit, logger }) => ({
       try {
          const queuedItems = await reddit.getNewModQueue(subreddit, 10) // Fetch the latest 10 comments
          const newItems = []
-console.log(queuedItems)
+         // console.log(queuedItems)
          queuedItems.forEach((item) => {
             const itemId = item.data.id
+            // console.log(item.data.created_utc * 1000, startTime)
             if (
-               !loggedItemIds.has(itemId) &&
-               new Date(item.data.created_utc * 1000) >= startTime
+               !loggedItemIds.has(itemId)
+               //  && new Date(item.data.created_utc * 1000) >= startTime
             ) {
                // if (!loggedCommentIds.has(commentId) ) {
                logger.info({
@@ -28,13 +29,16 @@ console.log(queuedItems)
                      'getNewModQueue',
                      'Found',
                      item.data.subreddit,
+                     item.kind,
+                     item.data.author,
                      item.data.id,
                   ],
                })
-               newItems.push(item.data)
+               newItems.push(item)
                loggedItemIds.add(itemId) // Mark the comment as logged
             }
          })
+         // console.log(newItems);
          return { status: 'success', data: newItems }
       } catch (error) {
          console.error(
