@@ -4,7 +4,7 @@ module.exports = ({ reddit, logger }) => ({
    // cronExpression: '*/20 * * * * *', // Every 20 seconds (testing)
    cronExpression: '20 0 23 * * FRI,SAT', // Every Friday and Saturday at 11:00:02pm (live)
    jobFunction: async () => {
-      const subreddit = 'OPLTesting' // subreddit to search
+      const subreddit = 'OnPatrolLive' // subreddit to search
       const searchString = 'Live Thread' // Post title to locate
       const searchFlairName = '🚨 Live Thread 🚨' // Post flair to locate and change
       const targetFlairName = 'Past Live Thread' // Post flair to change to

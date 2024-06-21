@@ -1,12 +1,14 @@
 let loggedItemIds = new Set()
 const startTime = new Date() // When the job was first scheduled
+// const subreddit = 'OnPatrolLive,OPLTesting' // Replace with the target subreddit
 const subreddit = 'OPLTesting' // Replace with the target subreddit
 
 module.exports = ({ reddit, logger }) => ({
    name: 'getNewModQueue',
 
-   cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
-   // cronExpression: '*/15 * * * * *', // Every 15 seconds (live and testing)
+   // cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
+   // cronExpression: '*/15 * * * * *', // Every 15 seconds (testing)
+   cronExpression: '4,19,34,49 * * * * *', // Every 15 seconds (live)
 
    jobFunction: async () => {
       // logger.info({emoji: '💬', columns: ['getNewModQueue', `Fetching`, subreddit]});

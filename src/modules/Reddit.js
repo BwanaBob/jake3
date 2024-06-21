@@ -34,11 +34,11 @@ class Reddit {
       if (rateLimitRemaining !== null && rateLimitReset !== null) {
          const perMilliseconds = rateLimitReset * 1000 // Convert seconds to milliseconds
          const maxRequests = rateLimitRemaining
-         // console.log(
-         //    `Reddit API: Setting rate limit to ${maxRequests} per ${
-         //       perMilliseconds / 1000
-         //    } seconds (Reddit provided)`
-         // )
+         console.log(
+            `Reddit API: Setting rate limit to ${maxRequests} per ${
+               perMilliseconds / 1000
+            } seconds (Reddit provided)`
+         )
          this.http = axiosRateLimit(axios.create(), {
             maxRequests,
             perMilliseconds,
@@ -118,6 +118,7 @@ class Reddit {
 
          const response = await this.client.request(config)
          this._handleRateLimitHeaders(response.headers)
+         // console.log(response);
          return response.data
       } catch (error) {
          if (error.response && error.response.status === 401) {
@@ -170,35 +171,37 @@ class Reddit {
 
    async fetchAllModmailConversations() {
       try {
-         const response = await this.apiRequest(
-            '/api/mod/conversations',
-            'get',
-            { state: 'all' }
-         )
-         const { conversations, conversationIds } = response
-         return { conversations, conversationIds }
+        const response = await this.apiRequest('/api/mod/conversations', 'get', { state: 'inbox' });
+      //   console.log(response);
+        return response;
       } catch (error) {
-         console.error('Error fetching modmail conversations:', error.message)
-         return { conversations: {}, conversationIds: [] }
+        console.error('Error fetching modmail conversations:', error.message);
+        return response;
       }
    }
 
-   async fetchModmailMessages(conversationId) {
-      try {
-         const response = await this.apiRequest(
-            `/api/mod/conversations/${conversationId}`,
-            'get'
-         )
-         // console.log(response);a
-         return response.messages
-      } catch (error) {
-         console.error(
-            `Error fetching messages for conversation ${conversationId}:`,
-            error.message
-         )
-         return []
-      }
-   }
+   //  async fetchAllModmailConversations-old() {
+   //    try {
+   //      const { conversations, conversationIds } = await this.apiRequest('/api/mod/conversations', 'get', { state: 'inbox' });
+   //    //   console.log(conversations['1xjdr2']);
+   //      return { conversations, conversationIds };
+   //    } catch (error) {
+   //      console.error('Error fetching modmail conversations:', error.message);
+   //      return { conversations: {}, conversationIds: [] };
+   //    }
+   //  }
+  
+   //  async fetchModmailMessages(conversationId) {
+   //    try {
+   //      const { conversation } = await this.apiRequest(`/api/mod/conversations/${conversationId}`, 'get');
+   //    //   console.log(conversation)
+   //      return conversation.messages || [];
+   //    } catch (error) {
+   //      console.error(`Error fetching messages for conversation ${conversationId}:`, error.message);
+   //      return [];
+   //    }
+   //  }
+
 
    async getNewComments(subreddit, limit = 25) {
       const data = await this.apiRequest(
@@ -217,9 +220,45 @@ class Reddit {
       return data.data.children
    }
 
+   async getNewReports(subreddit, limit = 10) {
+      const data = await this.apiRequest(
+         `/r/${subreddit}/about/reports`,
+         'get',
+         { limit }
+      )
+      return data.data.children
+   }
+
+   async getNewSpam(subreddit, limit = 10) {
+      const data = await this.apiRequest(
+         `/r/${subreddit}/about/spam`,
+         'get',
+         { limit }
+      )
+      return data.data.children
+   }
+
    async getNewModQueue(subreddit, limit = 10) {
       const data = await this.apiRequest(
          `/r/${subreddit}/about/modqueue`,
+         'get',
+         { limit }
+      )
+      return data.data.children
+   }
+
+   async getNewUnmoderated(subreddit, limit = 10) {
+      const data = await this.apiRequest(
+         `/r/${subreddit}/about/unmoderated`,
+         'get',
+         { limit }
+      )
+      return data.data.children
+   }
+   
+   async getNewEdited(subreddit, limit = 10) {
+      const data = await this.apiRequest(
+         `/r/${subreddit}/about/edited`,
          'get',
          { limit }
       )
@@ -232,6 +271,13 @@ class Reddit {
          restrict_sr: true,
          sort: 'new',
          limit,
+      })
+      return data.data.children
+   }
+
+   async getModLog(subreddit, mod, type, limit = 10) {
+      const data = await this.apiRequest(`/r/${subreddit}/about/log`, 'get', {
+         limit, mod, type, 
       })
       return data.data.children
    }

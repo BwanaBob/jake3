@@ -4,8 +4,9 @@ const subreddit = 'OPLTesting+OnPatrolLive' // Replace with the target subreddit
 
 module.exports = ({ reddit, logger }) => ({
    name: 'getNewPosts',
-   cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
-//    cronExpression: '*/15 * * * * *', // Every 15 seconds (live and testing)
+//    cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
+//    cronExpression: '*/15 * * * * *', // Every 15 seconds (testing)
+   cronExpression: '26,56 * * * * *', // Every 15 seconds (live)
 
    jobFunction: async () => {
       // logger.info({emoji: '💬', columns: ['getNewPosts', `Fetching`, subreddit]});
