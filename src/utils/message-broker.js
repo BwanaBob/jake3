@@ -132,11 +132,7 @@ module.exports = {
             url: `https://www.reddit.com${comment.permalink}`,
             iconURL: thisAvatarURL,
          })
-         .setDescription(
-            `${comment.body
-               .slice(0, config.commentSize)
-               .replace(/(\r?\n|\r|#)/gm)}`
-         )
+         .setDescription(`${comment.body.slice(0, config.commentSize)}`)
 
       if (
          comment.banned_at_utc != null &&
