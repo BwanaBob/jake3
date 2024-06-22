@@ -69,7 +69,7 @@ module.exports = {
       } else {
          tidyThread = await oplChannel.threads.create({
             name: tidyThreadName,
-            autoArchiveDuration: ThreadAutoArchiveDuration.OneHour,
+            autoArchiveDuration: ThreadAutoArchiveDuration.OneDay,
             joinable: true,
             reason: 'A separate thread for jobs',
          })
@@ -88,7 +88,7 @@ module.exports = {
       } else {
          streamThread = await oplChannel.threads.create({
             name: streamThreadName,
-            autoArchiveDuration: ThreadAutoArchiveDuration.OneHour,
+            autoArchiveDuration: ThreadAutoArchiveDuration.OneDay,
             joinable: true,
             reason: 'A separate thread for the stream',
          })
@@ -107,7 +107,7 @@ module.exports = {
       } else {
          queueThread = await oplChannel.threads.create({
             name: queueThreadName,
-            autoArchiveDuration: ThreadAutoArchiveDuration.OneHour,
+            autoArchiveDuration: ThreadAutoArchiveDuration.OneDay,
             joinable: true,
             reason: 'A separate thread for the Mod Queue',
          })
@@ -126,7 +126,7 @@ module.exports = {
       } else {
          mailThread = await oplChannel.threads.create({
             name: mailThreadName,
-            autoArchiveDuration: ThreadAutoArchiveDuration.OneHour,
+            autoArchiveDuration: ThreadAutoArchiveDuration.OneDay,
             joinable: true,
             reason: 'A separate thread for Mod Mail',
          })
