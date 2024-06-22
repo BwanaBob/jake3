@@ -65,7 +65,7 @@ module.exports = {
       )
       if (tfindThread) {
          tidyThread = tfindThread
-         // await sendThread.join()
+         if (tidyThread.joinable) await tidyThread.join();
       } else {
          tidyThread = await oplChannel.threads.create({
             name: tidyThreadName,
@@ -73,6 +73,7 @@ module.exports = {
             joinable: true,
             reason: 'A separate thread for jobs',
          })
+         await tidyThread.setArchived(false); // unarchived
       }
       client.params.set("jobsChannelId", tidyThread.id);
 
@@ -84,7 +85,7 @@ module.exports = {
       )
       if (sfindThread) {
          streamThread = sfindThread
-         // await sendThread.join()
+         if (streamThread.joinable) await streamThread.join();
       } else {
          streamThread = await oplChannel.threads.create({
             name: streamThreadName,
@@ -92,6 +93,7 @@ module.exports = {
             joinable: true,
             reason: 'A separate thread for the stream',
          })
+         await streamThread.setArchived(false); // unarchived
       }
       client.params.set("streamChannelId", streamThread.id);
 
@@ -103,7 +105,7 @@ module.exports = {
       )
       if (qfindThread) {
          queueThread = qfindThread
-         // await sendThread.join()
+         if (queueThread.joinable) await queueThread.join();
       } else {
          queueThread = await oplChannel.threads.create({
             name: queueThreadName,
@@ -111,6 +113,7 @@ module.exports = {
             joinable: true,
             reason: 'A separate thread for the Mod Queue',
          })
+         await queueThread.setArchived(false); // unarchived
       }
       client.params.set("queueChannelId", queueThread.id);
 
@@ -122,7 +125,7 @@ module.exports = {
       )
       if (mfindThread) {
          mailThread = mfindThread
-         // await sendThread.join()
+         if (mailThread.joinable) await mailThread.join();
       } else {
          mailThread = await oplChannel.threads.create({
             name: mailThreadName,
@@ -130,6 +133,7 @@ module.exports = {
             joinable: true,
             reason: 'A separate thread for Mod Mail',
          })
+         await mailThread.setArchived(false); // unarchived
       }
       client.params.set("mailChannelId", mailThread.id);
 
