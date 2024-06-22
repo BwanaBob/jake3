@@ -189,7 +189,11 @@ module.exports = {
                   } else {
                      break
                   }
-                  message = { embeds: [messageEmbed] }
+                  const modPing = '1171955876609937564'
+                  message = {
+                     embeds: [messageEmbed],
+                     content: `<@&${modPing}>`,
+                  }
                   sendChannel = client.params.get('queueChannelId')
                   this.sendMessage(client, sendChannel, message)
                }
@@ -263,38 +267,42 @@ module.exports = {
                }
             }
             break
-            case 'getNewPosts':
-               if (response.status == 'success') {
-                  let messageEmbed = ''
-                  for (const post of response.data) {
-                     messageEmbed = this._makePostEmbed(post)
-                     message = { embeds: [messageEmbed] }
-                     sendChannel = client.params.get('streamChannelId')
-                     this.sendMessage(client, sendChannel, message)
-                  }
+         case 'getNewPosts':
+            if (response.status == 'success') {
+               let messageEmbed = ''
+               for (const post of response.data) {
+                  messageEmbed = this._makePostEmbed(post)
+                  message = { embeds: [messageEmbed] }
+                  sendChannel = client.params.get('streamChannelId')
+                  this.sendMessage(client, sendChannel, message)
                }
-               break
-               case 'getNewModMail':
-                  if (response.status == 'success') {
-                     for (const mailMessage of response.data) {
-                        const messageEmbed = new EmbedBuilder()
-                        .setColor(config.jobOutput.modMail.embedColor)
-                        .setTitle('Mod Mail')
-                        .setURL(`https://mod.reddit.com/mail/all`)
-                        .setAuthor({
-                           name: mailMessage.author.name,
-                           iconURL: 'https://i.imgur.com/MbDgRbw.png',
-                        })
-                        .setDescription(
-                           `${mailMessage.bodyMarkdown
-                              .slice(0, config.commentSize)
-                              .replace(/(\r?\n|\r|#)/gm)}`
-                        )
-                        message = { embeds: [messageEmbed] }
-                        sendChannel = client.params.get('mailChannelId')
-                        this.sendMessage(client, sendChannel, message)
-                     }
+            }
+            break
+         case 'getNewModMail':
+            if (response.status == 'success') {
+               for (const mailMessage of response.data) {
+                  const messageEmbed = new EmbedBuilder()
+                     .setColor(config.jobOutput.modMail.embedColor)
+                     .setTitle('Mod Mail')
+                     .setURL(`https://mod.reddit.com/mail/all`)
+                     .setAuthor({
+                        name: mailMessage.author.name,
+                        iconURL: 'https://i.imgur.com/MbDgRbw.png',
+                     })
+                     .setDescription(
+                        `${mailMessage.bodyMarkdown
+                           .slice(0, config.commentSize)
+                           .replace(/(\r?\n|\r|#)/gm)}`
+                     )
+                  const modPing = '1171955876609937564'
+                  message = {
+                     embeds: [messageEmbed],
+                     content: `<@&${modPing}>`,
                   }
+                  sendChannel = client.params.get('mailChannelId')
+                  this.sendMessage(client, sendChannel, message)
+               }
+            }
          // Add more cases for different job names and their respective formatting
          default:
             message += 'Data:\n'

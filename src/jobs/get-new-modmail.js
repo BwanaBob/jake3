@@ -1,13 +1,13 @@
 let loggedMessageIds = new Set()
 const startTime = new Date() // When the job was first scheduled
 // const subreddit = 'OPLTesting+OnPatrolLive' // Replace with the target subreddit
-const subreddit = 'OPLTesting' // Replace with the target subreddit
+const subreddit = 'OnPatrolLive' // Replace with the target subreddit
 
 module.exports = ({ reddit, logger }) => ({
    name: 'getNewModMail',
 
-  //  cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
-   cronExpression: '11,41 * * * * *', // Every 15 seconds (live and testing)
+   // cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
+   cronExpression: '11,41 * * * * *', // Every 30 seconds (live and testing)
 
    jobFunction: async () => {
       // logger.info({emoji: '💬', columns: ['getNewComments', `Fetching`, subreddit]});

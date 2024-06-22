@@ -23,7 +23,7 @@ scheduler.on('jobCancelled', (name) => {
 });
 
 scheduler.on('jobCompleted', (name, result) => {
-  logger.info({ emoji: '⏰', columns: ['Scheduler', 'Job Complete', name ]})
+  // logger.info({ emoji: '⏰', columns: ['Scheduler', 'Job Complete', name ]})
   const discordResult = broker.processDiscordMessage(discord.client, name, result)
   // console.log(result);
 });

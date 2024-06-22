@@ -1,7 +1,7 @@
 let loggedItemIds = new Set()
 const startTime = new Date() // When the job was first scheduled
 // const subreddit = 'OnPatrolLive,OPLTesting' // Replace with the target subreddit
-const subreddit = 'OPLTesting' // Replace with the target subreddit
+const subreddit = 'OPLTesting+OnPatrolLive' // Replace with the target subreddit
 
 module.exports = ({ reddit, logger }) => ({
    name: 'getNewModQueue',
