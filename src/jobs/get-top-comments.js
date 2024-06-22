@@ -12,8 +12,8 @@ const ineligibleUsers = config.cotn.ineligibleUsers
 module.exports = ({ reddit, logger }) => ({
    name: 'getTopComments',
    // cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
-   // cronExpression: '*/30 * * * * *', // Every 30 seconds (testing)
-   cronExpression: '0 20 9 * * SAT,SUN', // Every Saturday and Sunday at 3am (live)
+   // cronExpression: '0 * * * * *', // Every 30 seconds (testing)
+   cronExpression: '0 0 3 * * SAT,SUN', // Every Saturday and Sunday at 3am (live)
    jobFunction: async () => {
       try {
          logger.info({
@@ -74,7 +74,7 @@ module.exports = ({ reddit, logger }) => ({
             )
 
             // Filter ineligible users
-            const filteredComments = commentAverages.filter(comment => !ineligibleUsers.includes(comment.author));
+            const filteredComments = commentAverages.filter(comment => !ineligibleUsers.includes(comment.data.author));
 
             // Sort by average score
             const sortedComments = filteredComments.sort(
