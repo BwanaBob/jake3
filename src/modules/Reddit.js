@@ -284,6 +284,7 @@ class Reddit {
 
    async getCommentsForPost(postId, limit = 100) {
       const data = await this.apiRequest(`/comments/${postId}.json`, 'get', {
+         sort: 'top',
          limit,
       })
       return data[1].data.children // Comments are in the second element of the response array
