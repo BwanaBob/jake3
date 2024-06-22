@@ -28,8 +28,8 @@ module.exports = {
          activities: [
             {
                type: ActivityType.Custom,
-               state: "🐾 Doing Jake's job!",
-               name: "🐾 Doing Jake's job!",
+               state: "🐾 Fetching Reddit gifties!",
+               name: "🐾 Fetching Reddit gifties!",
             },
          ],
       }
