@@ -217,7 +217,7 @@ module.exports = {
                cotnEmbed.setDescription(embedDescription)
                cotnEmbed.addFields({
                   name: 'Post',
-                  value: `[${response.post.id}](<${response.post.url}>) ${response.post.title}`,
+                  value: `[${response.post.id}](<${response.post.url}?sort=top>) ${response.post.title}`,
                })
                message = { embeds: [cotnEmbed] }
                sendChannel = client.params.get('jobsChannelId')
