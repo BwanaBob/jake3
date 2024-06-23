@@ -2,31 +2,46 @@ module.exports = ({ reddit, logger }) => ({
    name: 'tidy',
    // cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
    // cronExpression: '*/20 * * * * *', // Every 20 seconds (testing)
-   cronExpression: '0 20 3 * * FRI,SAT,SUN', // Every Friday and Saturday at 11:00:02pm (live)
+   cronExpression: '20 0 23 * * FRI,SAT', // Every Friday and Saturday at 11:00:02pm (live)
    jobFunction: async () => {
       const subreddit = 'OnPatrolLive' // subreddit to search
       const searchString = 'Live Thread' // Post title to locate
-      const searchFlairName = '🚨 Live Thread 🚨' // Post flair to locate and change
+      const searchFlairName = 'Live Thread' // Post flair to locate and change
       const targetFlairName = 'Past Live Thread' // Post flair to change to
       let result = { status: 'failed' }
 
-      // logger.info({ emoji: '🧹', columns: ['tidy', `Find Post`, subreddit, searchString], })
+      logger.info({
+         emoji: '🧹',
+         columns: ['tidy', `Find Post`, subreddit, searchString],
+      })
       try {
          const posts = await reddit.searchPosts(subreddit, searchString, 20) // Search for the latest 20 posts
          // console.log(posts);
          const post = posts.find(
             (post) =>
-               post.data.link_flair_text === searchFlairName &&
-               post.data.stickied == true
+               post.data.stickied &&
+               post.data.link_flair_text &&
+               post.data.link_flair_text
+                  .toLowerCase()
+                  .includes(searchFlairName.toLowerCase()) &&
+               post.data.title
+                  .toLowerCase()
+                  .includes(searchString.toLowerCase())
          ) // Narrow results using flair
-
+         // console.log(post);
          if (post) {
-            // logger.info({ emoji: '🧹', columns: ['tidy', `Found Post`, subreddit, post.data.title], })
+            logger.info({
+               emoji: '🧹',
+               columns: ['tidy', `Found Post`, subreddit, post.data.title],
+            })
 
             // Look up the flair ID by name
             const flairs = await reddit.getSubredditFlairs(subreddit)
+            // console.log(flairs);
             const targetFlair = flairs.find(
-               (flair) => flair.text === targetFlairName
+               // (flair) => flair.text === targetFlairName
+               (flair) =>
+                  flair.text.toLowerCase() == targetFlairName.toLowerCase()
             )
 
             if (!targetFlair) {
@@ -34,7 +49,16 @@ module.exports = ({ reddit, logger }) => ({
             }
 
             const targetFlairId = targetFlair.id
-            // logger.info({ emoji: '🧹', columns: ['tidy', `Found Flair`, subreddit, targetFlairName, targetFlairId, ], })
+            logger.info({
+               emoji: '🧹',
+               columns: [
+                  'tidy',
+                  `Found Flair`,
+                  subreddit,
+                  targetFlairName,
+                  targetFlairId,
+               ],
+            })
 
             await reddit.updatePostFlair(post.data.id, targetFlairId)
             await reddit.updatePostSticky(post.data.id, false)
@@ -45,10 +69,16 @@ module.exports = ({ reddit, logger }) => ({
                title: post.data.title,
                url: post.data.url,
             }
-            // logger.info({ emoji: '🧹', columns: ['tidy', `Processed Post`, subreddit, post.data.title], })
+            logger.info({
+               emoji: '🧹',
+               columns: ['tidy', `Processed Post`, subreddit, post.data.title],
+            })
          } else {
             result.status = 'not found'
-            // logger.info({ emoji: '🧹', columns: ['tidy', `Post Not Found`, subreddit, searchString], })
+            logger.info({
+               emoji: '🧹',
+               columns: ['tidy', `Post Not Found`, subreddit, searchString],
+            })
          }
          return result
       } catch (error) {
