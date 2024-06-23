@@ -94,7 +94,7 @@ class Reddit {
 
    async ensureValidToken() {
       if (!this.token || Date.now() >= this.tokenExpiresAt) {
-         console.warn(`Reddit API: Token expiring. Retrieving new token.`)
+         console.log(`Reddit API: Token expiring. Retrieving new token.`)
          await this.getOAuthToken()
       }
    }
