@@ -3,6 +3,18 @@ const startTime = new Date() // When the job was first scheduled
 // const subreddit = 'OnPatrolLive,OPLTesting' // Replace with the target subreddit
 const subreddit = 'OPLTesting+OnPatrolLive' // Replace with the target subreddit
 
+const fs = require('fs')
+function saveItemsToFile(item) {
+   const filePath = 'queue-items.txt'
+   fs.appendFile(filePath, JSON.stringify(item, null, 2) + '\n', (err) => {
+      if (err) {
+         console.error('Error writing to file:', err)
+      } else {
+         console.log('Items saved to', filePath)
+      }
+   })
+}
+
 module.exports = ({ reddit, logger }) => ({
    name: 'getNewModQueue',
 
@@ -12,7 +24,6 @@ module.exports = ({ reddit, logger }) => ({
 
    jobFunction: async () => {
       // logger.info({emoji: '💬', columns: ['getNewModQueue', `Fetching`, subreddit]});
-
       try {
          const queuedItems = await reddit.getNewModQueue(subreddit, 10) // Fetch the latest 10 comments
          const newItems = []
@@ -22,10 +33,10 @@ module.exports = ({ reddit, logger }) => ({
             let description = ''
             if ((item.kind = 't1')) {
                //item is a comment
-               description = item.data.body;
+               description = item.data.body
             } else if ((item.kind = 't3')) {
                //item is a post
-               description = item.data.title;
+               description = item.data.title
             }
             // console.log(item.data.created_utc * 1000, startTime)
             if (
@@ -45,6 +56,7 @@ module.exports = ({ reddit, logger }) => ({
                })
                newItems.push(item)
                loggedItemIds.add(itemId) // Mark the comment as logged
+               // saveItemsToFile(item)
             }
          })
          // console.log(newItems);

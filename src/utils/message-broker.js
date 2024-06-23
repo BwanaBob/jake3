@@ -10,18 +10,13 @@ module.exports = {
       let postMessage = ''
       let authorUser = post.author
 
-      if (post.subreddit == 'OnPatrolLive' || post.subreddit == 'OPLTesting') {
+      if (post.subreddit == 'OnPatrolLive') {
          thisAvatarURL = oplAvatarURL
-      } else if (post.subreddit == 'Police247') {
+      } else if (
+         post.subreddit == 'Police247' ||
+         post.subreddit == 'OPLTesting'
+      ) {
          thisAvatarURL = p24AvatarURL
-      }
-      if (post.author_flair_css_class == 'shadow') {
-         thisAvatarURL = 'https://i.imgur.com/6eRa9QF.png'
-         authorUser += ' [shadow]'
-      }
-      if (post.author_flair_css_class == 'watch') {
-         thisAvatarURL = 'https://i.imgur.com/SQ8Yka8.png'
-         authorUser += ' [watch]'
       }
 
       const postEmbed = new EmbedBuilder()
@@ -32,6 +27,18 @@ module.exports = {
             url: `https://www.reddit.com${post.permalink}`,
             iconURL: thisAvatarURL,
          })
+
+      if (post.author_flair_css_class == 'shadow') {
+         // console.log('User is shadowed')
+         thisAvatarURL = 'https://i.imgur.com/6eRa9QF.png'
+         authorUser += ' [shadow]'
+         postEmbed.setColor(config.jobOutput.spamPost.embedColor)
+      }
+      if (post.author_flair_css_class == 'watch') {
+         thisAvatarURL = 'https://i.imgur.com/SQ8Yka8.png'
+         authorUser += ' [watch]'
+         postEmbed.setColor(config.jobOutput.modQueuePost.embedColor)
+      }
 
       postMessage = `**${post.title.slice(0, config.postSize)}**`
       if (post.selftext) {
@@ -76,17 +83,17 @@ module.exports = {
       postEmbed.setDescription(`${postEmoji}  ${postMessage}`)
 
       if (
-         post.banned_at_utc != null &&
+         post.banned_at_utc &&
          (post.author_flair_css_class == 'shadow' || post.spam)
       ) {
          postEmbed.setColor(config.jobOutput.spamPost.embedColor)
          postEmbed.setTitle('Spam Post')
          postEmbed.setURL(`https://www.reddit.com/r/OnPatrolLive/about/spam`)
-      } else if (
-         post.banned_at_utc != null &&
-         post.author_flair_css_class !== 'shadow' &&
-         !post.spam
-      ) {
+         return postEmbed
+      }
+
+      if (post.banned_at_utc) {
+         // console.log('Comment is in queue')
          if (post.num_reports && post.num_reports > 0) {
             postEmbed.setColor(config.jobOutput.reportedPost.embedColor)
             postEmbed.setTitle('Reported Post')
@@ -106,12 +113,12 @@ module.exports = {
       let oplAvatarURL = 'https://i.imgur.com/MbDgRbw.png'
       let authorUser = comment.author
 
-      if (
-         comment.subreddit == 'OnPatrolLive' ||
+      if (comment.subreddit == 'OnPatrolLive') {
+         thisAvatarURL = oplAvatarURL
+      } else if (
+         comment.subreddit == 'Police247' ||
          comment.subreddit == 'OPLTesting'
       ) {
-         thisAvatarURL = oplAvatarURL
-      } else if (comment.subreddit == 'Police247') {
          thisAvatarURL = p24AvatarURL
       }
 
@@ -126,34 +133,40 @@ module.exports = {
          .setDescription(`${comment.body.slice(0, config.commentSize)}`)
 
       if (comment.author_flair_css_class == 'shadow') {
+         // console.log('User is shadowed')
          thisAvatarURL = 'https://i.imgur.com/6eRa9QF.png'
          authorUser += ' [shadow]'
-         .setColor(config.jobOutput.spamComment.embedColor)
+         commentEmbed.setColor(config.jobOutput.spamComment.embedColor)
       }
+
       if (comment.author_flair_css_class == 'watch') {
+         // console.log('User is on watchlist')
          thisAvatarURL = 'https://i.imgur.com/SQ8Yka8.png'
          authorUser += ' [watch]'
-         .setColor(config.jobOutput.modQueueComment.embedColor)
+         commentEmbed.setColor(config.jobOutput.modQueueComment.embedColor)
       }
 
       if (
-         comment.banned_at_utc != null &&
+         comment.banned_at_utc &&
          (comment.author_flair_css_class == 'shadow' ||
             comment.spam ||
             comment.body == '!tidy')
       ) {
+         // console.log('Comment is spam')
          commentEmbed.setColor(config.jobOutput.spamComment.embedColor)
-      } else if (
-         comment.banned_at_utc != null &&
-         comment.author_flair_css_class !== 'shadow' &&
-         !comment.spam && !comment.body == '!tidy'
-      ) {
+         return commentEmbed
+      }
+
+      if (comment.banned_at_utc) {
+         // console.log('Comment is in queue')
          if (comment.num_reports && !comment.num_reports === 0) {
             commentEmbed.setColor(config.jobOutput.reportedComment.embedColor)
             commentEmbed.setTitle('Reported Comment')
+            // console.log('Comment is in reported')
          } else {
             commentEmbed.setColor(config.jobOutput.modQueueComment.embedColor)
             commentEmbed.setTitle('Mod Queue Comment')
+            // console.log('Comment is just in queue')
          }
          commentEmbed.setURL(
             `https://www.reddit.com/mod/${comment.subreddit}/queue`
@@ -232,17 +245,17 @@ module.exports = {
                   value: 'Processed',
                   inline: false,
                })
-               tidyEmbed.addFields({
-                  name: 'Post Id',
-                  value: response.data.id,
-                  inline: false,
-               })
+               // tidyEmbed.addFields({
+               //    name: 'Post Id',
+               //    value: response.data.id,
+               //    inline: false,
+               // })
                tidyEmbed.addFields({
                   name: 'Post Title',
                   value: `[${response.data.title}](${response.data.url})`,
                   inline: false,
                })
-               tidyEmbed.setFooter({ text: response.data.subreddit })
+               tidyEmbed.setFooter({ text: `r/${response.data.subreddit}` })
             } else {
                tidyEmbed.addFields({
                   name: 'Status',
@@ -288,9 +301,10 @@ module.exports = {
                         iconURL: 'https://i.imgur.com/MbDgRbw.png',
                      })
                      .setDescription(
-                        `${mailMessage.bodyMarkdown
-                           .slice(0, config.commentSize)
-                           .replace(/(\r?\n|\r|#)/gm)}`
+                        `${
+                           mailMessage.bodyMarkdown.slice(0, config.commentSize)
+                           // .replace(/(\r?\n|\r|#)/gm)
+                        }`
                      )
                   const modPing = '1171955876609937564'
                   message = {
@@ -309,6 +323,3 @@ module.exports = {
       }
    },
 }
-
-// module.exports = Broker
-// module.exports = { processDiscordMessage, setChannels }
