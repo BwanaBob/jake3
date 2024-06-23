@@ -18,7 +18,7 @@ module.exports = ({ reddit, logger }) => ({
       try {
          logger.info({
             emoji: '🏅',
-            columns: ['getTopComments', 'Find Post', subreddit, searchString],
+            columns: ['Top Comments', 'Find Post', subreddit, searchString],
          })
 
          const posts = await reddit.searchPosts(subreddit, searchString, 10) // Search for the latest 10 posts
@@ -31,12 +31,7 @@ module.exports = ({ reddit, logger }) => ({
             const postId = post.data.id
             logger.info({
                emoji: '🏅',
-               columns: [
-                  'getTopComments',
-                  'Found Post',
-                  postId,
-                  post.data.title,
-               ],
+               columns: ['Top Comments', 'Found Post', postId, post.data.title],
             })
 
             // Retrieve comments multiple times
@@ -74,7 +69,10 @@ module.exports = ({ reddit, logger }) => ({
             )
 
             // Filter ineligible users
-            const filteredComments = commentAverages.filter(comment => !ineligibleUsers.includes(comment.data.author));
+            const filteredComments = commentAverages.filter(
+               (comment) =>
+                  !ineligibleUsers.includes(comment.data.author) || comment.data.author_flair_text == "CotN Royalty 👑"
+            )
 
             // Sort by average score
             const sortedComments = filteredComments.sort(
