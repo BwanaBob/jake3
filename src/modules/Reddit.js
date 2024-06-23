@@ -202,7 +202,15 @@ class Reddit {
    //    }
    //  }
 
-
+   async getOneComment(subreddit, commentId) {
+      const data = await this.apiRequest(
+         `/api/info?id=t1_${commentId}`, 
+         'get',
+         { comment: commentId }
+      )
+      console.log(data.data.children);
+      return data.data.children
+   }
    async getNewComments(subreddit, limit = 25) {
       const data = await this.apiRequest(
          `/r/${subreddit}/comments.json`,

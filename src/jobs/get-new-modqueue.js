@@ -19,21 +19,28 @@ module.exports = ({ reddit, logger }) => ({
          // console.log(queuedItems)
          queuedItems.forEach((item) => {
             const itemId = item.data.id
+            let description = ''
+            if ((item.kind = 't1')) {
+               //item is a comment
+               description = item.data.body;
+            } else if ((item.kind = 't3')) {
+               //item is a post
+               description = item.data.title;
+            }
             // console.log(item.data.created_utc * 1000, startTime)
             if (
                !loggedItemIds.has(itemId) &&
                new Date(item.data.created_utc * 1000) >= startTime
             ) {
-               // if (!loggedCommentIds.has(commentId) ) {
                logger.info({
                   emoji: '💬',
                   columns: [
-                     'getNewModQueue',
-                     'Found',
+                     'New ModQueue',
                      item.data.subreddit,
-                     item.kind,
+                     // item.kind,
                      item.data.author,
-                     item.data.id,
+                     // item.data.id,
+                     description,
                   ],
                })
                newItems.push(item)

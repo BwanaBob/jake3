@@ -15,17 +15,18 @@ module.exports = ({ reddit, logger }) => ({
       try {
          const data = await reddit.fetchAllModmailConversations(subreddit, 100) // Fetch the latest 20 comments
          const newMessages = []
-         const remainingMessages = Object.values(data.messages).filter(message => new Date(message.date) > startTime);
+         const remainingMessages = Object.values(data.messages).filter(
+            (message) => new Date(message.date) > startTime
+         )
          remainingMessages.forEach((message) => {
-            if (
-               !loggedMessageIds.has(message.id)
-            ) {
+            if (!loggedMessageIds.has(message.id)) {
                logger.info({
                   emoji: '💬',
                   columns: [
-                     'getNewModMail',
-                     'Found',
-                    //  message.id,
+                     'New ModMail',
+                     // 'Found',
+                     //  message.id,
+                     message.subreddit,
                      message.author.name,
                      message.bodyMarkdown,
                   ],

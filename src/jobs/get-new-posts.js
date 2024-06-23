@@ -24,8 +24,8 @@ module.exports = ({ reddit, logger }) => ({
                logger.info({
                   emoji: '💬',
                   columns: [
-                     'getNewPosts',
-                     'Found',
+                     'New Post',
+                     // 'Found',
                      post.data.subreddit,
                      post.data.author,
                      post.data.title,

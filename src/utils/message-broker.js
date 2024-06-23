@@ -115,15 +115,6 @@ module.exports = {
          thisAvatarURL = p24AvatarURL
       }
 
-      if (comment.author_flair_css_class == 'shadow') {
-         thisAvatarURL = 'https://i.imgur.com/6eRa9QF.png'
-         authorUser += ' [shadow]'
-      }
-      if (comment.author_flair_css_class == 'watch') {
-         thisAvatarURL = 'https://i.imgur.com/SQ8Yka8.png'
-         authorUser += ' [watch]'
-      }
-
       const commentEmbed = new EmbedBuilder()
          .setColor(config.jobOutput.newComment.embedColor)
          .setURL(`https://www.reddit.com${comment.permalink}`)
@@ -133,6 +124,17 @@ module.exports = {
             iconURL: thisAvatarURL,
          })
          .setDescription(`${comment.body.slice(0, config.commentSize)}`)
+
+      if (comment.author_flair_css_class == 'shadow') {
+         thisAvatarURL = 'https://i.imgur.com/6eRa9QF.png'
+         authorUser += ' [shadow]'
+         .setColor(config.jobOutput.spamComment.embedColor)
+      }
+      if (comment.author_flair_css_class == 'watch') {
+         thisAvatarURL = 'https://i.imgur.com/SQ8Yka8.png'
+         authorUser += ' [watch]'
+         .setColor(config.jobOutput.modQueueComment.embedColor)
+      }
 
       if (
          comment.banned_at_utc != null &&
@@ -144,9 +146,9 @@ module.exports = {
       } else if (
          comment.banned_at_utc != null &&
          comment.author_flair_css_class !== 'shadow' &&
-         !comment.spam
+         !comment.spam && !comment.body == '!tidy'
       ) {
-         if (comment.num_reports && comment.num_reports > 0) {
+         if (comment.num_reports && !comment.num_reports === 0) {
             commentEmbed.setColor(config.jobOutput.reportedComment.embedColor)
             commentEmbed.setTitle('Reported Comment')
          } else {
