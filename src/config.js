@@ -1,9 +1,9 @@
 module.exports = {
    axiosDefaultRequests: 60,
    axiosDefaultRequestsMS: 60000,
+   readBehind: 60, // read data seconds before application started
    commentSize: 800,
    postSize: 800,
-   commentEmbedColor: '#3498db',
    jobOutput: {
       tidy: { embedColor: '#3498db' },
       cotn: { embedColor: '#3498db' },
@@ -13,7 +13,7 @@ module.exports = {
       reportedComment: { embedColor: '#c40ff1' },
       newPost: { embedColor: '#2ecc71' },
       spamPost: { embedColor: '#e91e63' },
-      modQueuePost: { embedColor: '#f1c40f' },
+      modQueuePost: { embedColor: '#f1aa0f' },
       reportedPost: { embedColor: '#c40ff1' },
       modMail: { embedColor: '#aa44cc' },
    },

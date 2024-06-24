@@ -1,19 +1,21 @@
+const { readBehind } = require('../config')
+
 let loggedItemIds = new Set()
-const startTime = new Date() // When the job was first scheduled
+const startTime = new Date() - (readBehind * 1000)// When the job was first scheduled
 // const subreddit = 'OnPatrolLive,OPLTesting' // Replace with the target subreddit
 const subreddit = 'OPLTesting+OnPatrolLive' // Replace with the target subreddit
 
-const fs = require('fs')
-function saveItemsToFile(item) {
-   const filePath = 'queue-items.txt'
-   fs.appendFile(filePath, JSON.stringify(item, null, 2) + '\n', (err) => {
-      if (err) {
-         console.error('Error writing to file:', err)
-      } else {
-         console.log('Items saved to', filePath)
-      }
-   })
-}
+// const fs = require('fs')
+// function saveItemsToFile(item) {
+//    const filePath = 'queue-items.txt'
+//    fs.appendFile(filePath, JSON.stringify(item, null, 2) + '\n', (err) => {
+//       if (err) {
+//          console.error('Error writing to file:', err)
+//       } else {
+//          console.log('Items saved to', filePath)
+//       }
+//    })
+// }
 
 module.exports = ({ reddit, logger }) => ({
    name: 'getNewModQueue',
@@ -30,28 +32,20 @@ module.exports = ({ reddit, logger }) => ({
          // console.log(queuedItems)
          queuedItems.forEach((item) => {
             const itemId = item.data.id
-            let description = ''
-            if ((item.kind = 't1')) {
-               //item is a comment
-               description = item.data.body
-            } else if ((item.kind = 't3')) {
-               //item is a post
-               description = item.data.title
-            }
-            // console.log(item.data.created_utc * 1000, startTime)
             if (
                !loggedItemIds.has(itemId) &&
                new Date(item.data.created_utc * 1000) >= startTime
             ) {
+               // console.log(item)
                logger.info({
                   emoji: '💬',
                   columns: [
                      'New ModQueue',
                      item.data.subreddit,
-                     // item.kind,
+                     item.kind,
                      item.data.author,
-                     // item.data.id,
-                     description,
+                     item.data.id,
+                     // description,
                   ],
                })
                newItems.push(item)
@@ -59,12 +53,12 @@ module.exports = ({ reddit, logger }) => ({
                // saveItemsToFile(item)
             }
          })
-         // console.log(newItems);
          return { status: 'success', data: newItems }
       } catch (error) {
          console.error(
             'getNewModQueue: Error fetching new comments:',
-            error.message
+            // error.message
+            error
          )
          throw error
       }

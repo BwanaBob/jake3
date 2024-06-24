@@ -107,6 +107,7 @@ module.exports = {
    },
 
    _makeCommentEmbed(comment) {
+      // console.log(comment);
       let thisAvatarURL =
          'https://www.redditstatic.com/avatars/defaults/v2/avatar_default_7.png'
       let p24AvatarURL = 'https://i.imgur.com/TjABABi.png'

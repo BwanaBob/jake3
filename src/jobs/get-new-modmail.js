@@ -1,5 +1,7 @@
+const { readBehind } = require('../config')
+const startTime = new Date() - (readBehind * 1000)// When the job was first scheduled
+
 let loggedMessageIds = new Set()
-const startTime = new Date() // When the job was first scheduled
 // const subreddit = 'OPLTesting+OnPatrolLive' // Replace with the target subreddit
 const subreddit = 'OnPatrolLive' // Replace with the target subreddit
 

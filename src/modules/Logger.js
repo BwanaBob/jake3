@@ -49,7 +49,7 @@ class Logger {
          }
 
          if (isLast) {
-            logString += column.text
+            logString += column.text || ""
          } else {
             let thisMin = config.logger.columns[index].min || 12
             let thisMax = config.logger.columns[index].max || 12
