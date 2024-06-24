@@ -7,9 +7,8 @@ const {
    redditUserAgent,
    redditUsername,
    redditPassword,
-   axiosDefaultRequests,
-   axiosDefaultRequestsMS,
-} = require('../config')
+} = require('../credentials')
+const { axiosDefaultRequests, axiosDefaultRequestsMS } = require('../config')
 
 class Reddit {
    constructor() {
@@ -171,12 +170,16 @@ class Reddit {
 
    async fetchAllModmailConversations() {
       try {
-        const response = await this.apiRequest('/api/mod/conversations', 'get', { state: 'inbox' });
-      //   console.log(response);
-        return response;
+         const response = await this.apiRequest(
+            '/api/mod/conversations',
+            'get',
+            { state: 'inbox' }
+         )
+         //   console.log(response);
+         return response
       } catch (error) {
-        console.error('Error fetching modmail conversations:', error.message);
-        return response;
+         console.error('Error fetching modmail conversations:', error.message)
+         return response
       }
    }
 
@@ -190,7 +193,7 @@ class Reddit {
    //      return { conversations: {}, conversationIds: [] };
    //    }
    //  }
-  
+
    //  async fetchModmailMessages(conversationId) {
    //    try {
    //      const { conversation } = await this.apiRequest(`/api/mod/conversations/${conversationId}`, 'get');
@@ -204,11 +207,11 @@ class Reddit {
 
    async getOneComment(subreddit, commentId) {
       const data = await this.apiRequest(
-         `/api/info?id=t1_${commentId}`, 
+         `/api/info?id=t1_${commentId}`,
          'get',
          { comment: commentId }
       )
-      console.log(data.data.children);
+      console.log(data.data.children)
       return data.data.children
    }
    async getNewComments(subreddit, limit = 25) {
@@ -238,11 +241,9 @@ class Reddit {
    }
 
    async getNewSpam(subreddit, limit = 10) {
-      const data = await this.apiRequest(
-         `/r/${subreddit}/about/spam`,
-         'get',
-         { limit }
-      )
+      const data = await this.apiRequest(`/r/${subreddit}/about/spam`, 'get', {
+         limit,
+      })
       return data.data.children
    }
 
@@ -263,7 +264,7 @@ class Reddit {
       )
       return data.data.children
    }
-   
+
    async getNewEdited(subreddit, limit = 10) {
       const data = await this.apiRequest(
          `/r/${subreddit}/about/edited`,
@@ -285,7 +286,9 @@ class Reddit {
 
    async getModLog(subreddit, mod, type, limit = 10) {
       const data = await this.apiRequest(`/r/${subreddit}/about/log`, 'get', {
-         limit, mod, type, 
+         limit,
+         mod,
+         type,
       })
       return data.data.children
    }

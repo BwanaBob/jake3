@@ -1,6 +1,6 @@
 const { REST, Routes } = require("discord.js");
 const fs = require("node:fs");
-const { discordToken, discordClientId } = require('./config')
+const { discordToken, discordClientId } = require('./credentials')
 
 const commands = [];
 // Grab all the command files from the commands directory you created earlier

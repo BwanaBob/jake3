@@ -5,7 +5,7 @@ const { channel } = require('diagnostics_channel');
 const Logger = require('./modules/Logger');
 const Discord = require('./modules/Discord');
 
-const { discordToken } = require('./config');
+const { discordToken } = require('./credentials');
 const scheduler = new Scheduler();
 const reddit = new Reddit();
 const logger = new Logger();

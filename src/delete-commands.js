@@ -1,6 +1,6 @@
 // https://discordjs.guide/slash-commands/deleting-commands.html#deleting-all-commands
 const { REST, Routes } = require("discord.js");
-const { discordToken, discordClientId, discordCommandGuildId } = require('./config')
+const { discordToken, discordClientId, discordCommandGuildId } = require('./credentials')
 const rest = new REST({ version: "10" }).setToken(discordToken);
 
 // for guild-based commands
