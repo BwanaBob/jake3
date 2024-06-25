@@ -4,20 +4,24 @@ module.exports = {
    readBehind: 90, // read data seconds before application started
    commentSize: 800,
    postSize: 800,
+   quietHours: {
+      start: '23:10',
+      end: '08:00',
+   },
    redditChannelName: 'reddit',
    redditThreads: ['Jobs', 'Stream', 'Mod Mail', 'Mod Queue'], // threads each server must have to receive messages
    subreddits: {
-      default:{
-         discordServerId: "391821567241224192",
+      default: {
+         discordServerId: '391821567241224192',
       },
       OnPatrolLive: {
-         discordServerId: "325206992413130753",
+         discordServerId: '325206992413130753',
       },
       OPLTesting: {
-         discordServerId: "391821567241224192",
+         discordServerId: '391821567241224192',
       },
       Police247: {
-         discordServerId: "1239702141401305109",
+         discordServerId: '1239702141401305109',
       },
    },
    jobOutput: {
@@ -55,12 +59,12 @@ module.exports = {
       },
    },
    cotn: {
-      subreddit: "OnPatrolLive",
+      subreddit: 'OnPatrolLive',
       searchString: 'title:"Live Thread"',
-      returnCount: 10,    // number of top comments to return
-      commentLimit: 100,  // Comments per fetch to analize
-      fetchCount: 5,      // repeat fetches to get average score
-      fetchDelay: 2000,   // delay between repeated fetches
+      returnCount: 10, // number of top comments to return
+      commentLimit: 100, // Comments per fetch to analize
+      fetchCount: 5, // repeat fetches to get average score
+      fetchDelay: 2000, // delay between repeated fetches
       ineligibleUsers: [
          'meet_me_at_the_barre',
          'BwanaRob',

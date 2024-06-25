@@ -1,4 +1,4 @@
-const { EmbedBuilder } = require('discord.js')
+const { EmbedBuilder, MessageFlagsBitField } = require('discord.js')
 const config = require('../config')
 
 module.exports = {
@@ -175,14 +175,63 @@ module.exports = {
       }
       return commentEmbed
    },
+
+   // // original sendMessage
+   // async sendMessage(client, channelId, message) {
+   //    // console.log(`Sending message from ${source} - ${subreddit}`)
+   //    const channel = await client.channels.cache.get(channelId)
+   //    const sentMessage = await channel.send(message).catch((err) => {
+   //       console.error(`[ERROR] Sending message ${data.id} -`, err.message)
+   //    })
+   //    // console.log(`Sent Message: ${sentMessage.id}`)
+   // },
+
    async sendMessage(client, channelId, message) {
-      // console.log(`Sending message from ${source} - ${subreddit}`)
+      const { start, end } = config.quietHours
+
+      const currentTime = new Date()
+      const startTime = new Date()
+      const endTime = new Date()
+
+      // Set startTime and endTime
+      const [startHour, startMinute] = start.split(':').map(Number)
+      const [endHour, endMinute] = end.split(':').map(Number)
+      startTime.setHours(startHour, startMinute, 0, 0)
+      endTime.setHours(endHour, endMinute, 0, 0)
+
+      // If end time is earlier in the day than start time (e.g., quiet period spans midnight)
+      if (endTime < startTime) {
+         if (currentTime < endTime) {
+            startTime.setDate(startTime.getDate() - 1) // Set start time to yesterday
+         } else {
+            endTime.setDate(endTime.getDate() + 1) // Set end time to tomorrow
+         }
+      }
+
+      // Check if current time is within quiet hours
+      if (currentTime >= startTime && currentTime <= endTime) {
+         // if (message.content) {
+         //    message.content = `@silent ${message.content}`
+         // } else {
+         //    message.content = '@silent'
+         // }
+         message.flags = [MessageFlagsBitField.Flags.SuppressNotifications]
+      }
+
       const channel = await client.channels.cache.get(channelId)
-      const sentMessage = await channel.send(message).catch((err) => {
-         console.error(`[ERROR] Sending message ${data.id} -`, err.message)
-      })
-      // console.log(`Sent Message: ${sentMessage.id}`)
+      if (!channel) {
+         console.error(`[ERROR] Channel ${channelId} not found`)
+         return
+      }
+
+      try {
+         const sentMessage = await channel.send(message)
+         // console.log(sentMessage);
+      } catch (error) {
+         console.error(`[ERROR] Sending message -`, error)
+      }
    },
+
    async processDiscordMessage(client, jobName, response) {
       // console.log("message broker activated");
       let message = `Job **${jobName}** executed.` // to be replaced
