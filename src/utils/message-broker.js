@@ -10,12 +10,9 @@ module.exports = {
       let postMessage = ''
       let authorUser = post.author
 
-      if (post.subreddit == 'OnPatrolLive') {
+      if (post.subreddit == 'OnPatrolLive' || post.subreddit == 'OPLTesting') {
          thisAvatarURL = oplAvatarURL
-      } else if (
-         post.subreddit == 'Police247' ||
-         post.subreddit == 'OPLTesting'
-      ) {
+      } else if (post.subreddit == 'Police247') {
          thisAvatarURL = p24AvatarURL
       }
 
@@ -210,11 +207,6 @@ module.exports = {
 
       // Check if current time is within quiet hours
       if (currentTime >= startTime && currentTime <= endTime) {
-         // if (message.content) {
-         //    message.content = `@silent ${message.content}`
-         // } else {
-         //    message.content = '@silent'
-         // }
          message.flags = [MessageFlagsBitField.Flags.SuppressNotifications]
       }
 
@@ -253,11 +245,15 @@ module.exports = {
                   } else {
                      break
                   }
-                  const modPing = '1171955876609937564'
                   message = {
                      embeds: [messageEmbed],
-                     content: `<@&${modPing}>`,
                   }
+                  // const modPing = '1171955876609937564'
+                  const modPing = redditServers[item.data.subreddit]?.notifyRole
+                  if (modPing) {
+                     message.content = `<@&${modPing}>`
+                  }
+
                   sendChannel = redditServers[item.data.subreddit]['Mod Queue']
                   this.sendMessage(client, sendChannel, message)
                }
@@ -364,11 +360,18 @@ module.exports = {
                      .setFooter({
                         text: `r/${mailMessage.parentOwnerDisplayName}`,
                      })
-                  const modPing = '1171955876609937564'
+
                   message = {
                      embeds: [messageEmbed],
-                     content: `<@&${modPing}>`,
                   }
+                  // const modPing = '1171955876609937564'
+                  const modPing =
+                     redditServers[mailMessage.parentOwnerDisplayName]
+                        ?.notifyRole
+                  if (modPing) {
+                     message.content = `<@&${modPing}>`
+                  }
+
                   // console.log(mailMessage)
                   if (mailMessage.parentOwnerType == 'subreddit') {
                      sendChannel =

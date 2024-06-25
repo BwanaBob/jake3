@@ -11,7 +11,8 @@ const verifyDiscordServer = async function (discordServer, redditServerName) {
 //       `Verifying channel: ${config.redditChannelName} for /r/${redditServerName} on ${discordServer.name}`
 //    )
    if (discordServers[discordServer.id].complete === true) {
-      redditServers[redditServerName] = discordServers[discordServer.id]
+      Object.assign(redditServers[redditServerName], discordServers[discordServer.id]);
+      // redditServers[redditServerName] = discordServers[discordServer.id]
     //   console.log(
     //      `Discord server: ${discordServer.name} already defined. Reusing for reddit server: ${redditServerName}`
     //   )
@@ -98,7 +99,7 @@ module.exports = {
             }
          }
       }
-    //   console.log(redditServers)
+      console.log(redditServers)
     //   console.log(discordServers)
       client.params.set('redditServers', redditServers)
    },
