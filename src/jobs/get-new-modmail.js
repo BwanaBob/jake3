@@ -3,7 +3,7 @@ const startTime = new Date() - readBehind * 1000 // When the job was first sched
 
 let loggedMessageIds = new Set()
 // const subreddit = 'OPLTesting+OnPatrolLive' // Replace with the target subreddit
-const subreddit = 'OPLTesting+OnPatrolLive' // Replace with the target subreddit
+const subreddit = 'OPLTesting+OnPatrolLive+Police247' // Replace with the target subreddit
 
 function enrichMessages(data) {
    const { conversations, messages, conversationIds } = data

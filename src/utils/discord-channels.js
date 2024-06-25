@@ -7,27 +7,30 @@ let redditServers = {} // to be stored in client config and used by message-brok
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
 const verifyDiscordServer = async function (discordServer, redditServerName) {
-//    console.log(
-//       `Verifying channel: ${config.redditChannelName} for /r/${redditServerName} on ${discordServer.name}`
-//    )
+   //    console.log(
+   //       `Verifying channel: ${config.redditChannelName} for /r/${redditServerName} on ${discordServer.name}`
+   //    )
    if (discordServers[discordServer.id].complete === true) {
-      Object.assign(redditServers[redditServerName], discordServers[discordServer.id]);
+      Object.assign(
+         redditServers[redditServerName],
+         discordServers[discordServer.id]
+      )
       // redditServers[redditServerName] = discordServers[discordServer.id]
-    //   console.log(
-    //      `Discord server: ${discordServer.name} already defined. Reusing for reddit server: ${redditServerName}`
-    //   )
+      //   console.log(
+      //      `Discord server: ${discordServer.name} already defined. Reusing for reddit server: ${redditServerName}`
+      //   )
    } else {
       currentChannel = await discordServer.channels.cache.find(
          (channel) => channel.name === config.redditChannelName
       )
       if (currentChannel) {
-        //  console.log(`Reddit channel found: ${currentChannel.name}`)
+         //  console.log(`Reddit channel found: ${currentChannel.name}`)
          for (const threadName of config.redditThreads) {
             const findThread = await currentChannel.threads.cache.find(
                (x) => x.name === threadName
             )
             if (findThread) {
-            //    console.log(`${threadName} found - joining`)
+               //    console.log(`${threadName} found - joining`)
                if (findThread.joinable) {
                   await findThread.join()
                }
@@ -51,7 +54,7 @@ const verifyDiscordServer = async function (discordServer, redditServerName) {
          }
          discordServers[discordServer.id].discordServerId = discordServer.id
          discordServers[discordServer.id].complete = true
-        //  console.log(`Discord server: ${discordServer.name} fully defined.`)
+         //  console.log(`Discord server: ${discordServer.name} fully defined.`)
       } else {
          console.error(`Default channel not found:`)
          throw error
@@ -67,7 +70,7 @@ module.exports = {
       //   client.params.set('redditServers', config.subreddits)
       //   redditServers = client.params.get('redditServers')
       redditServers = config.subreddits
-    //   console.log(redditServers)
+      //   console.log(redditServers)
 
       for (const redditServerName in redditServers) {
          if (redditServers.hasOwnProperty(redditServerName)) {
@@ -79,16 +82,16 @@ module.exports = {
             )
             if (thisDiscordServer) {
                //bot is a member of the current guild
-            //    console.log(`Bot is a member of ${thisDiscordServer.name}`)
+               //    console.log(`Bot is a member of ${thisDiscordServer.name}`)
                if (!discordServers[thisDiscordServer.id]) {
                   discordServers[thisDiscordServer.id] = {}
                }
                // START FINDING / CREATING CHANNELS AND THREADS
                await verifyDiscordServer(thisDiscordServer, redditServerName)
             } else {
-            //    console.log(
-            //       `Bot is NOT a member of the specified guild: ${redditServers[redditServerName].discordServerId}. Using default channel.`
-            //    )
+               //    console.log(
+               //       `Bot is NOT a member of the specified guild: ${redditServers[redditServerName].discordServerId}. Using default channel.`
+               //    )
                redditServers[redditServerName].discordServerId =
                   redditServers['default'].discordServerId
                const defaultDiscordServer = client.guilds.cache.get(
@@ -99,8 +102,8 @@ module.exports = {
             }
          }
       }
-      console.log(redditServers)
-    //   console.log(discordServers)
+      // console.log(redditServers)
+      // console.log(discordServers)
       client.params.set('redditServers', redditServers)
    },
 }
