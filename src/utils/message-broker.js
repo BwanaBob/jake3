@@ -188,6 +188,9 @@ module.exports = {
       let message = `Job **${jobName}** executed.` // to be replaced
       // console.log(jobName, response.status)
       // console.log(response.data)
+      const redditServers = client.params.get('redditServers')
+      // console.log(redditServers);
+
       let sendChannel = ''
       switch (jobName) {
          case 'getNewModQueue':
@@ -206,7 +209,7 @@ module.exports = {
                      embeds: [messageEmbed],
                      content: `<@&${modPing}>`,
                   }
-                  sendChannel = client.params.get('queueChannelId')
+                  sendChannel = redditServers[item.data.subreddit]['Mod Queue']
                   this.sendMessage(client, sendChannel, message)
                }
             }
@@ -274,7 +277,8 @@ module.exports = {
                for (const comment of response.data) {
                   messageEmbed = this._makeCommentEmbed(comment)
                   message = { embeds: [messageEmbed] }
-                  sendChannel = client.params.get('streamChannelId')
+                  sendChannel = redditServers[comment.subreddit]['Stream']
+                  // sendChannel = client.params.get('streamChannelId')
                   this.sendMessage(client, sendChannel, message)
                }
             }
@@ -285,7 +289,8 @@ module.exports = {
                for (const post of response.data) {
                   messageEmbed = this._makePostEmbed(post)
                   message = { embeds: [messageEmbed] }
-                  sendChannel = client.params.get('streamChannelId')
+                  sendChannel = redditServers[post.subreddit]['Stream']
+                  // sendChannel = client.params.get('streamChannelId')
                   this.sendMessage(client, sendChannel, message)
                }
             }
@@ -295,7 +300,7 @@ module.exports = {
                for (const mailMessage of response.data) {
                   const messageEmbed = new EmbedBuilder()
                      .setColor(config.jobOutput.modMail.embedColor)
-                     .setTitle('Mod Mail')
+                     .setTitle(mailMessage.parentSubject || 'Mod Mail')
                      .setURL(`https://mod.reddit.com/mail/all`)
                      .setAuthor({
                         name: mailMessage.author.name,
@@ -307,12 +312,23 @@ module.exports = {
                            // .replace(/(\r?\n|\r|#)/gm)
                         }`
                      )
+                     .setFooter({
+                        text: `r/${mailMessage.parentOwnerDisplayName}`,
+                     })
                   const modPing = '1171955876609937564'
                   message = {
                      embeds: [messageEmbed],
                      content: `<@&${modPing}>`,
                   }
-                  sendChannel = client.params.get('mailChannelId')
+                  // console.log(mailMessage)
+                  if (mailMessage.parentOwnerType == 'subreddit') {
+                     sendChannel =
+                        redditServers[mailMessage.parentOwnerDisplayName][
+                           'Mod Mail'
+                        ]
+                  } else {
+                     sendChannel = client.params.get('mailChannelId')
+                  }
                   this.sendMessage(client, sendChannel, message)
                }
             }

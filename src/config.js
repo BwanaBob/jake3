@@ -1,9 +1,25 @@
 module.exports = {
-   axiosDefaultRequests: 60,
+   axiosDefaultRequests: 300,
    axiosDefaultRequestsMS: 60000,
-   readBehind: 60, // read data seconds before application started
+   readBehind: 90, // read data seconds before application started
    commentSize: 800,
    postSize: 800,
+   redditChannelName: 'reddit',
+   redditThreads: ['Jobs', 'Stream', 'Mod Mail', 'Mod Queue'], // threads each server must have to receive messages
+   subreddits: {
+      default:{
+         discordServerId: "391821567241224192",
+      },
+      OnPatrolLive: {
+         discordServerId: "325206992413130753",
+      },
+      OPLTesting: {
+         discordServerId: "391821567241224192",
+      },
+      Police247: {
+         discordServerId: "1239702141401305109",
+      },
+   },
    jobOutput: {
       tidy: { embedColor: '#3498db' },
       cotn: { embedColor: '#3498db' },

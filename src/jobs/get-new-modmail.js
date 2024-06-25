@@ -1,9 +1,50 @@
 const { readBehind } = require('../config')
-const startTime = new Date() - (readBehind * 1000)// When the job was first scheduled
+const startTime = new Date() - readBehind * 1000 // When the job was first scheduled
 
 let loggedMessageIds = new Set()
 // const subreddit = 'OPLTesting+OnPatrolLive' // Replace with the target subreddit
-const subreddit = 'OnPatrolLive' // Replace with the target subreddit
+const subreddit = 'OPLTesting+OnPatrolLive' // Replace with the target subreddit
+
+function enrichMessages(data) {
+   const { conversations, messages, conversationIds } = data
+
+   // Create a mapping of messageId to parent conversation details
+   const messageToConversationMap = {}
+
+   for (const conversationId of conversationIds) {
+      const conversation = conversations[conversationId]
+      const messageIds = conversation.objIds
+      //   console.log(messageIds);
+      // console.log(conversation)
+
+      for (const messageId of messageIds) {
+         messageToConversationMap[messageId.id] = {
+            parentId: conversationId || 'unknown',
+            parentSubject: conversation.subject || 'unknown',
+            parentOwnerType: conversation.owner.type || 'unknown',
+            parentOwnerDisplayName: conversation.owner.displayName || 'unknown',
+         }
+      }
+   }
+
+   // console.log(messageToConversationMap);
+   // Enrich each message with parent conversation details
+   for (const messageId in messages) {
+      const message = messages[messageId]
+
+      if (messageToConversationMap[messageId]) {
+         message.parentId = messageToConversationMap[messageId].parentId
+         message.parentSubject =
+            messageToConversationMap[messageId].parentSubject
+         message.parentOwnerType =
+            messageToConversationMap[messageId].parentOwnerType
+         message.parentOwnerDisplayName =
+            messageToConversationMap[messageId].parentOwnerDisplayName
+      }
+   }
+
+   return messages
+}
 
 module.exports = ({ reddit, logger }) => ({
    name: 'getNewModMail',
@@ -17,10 +58,16 @@ module.exports = ({ reddit, logger }) => ({
       try {
          const data = await reddit.fetchAllModmailConversations(subreddit, 100) // Fetch the latest 20 comments
          const newMessages = []
-         const remainingMessages = Object.values(data.messages).filter(
+         // console.log(data);
+         const enrichedMessages = enrichMessages(data)
+         // console.log(enrichedMessages)
+
+         // const remainingMessages = Object.values(data.messages).filter(
+         const remainingMessages = Object.values(enrichedMessages).filter(
             (message) => new Date(message.date) > startTime
          )
          remainingMessages.forEach((message) => {
+            // console.log(message);
             if (!loggedMessageIds.has(message.id)) {
                logger.info({
                   emoji: '💬',
@@ -28,7 +75,7 @@ module.exports = ({ reddit, logger }) => ({
                      'New ModMail',
                      // 'Found',
                      //  message.id,
-                     message.subreddit,
+                     message.parentOwnerDisplayName,
                      message.author.name,
                      message.bodyMarkdown,
                   ],
@@ -39,10 +86,7 @@ module.exports = ({ reddit, logger }) => ({
          })
          return { status: 'success', data: newMessages }
       } catch (error) {
-         console.error(
-            'getNewModMail: Error fetching new ModMail:',
-            error.message
-         )
+         console.error('getNewModMail: Error fetching new ModMail:', error)
          throw error
       }
    },

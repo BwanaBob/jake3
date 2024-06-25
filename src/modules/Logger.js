@@ -41,7 +41,7 @@ class Logger {
          logString += `${logData.emoji} `
       }
 
-      logData.columns.forEach((column, index) => {
+      logData.columns.forEach((column = " ", index) => {
          const isLast = index === logData.columns.length - 1
          if (typeof column === 'string' || column instanceof String) {
             const newCol = { text: column }
