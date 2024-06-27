@@ -1,13 +1,14 @@
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 const config = require('../config')
-
-const subreddit = config.cotn.subreddit
-const searchString = config.cotn.searchString
-const fetchCount = config.cotn.fetchCount
-const fetchDelay = config.cotn.fetchDelay
-const commentLimit = config.cotn.commentLimit
-const returnCount = config.cotn.returnCount
-const ineligibleUsers = config.cotn.ineligibleUsers
+const {
+   subreddit,
+   searchString,
+   fetchCount,
+   fetchDelay,
+   commentLimit,
+   returnCount,
+   ineligibleUsers,
+} = config.cotn
 
 module.exports = ({ reddit, logger }) => ({
    name: 'getTopComments',
@@ -71,7 +72,8 @@ module.exports = ({ reddit, logger }) => ({
             // Filter ineligible users
             const filteredComments = commentAverages.filter(
                (comment) =>
-                  !ineligibleUsers.includes(comment.data.author) || comment.data.author_flair_text == "CotN Royalty 👑"
+                  !ineligibleUsers.includes(comment.data.author) ||
+                  comment.data.author_flair_text == 'CotN Royalty 👑'
             )
 
             // Sort by average score

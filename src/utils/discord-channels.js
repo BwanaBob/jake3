@@ -39,17 +39,22 @@ const verifyDiscordServer = async function (discordServer, redditServerName) {
                discordServers[discordServer.id][threadName] = findThread.id
             } else {
                console.log(`${threadName} NOT found - creating`)
-               const createdThread = await currentChannel.threads.create({
-                  name: threadName,
-                  autoArchiveDuration: ThreadAutoArchiveDuration.OneDay,
-                  joinable: true,
-                  reason: `A separate thread for ${threadName}`,
-               })
-               await createdThread.setArchived(false) // unarchived
-               await delay(2000)
-               // add thread to redditServers
-               redditServers[redditServerName][threadName] = createdThread.id
-               discordServers[discordServer.id][threadName] = createdThread.id
+               try {
+                  const createdThread = await currentChannel.threads.create({
+                     name: threadName,
+                     autoArchiveDuration: ThreadAutoArchiveDuration.OneDay,
+                     joinable: true,
+                     reason: `A separate thread for ${threadName}`,
+                  })
+                  await createdThread.setArchived(false) // unarchived
+                  await delay(2000)
+                  // add thread to redditServers
+                  redditServers[redditServerName][threadName] = createdThread.id
+                  discordServers[discordServer.id][threadName] =
+                     createdThread.id
+               } catch (error) {
+                  console.error('Error creating thread:', error)
+               }
             }
          }
          discordServers[discordServer.id].discordServerId = discordServer.id

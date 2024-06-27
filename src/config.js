@@ -27,6 +27,10 @@ module.exports = {
          discordServerId: '1239702141401305109',
          notifyRole: '1255242494870945904',
       },
+      LAFireandRescue: {
+         discordServerId: '1119328833250803806',
+         notifyRole: '1255723797290418328',
+      },
    },
    jobOutput: {
       tidy: { embedColor: '#3498db' },
@@ -82,5 +86,12 @@ module.exports = {
          'LydiaTheTattooedLady',
          'BizarroRick',
       ],
+   },
+   getModLogJob: {
+      subreddit: "OnPatrolLive",
+      startDate: "2024-06-02",
+      startTime: "18:00:00",
+      endDate: "2024-06-25",
+      endTime: "18:00:00",
    },
 }

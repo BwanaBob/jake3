@@ -284,11 +284,13 @@ class Reddit {
       return data.data.children
    }
 
-   async getModLog(subreddit, mod, type, limit = 10) {
+   async getModLog(subreddit, limit = 10, after) {
       const data = await this.apiRequest(`/r/${subreddit}/about/log`, 'get', {
          limit,
-         mod,
-         type,
+         after,
+         // mod,
+         // show: 'all',
+         // type,
       })
       return data.data.children
    }
