@@ -12,59 +12,81 @@ const getSpecificTime = (date, time) => {
 }
 
 // Function to analyze the modlog entries
-const analyzeModlog = (entries) => {
-   const autoModRemovals = {};
- 
+const analyzeModlog = (entries, logger) => {
+   const autoModRemovals = {}
+
    // Track AutoModerator removals
-   entries.forEach(entry => {
-     if (entry.data.mod === 'AutoModerator' && entry.data.action === 'removecomment') {
-       autoModRemovals[entry.data.target_fullname] = {
-         details: entry.data.details,
-         approved: false,
-         removed: false
-       };
-     }
-   });
- 
+   entries.forEach((entry) => {
+      if (
+         entry.data.mod === 'AutoModerator' &&
+         entry.data.action === 'removecomment'
+      ) {
+         autoModRemovals[entry.data.target_fullname] = {
+            details: entry.data.details,
+            approved: false,
+            removed: false,
+         }
+      }
+   })
+
    // Track subsequent actions by human moderators
-   entries.forEach(entry => {
-     const targetId = entry.data.target_fullname;
-     if (autoModRemovals[targetId]) {
-       if (entry.data.mod !== 'AutoModerator' && entry.data.action === 'approvecomment') {
-         autoModRemovals[targetId].approved = true;
-       } else if (entry.data.mod !== 'AutoModerator' && entry.data.action === 'removecomment') {
-         autoModRemovals[targetId].removed = true;
-       }
-     }
-   });
- 
+   entries.forEach((entry) => {
+      const targetId = entry.data.target_fullname
+      if (autoModRemovals[targetId]) {
+         if (
+            entry.data.mod !== 'AutoModerator' &&
+            entry.data.action === 'approvecomment'
+         ) {
+            autoModRemovals[targetId].approved = true
+         } else if (
+            entry.data.mod !== 'AutoModerator' &&
+            entry.data.action === 'removecomment'
+         ) {
+            autoModRemovals[targetId].removed = true
+         }
+      }
+   })
+
    // Group and display results
-   const groupedEntries = Object.values(autoModRemovals).reduce((acc, entry) => {
-     const ruleDetail = entry.details;
-     if (!acc[ruleDetail]) {
-       acc[ruleDetail] = { approved: 0, removed: 0 };
-     }
-     if (entry.approved) {
-       acc[ruleDetail].approved++;
-     }
-     if (entry.removed) {
-       acc[ruleDetail].removed++;
-     }
-     return acc;
-   }, {});
- 
+   const groupedEntries = Object.values(autoModRemovals).reduce(
+      (acc, entry) => {
+         const ruleDetail = entry.details
+         if (!acc[ruleDetail]) {
+            acc[ruleDetail] = { approved: 0, removed: 0 }
+         }
+         if (entry.approved) {
+            acc[ruleDetail].approved++
+         }
+         if (entry.removed) {
+            acc[ruleDetail].removed++
+         }
+         return acc
+      },
+      {}
+   )
+
    for (const [ruleDetail, counts] of Object.entries(groupedEntries)) {
-     const total = counts.approved + counts.removed;
-     const approvedPercentage = (counts.approved / total) * 100;
-     const removedPercentage = (counts.removed / total) * 100;
-     console.log(`Rule: ${ruleDetail}`);
-     console.log(`Approved: ${counts.approved} (${approvedPercentage.toFixed(2)}%)`);
-     console.log(`Removed: ${counts.removed} (${removedPercentage.toFixed(2)}%)`);
-     console.log('---');
+      const total = counts.approved + counts.removed
+      const approvedPercentage = (counts.approved / total) * 100
+      const removedPercentage = (counts.removed / total) * 100
+      logger.info({
+         emoji: '',
+         columns: [
+            'Mod Log',
+            {
+               min: 11,
+               max: 11,
+               text: `✅ ${counts.approved}/${counts.removed} ⛔`,
+            },
+            `${approvedPercentage.toFixed(1)}% / ${removedPercentage.toFixed(
+               1
+            )}%`,
+            ruleDetail,
+         ],
+      })
+      //   console.log(`✅ ${counts.approved}/${counts.removed} ⛔ (${approvedPercentage.toFixed(2)}% / ${removedPercentage.toFixed(2)}%) - Rule: ${ruleDetail}`);
    }
- };
-
-
+}
 
 module.exports = ({ reddit, logger }) => ({
    name: 'getModLog',
@@ -83,8 +105,8 @@ module.exports = ({ reddit, logger }) => ({
          let hasMore = true
 
          while (hasMore) {
-            console.log(`Fetching records from API`)
-            const modlogEntries = await reddit.getModLog(subreddit, 500, after);
+            console.log(`Fetching records from API ${after}`)
+            const modlogEntries = await reddit.getModLog(subreddit, 500, after)
             console.log(`Fetched ${modlogEntries.size} records from API`)
             if (modlogEntries.length === 0) {
                hasMore = false
@@ -100,8 +122,7 @@ module.exports = ({ reddit, logger }) => ({
                // Add entries to the list
                allEntries = allEntries.concat(
                   modlogEntries.filter(
-                     (entry) =>
-                        entry.data.created_utc >= specificStartTime
+                     (entry) => entry.data.created_utc >= specificStartTime
                      // && entry.data.created_utc <= specificEndTime
                   )
                )
@@ -109,7 +130,7 @@ module.exports = ({ reddit, logger }) => ({
             }
          }
          console.log(allEntries)
-         analyzeModlog(allEntries)
+         analyzeModlog(allEntries, logger)
       } catch (error) {
          console.error('Error:', error)
       }

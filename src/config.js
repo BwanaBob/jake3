@@ -89,9 +89,9 @@ module.exports = {
    },
    getModLogJob: {
       subreddit: "OnPatrolLive",
-      startDate: "2024-06-02",
+      startDate: "2021-06-02",
       startTime: "18:00:00",
-      endDate: "2024-06-25",
+      endDate: "2025-06-25",
       endTime: "18:00:00",
    },
 }

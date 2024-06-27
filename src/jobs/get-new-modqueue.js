@@ -1,21 +1,21 @@
 const { readBehind } = require('../config')
 
 let loggedItemIds = new Set()
-const startTime = new Date() - (readBehind * 1000)// When the job was first scheduled
+const startTime = new Date() - readBehind * 1000 // When the job was first scheduled
 // const subreddit = 'OnPatrolLive,OPLTesting' // Replace with the target subreddit
 const subreddit = 'OPLTesting+OnPatrolLive+Police247' // Replace with the target subreddit
 
-// const fs = require('fs')
-// function saveItemsToFile(item) {
-//    const filePath = 'queue-items.txt'
-//    fs.appendFile(filePath, JSON.stringify(item, null, 2) + '\n', (err) => {
-//       if (err) {
-//          console.error('Error writing to file:', err)
-//       } else {
-//          console.log('Items saved to', filePath)
-//       }
-//    })
-// }
+const fs = require('fs')
+function saveItemsToFile(item) {
+   const filePath = 'queue-items.txt'
+   fs.appendFile(filePath, JSON.stringify(item, null, 2) + '\n', (err) => {
+      if (err) {
+         console.error('Error writing to file:', err)
+      } else {
+         console.log('Items saved to', filePath)
+      }
+   })
+}
 
 module.exports = ({ reddit, logger }) => ({
    name: 'getNewModQueue',
@@ -50,7 +50,7 @@ module.exports = ({ reddit, logger }) => ({
                })
                newItems.push(item)
                loggedItemIds.add(itemId) // Mark the comment as logged
-               // saveItemsToFile(item)
+               saveItemsToFile(item)
             }
          })
          return { status: 'success', data: newItems }
