@@ -66,32 +66,46 @@ module.exports = {
          14: { min: 15, max: 15 },
       },
    },
-   cotn: {
-      subreddit: 'OnPatrolLive',
-      searchString: 'title:"Live Thread"',
-      returnCount: 10, // number of top comments to return
-      commentLimit: 100, // Comments per fetch to analize
-      fetchCount: 5, // repeat fetches to get average score
-      fetchDelay: 2000, // delay between repeated fetches
-      ineligibleUsers: [
-         'meet_me_at_the_barre',
-         'BwanaRob',
-         'sausageslinger11',
-         'ifreakinglovepancake',
-         'aeiouaeiou999999',
-         'Moretakitty',
-         'EremiticFerret',
-         'Kavzilla',
-         'HatchlingChibi',
-         'LydiaTheTattooedLady',
-         'BizarroRick',
-      ],
-   },
-   getModLogJob: {
-      subreddit: "OnPatrolLive",
-      startDate: "2021-06-02",
-      startTime: "18:00:00",
-      endDate: "2025-06-25",
-      endTime: "18:00:00",
+   jobs: {
+      getNewComments: {
+         subreddit: 'OnPatrolLive+Police247+LAFireandRescue+OPLTesting',
+      },
+      getNewPosts: {
+         subreddit: 'OnPatrolLive+Police247+LAFireandRescue+OPLTesting',
+      },
+      getNewModQueue: {
+         subreddit: 'OnPatrolLive+Police247+LAFireandRescue+OPLTesting',
+      },
+      getNewModMail: {
+         subreddit: 'OnPatrolLive+Police247+LAFireandRescue+OPLTesting',
+      },
+      getModLog: {
+         subreddit: 'OnPatrolLive',
+         startDate: '2021-06-02',
+         startTime: '18:00:00',
+         endDate: '2025-06-25',
+         endTime: '18:00:00',
+      },
+      getTopComments: {
+         subreddit: 'OnPatrolLive',
+         searchString: 'title:"Live Thread"',
+         returnCount: 10, // number of top comments to return
+         commentLimit: 100, // Comments per fetch to analize
+         fetchCount: 5, // repeat fetches to get average score
+         fetchDelay: 2000, // delay between repeated fetches
+         ineligibleUsers: [
+            'meet_me_at_the_barre',
+            'BwanaRob',
+            'sausageslinger11',
+            'ifreakinglovepancake',
+            'aeiouaeiou999999',
+            'Moretakitty',
+            'EremiticFerret',
+            'Kavzilla',
+            'HatchlingChibi',
+            'LydiaTheTattooedLady',
+            'BizarroRick',
+         ],
+      },
    },
 }

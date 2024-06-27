@@ -8,7 +8,7 @@ const {
    commentLimit,
    returnCount,
    ineligibleUsers,
-} = config.cotn
+} = config.jobs.getTopComments
 
 module.exports = ({ reddit, logger }) => ({
    name: 'getTopComments',

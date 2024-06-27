@@ -1,8 +1,9 @@
-const { readBehind } = require('../config')
+const config = require('../config')
+const { subreddit } = config.jobs.getNewComments
+const { readBehind } = config
 const startTime = new Date() - (readBehind * 1000)// When the job was first scheduled
 
 let loggedCommentIds = new Set()
-const subreddit = 'OPLTesting+OnPatrolLive+Police247' // Replace with the target subreddit
 
 module.exports = ({ reddit, logger }) => ({
    name: 'getNewComments',

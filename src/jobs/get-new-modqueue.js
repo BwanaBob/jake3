@@ -1,9 +1,10 @@
-const { readBehind } = require('../config')
+const config = require('../config')
+const { subreddit } = config.jobs.getNewModQueue
+const { readBehind } = config
 
 let loggedItemIds = new Set()
 const startTime = new Date() - readBehind * 1000 // When the job was first scheduled
 // const subreddit = 'OnPatrolLive,OPLTesting' // Replace with the target subreddit
-const subreddit = 'OPLTesting+OnPatrolLive+Police247' // Replace with the target subreddit
 
 const fs = require('fs')
 function saveItemsToFile(item) {

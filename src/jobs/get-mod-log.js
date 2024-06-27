@@ -1,6 +1,6 @@
 const config = require('../config')
 const { subreddit, startDate, startTime, endDate, endTime } =
-   config.getModLogJob
+   config.jobs.getModLog
 
 // Helper function to get the timestamp for the specified date and time
 const getSpecificTime = (date, time) => {
