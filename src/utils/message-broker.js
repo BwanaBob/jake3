@@ -85,7 +85,7 @@ module.exports = {
 
       if (
          post.banned_at_utc &&
-         (post.author_flair_css_class == 'shadow' || post.spam || post.ban_note )
+         (post.author_flair_css_class == 'shadow' || post.spam || (post.ban_note && !post.ban_note == "remove not spam") )
       ) {
          postEmbed.setColor(config.jobOutput.spamPost.embedColor)
          postEmbed.setTitle('Spam Post')
@@ -155,7 +155,7 @@ module.exports = {
       if (
          comment.banned_at_utc &&
          (comment.author_flair_css_class == 'shadow' ||
-            comment.spam ||  comment.ban_note ||
+            comment.spam || (comment.ban_note && !comment.ban_note == "remove not spam") ||
             comment.body == '!tidy')
       ) {
          // console.log('Comment is spam')
