@@ -1,6 +1,8 @@
 # Config
 # src/config.js
 src/credentials.js
+comments.txt
+queue-items.txt
 
 # Logs
 logs
