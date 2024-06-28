@@ -67,6 +67,7 @@ class Reddit {
                grant_type: 'password',
                username: redditUsername,
                password: redditPassword,
+               // scope: 'read modposts modmail modconfig modflair modlog modcontributors submit privatemessages' // Add necessary scopes here
             }),
             {
                headers: {
@@ -141,6 +142,7 @@ class Reddit {
             console.error(
                `Reddit API: Error fetching data from ${endpoint}:`,
                error.response ? error.response.data : error.message
+               // error
             )
             throw error
          }
@@ -340,6 +342,16 @@ class Reddit {
          id: `t3_${postId}`,
          state: isSticky,
          num: slot,
+      }
+      await this.apiRequest(endpoint, 'post', data)
+   }
+
+   async distinguishComment( commentId ) {
+      const endpoint = `/api/distinguish`
+      const data = {
+         id: `t1_${commentId}`,
+         how: 'yes'
+         // sticky,
       }
       await this.apiRequest(endpoint, 'post', data)
    }

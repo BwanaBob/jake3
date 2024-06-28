@@ -4,6 +4,18 @@ const { readBehind } = config
 const startTime = new Date() - (readBehind * 1000)// When the job was first scheduled
 
 let loggedCommentIds = new Set()
+const fs = require('fs')
+
+function saveItemsToFile(item) {
+   const filePath = 'comments.txt'
+   fs.appendFile(filePath, JSON.stringify(item, null, 2) + '\n', (err) => {
+      if (err) {
+         console.error('Error writing to file:', err)
+      } else {
+         // console.log('Comment saved to', filePath)
+      }
+   })
+}
 
 module.exports = ({ reddit, logger }) => ({
    name: 'getNewComments',
@@ -37,6 +49,7 @@ module.exports = ({ reddit, logger }) => ({
                })
                newComments.push(comment.data)
                loggedCommentIds.add(commentId) // Mark the comment as logged
+               saveItemsToFile(comment)
             }
          })
          return { status: 'success', data: newComments }

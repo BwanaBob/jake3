@@ -13,7 +13,7 @@ function saveItemsToFile(item) {
       if (err) {
          console.error('Error writing to file:', err)
       } else {
-         console.log('Items saved to', filePath)
+         // console.log('Item saved to', filePath)
       }
    })
 }
