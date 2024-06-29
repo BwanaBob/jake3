@@ -80,7 +80,7 @@ module.exports = {
       postEmbed.setDescription(`${postEmoji}  ${postMessage}`)
 
       if(post.ban_note && post.ban_note !== "remove not spam"){
-         commentEmbed.setFooter({ text: `Ban note: ${post.ban_note}` })
+         postEmbed.setFooter({ text: `Ban note: ${post.ban_note}` })
       }
 
       if (
