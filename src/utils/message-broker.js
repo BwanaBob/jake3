@@ -79,7 +79,7 @@ module.exports = {
 
       postEmbed.setDescription(`${postEmoji}  ${postMessage}`)
 
-      if(post.ban_note){
+      if(post.ban_note && !post.ban_note == "remove not spam"){
          commentEmbed.setFooter({ text: `Ban note: ${post.ban_note}` })
       }
 
@@ -148,7 +148,7 @@ module.exports = {
          commentEmbed.setColor(config.jobOutput.modQueueComment.embedColor)
       }
 
-      if(comment.ban_note){
+      if(comment.ban_note && !comment.ban_note == "remove not spam"){
          commentEmbed.setFooter({ text: `Ban note: ${comment.ban_note}` })
       }
 
