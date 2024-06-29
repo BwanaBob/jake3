@@ -165,7 +165,7 @@ module.exports = {
 
       if (comment.banned_at_utc) {
          // console.log('Comment is in queue')
-         if (comment.num_reports && !comment.num_reports === 0) {
+         if (comment.num_reports && comment.num_reports > 0) {
             commentEmbed.setColor(config.jobOutput.reportedComment.embedColor)
             commentEmbed.setTitle('Reported Comment')
             // console.log('Comment is in reported')
