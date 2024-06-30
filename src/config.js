@@ -81,7 +81,7 @@ module.exports = {
       },
       getModLog: {
          subreddit: 'OnPatrolLive',
-         startDate: '2021-06-02',
+         startDate: '2021-06-28',
          startTime: '18:00:00',
          endDate: '2025-06-25',
          endTime: '18:00:00',
