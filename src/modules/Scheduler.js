@@ -49,6 +49,21 @@ class Scheduler extends EventEmitter {
          })
       })
    }
+
+   async runJobNow(name) {
+      const job = this.jobs[name]
+      if (job) {
+         try {
+            const result = await job.job()
+            this.emit('jobCompleted', name, result)
+         } catch (error) {
+            this.emit('jobError', name, error)
+         }
+      } else {
+         this.logger.info(`Job "${name}" not found`)
+         this.emit('jobNotFound', name)
+      }
+   }
 }
 
 module.exports = Scheduler
