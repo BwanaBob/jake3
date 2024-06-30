@@ -14,7 +14,7 @@ module.exports = ({ reddit, logger }) => ({
    name: 'getTopComments',
    // cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
    // cronExpression: '0 * * * * *', // Every 60 seconds (testing)
-   cronExpression: '6 0 7 * * SAT,SUN', // Every Saturday and Sunday at 3am (live)
+   cronExpression: '0 10 7 * * SAT,SUN', // Every Saturday and Sunday at 3am (live)
    jobFunction: async () => {
       try {
          logger.info({
