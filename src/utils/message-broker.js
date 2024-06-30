@@ -85,11 +85,21 @@ module.exports = {
 
       if (
          post.banned_at_utc &&
-         (post.author_flair_css_class == 'shadow' || post.spam || (post.ban_note && post.ban_note !== "remove not spam") )
+         ( post.spam )
       ) {
          postEmbed.setColor(config.jobOutput.spamPost.embedColor)
          postEmbed.setTitle('Spam Post')
          postEmbed.setURL(`https://www.reddit.com/r/OnPatrolLive/about/spam`)
+         return postEmbed
+      }
+
+      if (
+         post.banned_at_utc &&
+         (post.author_flair_css_class == 'shadow' || (post.ban_note && post.ban_note !== "remove not spam") )
+      ) {
+         postEmbed.setColor(config.jobOutput.spamPost.embedColor)
+         postEmbed.setTitle('Removed Post')
+         postEmbed.setURL(`https://www.reddit.com/mod/OnPatrolLive/queue?dx_mod_queue=enabled&queueType=removed&contentType=all&sort=sort_date&page=1&first=25&selectedSubreddits=OnPatrolLive`)
          return postEmbed
       }
 
@@ -154,12 +164,25 @@ module.exports = {
 
       if (
          comment.banned_at_utc &&
+         ( comment.spam )
+      ) {
+         // console.log('Comment is spam')
+         commentEmbed.setColor(config.jobOutput.spamComment.embedColor)
+         commentEmbed.setTitle('Spam Comment')
+         commentEmbed.setURL(`https://www.reddit.com/r/OnPatrolLive/about/spam`)
+         return commentEmbed
+      }
+
+      if (
+         comment.banned_at_utc &&
          (comment.author_flair_css_class == 'shadow' ||
-            comment.spam || (comment.ban_note && comment.ban_note !== "remove not spam") ||
+            (comment.ban_note && comment.ban_note !== "remove not spam") ||
             comment.body == '!tidy')
       ) {
          // console.log('Comment is spam')
          commentEmbed.setColor(config.jobOutput.spamComment.embedColor)
+         commentEmbed.setTitle('Removed Comment')
+         commentEmbed.setURL(`https://www.reddit.com/mod/OnPatrolLive/queue?dx_mod_queue=enabled&queueType=removed&contentType=all&sort=sort_date&page=1&first=25&selectedSubreddits=OnPatrolLive`)
          return commentEmbed
       }
 
