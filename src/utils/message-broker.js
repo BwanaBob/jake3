@@ -79,14 +79,39 @@ module.exports = {
 
       postEmbed.setDescription(`${postEmoji}  ${postMessage}`)
 
-      if(post.ban_note && post.ban_note !== "remove not spam"){
-         postEmbed.setFooter({ text: `Ban note: ${post.ban_note}` })
+      if (post.ban_note && post.ban_note !== 'remove not spam') {
+         postEmbedEmbed.addFields({
+            name: 'Ban Note',
+            value: post.ban_note,
+            inline: true,
+         })
       }
 
-      if (
-         post.banned_at_utc &&
-         ( post.spam )
-      ) {
+      if (post.banned_by && post.banned_by !== 'AutoModerator') {
+         postEmbedEmbed.addFields({
+            name: 'Banned By',
+            value: post.banned_by,
+            inline: true,
+         })
+      }
+
+      if (post.removed_by_category) {
+         postEmbedEmbed.addFields({
+            name: 'Removed By Category',
+            value: post.removed_by_category,
+            inline: true,
+         })
+      }
+
+      if (post.collapsed_reason_code) {
+         postEmbed.addFields({
+            name: 'Reason Code',
+            value: post.collapsed_reason_code,
+            inline: true,
+         })
+      }
+
+      if (post.banned_at_utc && post.spam) {
          postEmbed.setColor(config.jobOutput.spamPost.embedColor)
          postEmbed.setTitle('Spam Post')
          postEmbed.setURL(`https://www.reddit.com/r/OnPatrolLive/about/spam`)
@@ -95,11 +120,14 @@ module.exports = {
 
       if (
          post.banned_at_utc &&
-         (post.author_flair_css_class == 'shadow' || (post.ban_note && post.ban_note !== "remove not spam") )
+         (post.author_flair_css_class == 'shadow' ||
+            (post.ban_note && post.ban_note !== 'remove not spam'))
       ) {
          postEmbed.setColor(config.jobOutput.spamPost.embedColor)
          postEmbed.setTitle('Removed Post')
-         postEmbed.setURL(`https://www.reddit.com/mod/OnPatrolLive/queue?dx_mod_queue=enabled&queueType=removed&contentType=all&sort=sort_date&page=1&first=25&selectedSubreddits=OnPatrolLive`)
+         postEmbed.setURL(
+            `https://www.reddit.com/mod/OnPatrolLive/queue?dx_mod_queue=enabled&queueType=removed&contentType=all&sort=sort_date&page=1&first=25&selectedSubreddits=OnPatrolLive`
+         )
          return postEmbed
       }
 
@@ -158,14 +186,32 @@ module.exports = {
          commentEmbed.setColor(config.jobOutput.modQueueComment.embedColor)
       }
 
-      if(comment.ban_note && comment.ban_note !== "remove not spam"){
-         commentEmbed.setFooter({ text: `Ban note: ${comment.ban_note}` });
+      if (comment.ban_note && comment.ban_note !== 'remove not spam') {
+         // commentEmbed.setFooter({ text: `Ban note: ${comment.ban_note}` });
+         commentEmbed.addFields({
+            name: 'Ban Note',
+            value: comment.ban_note,
+            inline: true,
+         })
       }
 
-      if (
-         comment.banned_at_utc &&
-         ( comment.spam )
-      ) {
+      if (comment.banned_by && comment.banned_by !== 'AutoModerator') {
+         commentEmbed.addFields({
+            name: 'Banned By',
+            value: comment.banned_by,
+            inline: true,
+         })
+      }
+
+      if (comment.collapsed_reason_code) {
+         commentEmbed.addFields({
+            name: 'Reason Code',
+            value: comment.collapsed_reason_code,
+            inline: true,
+         })
+      }
+
+      if (comment.banned_at_utc && comment.spam) {
          // console.log('Comment is spam')
          commentEmbed.setColor(config.jobOutput.spamComment.embedColor)
          commentEmbed.setTitle('Spam Comment')
@@ -176,13 +222,15 @@ module.exports = {
       if (
          comment.banned_at_utc &&
          (comment.author_flair_css_class == 'shadow' ||
-            (comment.ban_note && comment.ban_note !== "remove not spam") ||
+            (comment.ban_note && comment.ban_note !== 'remove not spam') ||
             comment.body == '!tidy')
       ) {
          // console.log('Comment is spam')
          commentEmbed.setColor(config.jobOutput.spamComment.embedColor)
          commentEmbed.setTitle('Removed Comment')
-         commentEmbed.setURL(`https://www.reddit.com/mod/OnPatrolLive/queue?dx_mod_queue=enabled&queueType=removed&contentType=all&sort=sort_date&page=1&first=25&selectedSubreddits=OnPatrolLive`)
+         commentEmbed.setURL(
+            `https://www.reddit.com/mod/OnPatrolLive/queue?dx_mod_queue=enabled&queueType=removed&contentType=all&sort=sort_date&page=1&first=25&selectedSubreddits=OnPatrolLive`
+         )
          return commentEmbed
       }
 
