@@ -1,6 +1,6 @@
 const config = require('../config')
 const { subreddit, startDate, startTime, endDate, endTime } =
-   config.jobs.getModLog
+   config.jobs.getModLogStats
 
 // Helper function to get the timestamp for the specified date and time
 const getSpecificTime = (date, time) => {
@@ -12,14 +12,18 @@ const getSpecificTime = (date, time) => {
 }
 
 // Function to analyze the modlog entries
-const analyzeModlog = (entries, logger) => {
+const analyzeModlog = (entries, specificEndTime, logger) => {
    const autoModRemovals = {}
+   const sortedEntries = entries.sort(function (a, b) {
+      return a.data.created_utc - b.data.created_utc
+   }) // sort activity so that only the latest approval/removal counts
 
    // Track AutoModerator removals
-   entries.forEach((entry) => {
+   sortedEntries.forEach((entry) => {
       if (
          entry.data.mod === 'AutoModerator' &&
-         entry.data.action === 'removecomment'
+         entry.data.action === 'removecomment' &&
+         entry.data.created_utc <= specificEndTime // filter candidates by end time, but not later approvals and removals
       ) {
          autoModRemovals[entry.data.target_fullname] = {
             details: entry.data.details,
@@ -30,7 +34,8 @@ const analyzeModlog = (entries, logger) => {
    })
 
    // Track subsequent actions by human moderators
-   entries.forEach((entry) => {
+   // sort output for clarity
+   sortedEntries.forEach((entry) => {
       const targetId = entry.data.target_fullname
       if (autoModRemovals[targetId]) {
          if (
@@ -38,11 +43,13 @@ const analyzeModlog = (entries, logger) => {
             entry.data.action === 'approvecomment'
          ) {
             autoModRemovals[targetId].approved = true
+            autoModRemovals[targetId].removed = false
          } else if (
             entry.data.mod !== 'AutoModerator' &&
             entry.data.action === 'removecomment'
          ) {
             autoModRemovals[targetId].removed = true
+            autoModRemovals[targetId].approved = false
          }
       }
    })
@@ -50,22 +57,43 @@ const analyzeModlog = (entries, logger) => {
    // Group and display results
    const groupedEntries = Object.values(autoModRemovals).reduce(
       (acc, entry) => {
-         const ruleDetail = entry.details
+         let ruleDetail = entry.details.toLowerCase()
+         const bracketRegex = /\[(.*?)\]/ // Add a capturing group
+         let match = ruleDetail.match(bracketRegex)
+
+         if (match) {
+            ruleDetail = match[1] // match[1] will contain the text inside the brackets
+         }
+
          if (!acc[ruleDetail]) {
-            acc[ruleDetail] = { approved: 0, removed: 0 }
+            acc[ruleDetail] = { approved: 0, removed: 0, ruleCount: 0 }
          }
          if (entry.approved) {
             acc[ruleDetail].approved++
+            acc[ruleDetail].ruleCount++
          }
          if (entry.removed) {
             acc[ruleDetail].removed++
+            acc[ruleDetail].ruleCount++
          }
          return acc
       },
       {}
    )
 
-   for (const [ruleDetail, counts] of Object.entries(groupedEntries)) {
+   const sortedGroupedEntries = Object.entries(groupedEntries).sort((a, b) => {
+      const ruleDetailA = a[0].toUpperCase() // Ignore upper and lowercase
+      const ruleDetailB = b[0].toUpperCase() // Ignore upper and lowercase
+      if (ruleDetailA < ruleDetailB) {
+         return -1
+      }
+      if (ruleDetailA > ruleDetailB) {
+         return 1
+      }
+      return 0 // names must be equal
+   })
+
+   for (const [ruleDetail, counts] of sortedGroupedEntries) {
       const total = counts.approved + counts.removed
       const approvedPercentage = (counts.approved / total) * 100
       const removedPercentage = (counts.removed / total) * 100
@@ -74,13 +102,22 @@ const analyzeModlog = (entries, logger) => {
          columns: [
             'Mod Log',
             {
-               min: 11,
-               max: 11,
-               text: `✅ ${counts.approved}/${counts.removed} ⛔`,
+               min: 3,
+               max: 3,
+               text: `${counts.ruleCount}`,
             },
-            `${approvedPercentage.toFixed(1)}% / ${removedPercentage.toFixed(
-               1
-            )}%`,
+            {
+               min: 13,
+               max: 13,
+               text: `✅ ${counts.approved} (${approvedPercentage.toFixed(
+                  1
+               )}%)`,
+            },
+            {
+               min: 13,
+               max: 13,
+               text: `⛔ ${counts.removed} (${removedPercentage.toFixed(1)}%)`,
+            },
             ruleDetail,
          ],
       })
@@ -89,10 +126,10 @@ const analyzeModlog = (entries, logger) => {
 }
 
 module.exports = ({ reddit, logger }) => ({
-   name: 'getModLog',
+   name: 'getModLogStats',
 
    cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
-   // cronExpression: '0 * * * * *', // Every 1 minute (testing)
+   // cronExpression: '0 * * * * *', // Every 1 minucd co   te (testing)
 
    jobFunction: async () => {
       // logger.info({emoji: '💬', columns: ['getModLog', `Starting`, subreddit]});
@@ -129,8 +166,8 @@ module.exports = ({ reddit, logger }) => ({
                after = modlogEntries[modlogEntries.length - 1].data.id
             }
          }
-         console.log(allEntries)
-         analyzeModlog(allEntries, logger)
+         analyzeModlog(allEntries, specificEndTime, logger)
+         // console.log(allEntries)
       } catch (error) {
          console.error('Error:', error)
       }

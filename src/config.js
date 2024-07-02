@@ -79,12 +79,12 @@ module.exports = {
       getNewModMail: {
          subreddit: 'OnPatrolLive+Police247+LAFireandRescue+OPLTesting',
       },
-      getModLog: {
+      getModLogStats: {
          subreddit: 'OnPatrolLive',
-         startDate: '2021-06-28',
+         startDate: '2024-06-28',
          startTime: '18:00:00',
-         endDate: '2025-06-25',
-         endTime: '18:00:00',
+         endDate: '2024-06-30',
+         endTime: '00:30:00',
       },
       getTopComments: {
          subreddit: 'OnPatrolLive',
