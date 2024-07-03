@@ -228,7 +228,11 @@ module.exports = {
             url: `https://www.reddit.com${comment.permalink}`,
             iconURL: thisAvatarURL,
          })
-         .setTitle(`${comment.link_title.slice(0,config.commentTitleSize)}`)
+         // .setTitle(`${comment.link_title.slice(0,config.commentTitleSize)}`)
+         .setFooter({
+             text: `${comment.link_title.slice(0,config.commentTitleSize)}`
+             })
+
          .setDescription(`${comment.body.slice(0, config.commentSize)}`)
 
       if (comment.author_flair_css_class == 'shadow') {
@@ -273,7 +277,8 @@ module.exports = {
       if (comment.banned_at_utc && comment.spam) {
          // console.log('Comment is spam')
          commentEmbed.setColor(config.jobOutput.spamComment.embedColor)
-         commentEmbed.setTitle(`[Spam] ${comment.link_title.slice(0,config.commentTitleSize)}`)
+         // commentEmbed.setTitle(`[Spam] ${comment.link_title.slice(0,config.commentTitleSize)}`)
+         commentEmbed.setTitle(`Spam Comment`)
          commentEmbed.setURL(`https://www.reddit.com/r/OnPatrolLive/about/spam`)
          return commentEmbed
       }
@@ -286,7 +291,8 @@ module.exports = {
       ) {
          // console.log('Comment is spam')
          commentEmbed.setColor(config.jobOutput.spamComment.embedColor)
-         commentEmbed.setTitle(`[Removed] ${comment.link_title.slice(0,config.commentTitleSize)}`)
+         // commentEmbed.setTitle(`[Removed] ${comment.link_title.slice(0,config.commentTitleSize)}`)
+         commentEmbed.setTitle(`Removed Comment`)
          commentEmbed.setURL(
             `https://www.reddit.com/mod/OnPatrolLive/queue?dx_mod_queue=enabled&queueType=removed&contentType=all&sort=sort_date&page=1&first=25&selectedSubreddits=OnPatrolLive`
          )
@@ -301,7 +307,8 @@ module.exports = {
             // console.log('Comment is in reported')
          } else {
             commentEmbed.setColor(config.jobOutput.modQueueComment.embedColor)
-            commentEmbed.setTitle(`[Queue] ${comment.link_title.slice(0,config.commentTitleSize)}`)
+            // commentEmbed.setTitle(`[Queue] ${comment.link_title.slice(0,config.commentTitleSize)}`)
+            commentEmbed.setTitle(`Queued Comment`)
          }
          commentEmbed.setURL(
             `https://www.reddit.com/mod/${comment.subreddit}/queue`
