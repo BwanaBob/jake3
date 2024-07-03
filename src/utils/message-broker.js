@@ -138,7 +138,7 @@ module.exports = {
       postEmbed.setDescription(`${postEmoji}  ${postMessage}`)
 
       if (post.ban_note && post.ban_note !== 'remove not spam') {
-         postEmbedEmbed.addFields({
+         postEmbed.addFields({
             name: 'Ban Note',
             value: post.ban_note,
             inline: true,
@@ -146,7 +146,7 @@ module.exports = {
       }
 
       if (post.banned_by && post.banned_by !== 'AutoModerator') {
-         postEmbedEmbed.addFields({
+         postEmbed.addFields({
             name: 'Banned By',
             value: post.banned_by,
             inline: true,
@@ -154,7 +154,7 @@ module.exports = {
       }
 
       if (post.removed_by_category) {
-         postEmbedEmbed.addFields({
+         postEmbed.addFields({
             name: 'Removed By Category',
             value: post.removed_by_category,
             inline: true,
