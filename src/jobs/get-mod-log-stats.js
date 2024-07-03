@@ -123,6 +123,7 @@ const analyzeModlog = (entries, specificEndTime, logger) => {
       })
       //   console.log(`✅ ${counts.approved}/${counts.removed} ⛔ (${approvedPercentage.toFixed(2)}% / ${removedPercentage.toFixed(2)}%) - Rule: ${ruleDetail}`);
    }
+   return sortedGroupedEntries;
 }
 
 module.exports = ({ reddit, logger }) => ({
@@ -166,8 +167,9 @@ module.exports = ({ reddit, logger }) => ({
                after = modlogEntries[modlogEntries.length - 1].data.id
             }
          }
-         analyzeModlog(allEntries, specificEndTime, logger)
          // console.log(allEntries)
+         const results = analyzeModlog(allEntries, specificEndTime, logger)
+         return {status: 'success', data: results};
       } catch (error) {
          console.error('Error:', error)
       }

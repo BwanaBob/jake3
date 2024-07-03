@@ -2,6 +2,64 @@ const { EmbedBuilder, MessageFlagsBitField } = require('discord.js')
 const config = require('../config')
 
 module.exports = {
+   _getPostStatus(post) {
+      // not yet used
+      if (!post.banned_at_utc) {
+         return { status: 'Visible', subStatus: 'Visible' }
+      }
+
+      if (post.spam) {
+         return { status: 'Removed', subStatus: 'Spam' }
+      }
+
+      if (
+         post.banned_at_utc &&
+         !post.ban_note &&
+         post.banned_by &&
+         post.banned_by == 'true' &&
+         post.removed_by_category == 'reddit'
+      ) {
+         return { status: 'Queued', subStatus: 'Reddit' }
+      }
+
+      // if (
+      //    post.banned_at_utc &&
+      //    post.ban_note &&
+      //    post.ban_note == 'comfirm spam' &&
+      //    post.banned_by &&
+      //    post.banned_by == 'AutoModerator'
+      // ) {
+      //    return { status: 'Queued', subStatus: 'Automoderator ' } // this is on a comment karma one
+      // }
+
+      if (
+         post.banned_at_utc &&
+         post.ban_note &&
+         post.ban_note == 'remove not spam' &&
+         post.banned_by &&
+         post.banned_by == 'AutoModerator' &&
+         author_flair_css_class == 'shadow'
+      ) {
+         return { status: 'Removed', subStatus: 'ShadowBanned' }
+      }
+
+      if (
+         post.banned_at_utc &&
+         post.ban_note &&
+         post.ban_note == 'remove not spam' &&
+         post.banned_by &&
+         post.banned_by == 'AutoModerator'
+      ) {
+         return { status: 'Queued', subStatus: 'AutoModerator' }
+      }
+
+      if (post.num_reports && post.num_reports > 0) {
+         return { status: 'Queued', subStatus: 'Reported' }
+      }
+
+      return { status: 'Unknown', subStatus: 'Unknown' }
+   },
+
    _makePostEmbed(post) {
       let thisAvatarURL =
          'https://www.redditstatic.com/avatars/defaults/v2/avatar_default_7.png'
@@ -463,10 +521,45 @@ module.exports = {
                   this.sendMessage(client, sendChannel, message)
                }
             }
+            break
+         case 'getModLogStats':
+            if (response.status == 'success') {
+               // console.log(response.data)
+               // console.log('getModLogStats ran')
+               let statsDetail = ''
+               for (const [ruleDetail, counts] of response.data) {
+                  const total = counts.approved + counts.removed
+                  const approvedPercentage = (counts.approved / total) * 100
+                  const removedPercentage = (counts.removed / total) * 100
+                  statsDetail += `${counts.ruleCount} | ✅ ${
+                     counts.approved
+                  } (${approvedPercentage.toFixed(1)}%) | ⛔ ${
+                     counts.removed
+                  } (${removedPercentage.toFixed(1)}%) | ${ruleDetail}\n`
+               }
+
+               const statsEmbed = new EmbedBuilder()
+                  .setColor(config.jobOutput.modLogStats.embedColor)
+                  .setTitle('Mod Log Stats')
+                  // .setURL(`https://mod.reddit.com/mail/all`)
+                  // .setAuthor({
+                  //    name: mailMessage.author.name,
+                  //    iconURL: 'https://i.imgur.com/MbDgRbw.png',
+                  // })
+                  .setDescription(`\`\`\`${statsDetail}\`\`\``)
+               // .setFooter({
+               //    text: `r/${mailMessage.parentOwnerDisplayName}`,
+               // })
+
+               message = { embeds: [statsEmbed] }
+               sendChannel = redditServers['OPLTesting']['Jobs']
+               // sendChannel = client.params.get('jobsChannelId')
+               this.sendMessage(client, sendChannel, message)
+            }
+            break
          // Add more cases for different job names and their respective formatting
          default:
-            message += 'Data:\n'
-            message += JSON.stringify(response, null, 2)
+            console.log('Message Broker: Unable to identify message')
             break
       }
    },

@@ -44,6 +44,7 @@ module.exports = {
       modQueuePost: { embedColor: '#f1aa0f' },
       reportedPost: { embedColor: '#c40ff1' },
       modMail: { embedColor: '#aa44cc' },
+      modLogStats: { embedColor: '#3498db' },
    },
    logger: {
       logLength: 140,
