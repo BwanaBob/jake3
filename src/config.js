@@ -3,6 +3,7 @@ module.exports = {
    axiosDefaultRequestsMS: 60000,
    readBehind: 90, // read data seconds before application started
    commentSize: 800,
+   commentTitleSize: 50,
    postSize: 800,
    quietHours: {
       start: '23:10',
