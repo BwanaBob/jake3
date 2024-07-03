@@ -8,7 +8,7 @@ module.exports = ({ reddit, logger }) => ({
       logger.info('Executing sample job')
       try {
          const limit = 10 // Specify the number of posts to retrieve
-         const posts = await reddit.getSubredditPosts('OPLTesting', limit)
+         const posts = await reddit.getSubredditPosts('OnPatrolLive', limit)
          logger.info({
             emoji: '👻',
             module: 'Sample Job',

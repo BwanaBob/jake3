@@ -4,7 +4,7 @@ module.exports = ({ reddit, logger }) => ({
    // cronExpression: '*/20 * * * * *', // Every 20 seconds (testing)
    // cronExpression: '0 0 23 * * FRI,SAT', // Every Friday and Saturday at 11pm (live)
    jobFunction: async () => {
-      const subreddit = 'OPLTesting' // Replace with the target subreddit
+      const subreddit = 'OnPatrolLive' // Replace with the target subreddit
       logger.info(`Fetching settings for subreddit: ${subreddit}`)
       try {
          const settings = await reddit.getSubredditSettings(subreddit)

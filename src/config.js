@@ -20,10 +20,6 @@ module.exports = {
          discordServerId: '325206992413130753',
          notifyRole: '1171955876609937564',
       },
-      OPLTesting: {
-         discordServerId: '391821567241224192',
-         notifyRole: '391837678967980035',
-      },
       Police247: {
          discordServerId: '1239702141401305109',
          notifyRole: '1255242494870945904',

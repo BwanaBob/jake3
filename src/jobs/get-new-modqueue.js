@@ -4,7 +4,6 @@ const { readBehind } = config
 
 let loggedItemIds = new Set()
 const startTime = new Date() - readBehind * 1000 // When the job was first scheduled
-// const subreddit = 'OnPatrolLive,OPLTesting' // Replace with the target subreddit
 
 const fs = require('fs')
 function saveItemsToFile(item) {
