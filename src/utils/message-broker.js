@@ -16,10 +16,10 @@ module.exports = {
          post.banned_at_utc &&
          !post.ban_note &&
          post.banned_by &&
-         post.banned_by == 'true' &&
+         post.banned_by === true &&
          post.removed_by_category == 'reddit'
       ) {
-         return { status: 'Queued', subStatus: 'Reddit' }
+         return { status: 'Removed', subStatus: 'Spam' }
       }
 
       // if (
@@ -160,7 +160,7 @@ module.exports = {
             })
          }
       }
-      
+
       if (post.removed_by_category) {
          postEmbed.addFields({
             name: 'Removed By Category',
@@ -267,11 +267,19 @@ module.exports = {
       }
 
       if (comment.banned_by && comment.banned_by !== 'AutoModerator') {
-         commentEmbed.addFields({
-            name: 'Banned By',
-            value: comment.banned_by,
-            inline: true,
-         })
+         if (comment.banned_by === true) {
+            commentEmbed.addFields({
+               name: 'Banned By',
+               value: 'true',
+               inline: true,
+            })
+         } else {
+            commentEmbed.addFields({
+               name: 'Banned By',
+               value: comment.banned_by,
+               inline: true,
+            })
+         }
       }
 
       if (comment.collapsed_reason_code) {
