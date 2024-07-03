@@ -146,13 +146,21 @@ module.exports = {
       }
 
       if (post.banned_by && post.banned_by !== 'AutoModerator') {
-         postEmbed.addFields({
-            name: 'Banned By',
-            value: post.banned_by,
-            inline: true,
-         })
+         if (post.banned_by === true) {
+            postEmbed.addFields({
+               name: 'Banned By',
+               value: 'true',
+               inline: true,
+            })
+         } else {
+            postEmbed.addFields({
+               name: 'Banned By',
+               value: post.banned_by,
+               inline: true,
+            })
+         }
       }
-
+      
       if (post.removed_by_category) {
          postEmbed.addFields({
             name: 'Removed By Category',
@@ -230,8 +238,8 @@ module.exports = {
          })
          // .setTitle(`${comment.link_title.slice(0,config.commentTitleSize)}`)
          .setFooter({
-             text: `${comment.link_title.slice(0,config.commentTitleSize)}`
-             })
+            text: `${comment.link_title.slice(0, config.commentTitleSize)}`,
+         })
 
          .setDescription(`${comment.body.slice(0, config.commentSize)}`)
 
