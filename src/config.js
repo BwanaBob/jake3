@@ -70,16 +70,16 @@ module.exports = {
    },
    jobs: {
       getNewComments: {
-         subreddit: 'OnPatrolLive+Police247+LAFireandRescue+OPLTesting',
+         subreddit: 'OnPatrolLive+Police247+LAFireandRescue',
       },
       getNewPosts: {
-         subreddit: 'OnPatrolLive+Police247+LAFireandRescue+OPLTesting',
+         subreddit: 'OnPatrolLive+Police247+LAFireandRescue',
       },
       getNewModQueue: {
-         subreddit: 'OnPatrolLive+Police247+LAFireandRescue+OPLTesting',
+         subreddit: 'OnPatrolLive+Police247+LAFireandRescue',
       },
       getNewModMail: {
-         subreddit: 'OnPatrolLive+Police247+LAFireandRescue+OPLTesting',
+         subreddit: 'OnPatrolLive+Police247+LAFireandRescue',
       },
       getModLogStats: {
          subreddit: 'OnPatrolLive',
