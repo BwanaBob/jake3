@@ -3,7 +3,7 @@ module.exports = {
    axiosDefaultRequestsMS: 60000,
    readBehind: 90, // read data seconds before application started
    commentSize: 800,
-   commentTitleSize: 50,
+   commentTitleSize: 65,
    postSize: 800,
    quietHours: {
       start: '23:10',
@@ -27,6 +27,10 @@ module.exports = {
       LAFireandRescue: {
          discordServerId: '1119328833250803806',
          notifyRole: '1255723797290418328',
+      },
+      LAFireRescue: {
+         discordServerId: '391821567241224192',
+         notifyRole: '391837678967980035',
       },
    },
    jobOutput: {
@@ -66,16 +70,16 @@ module.exports = {
    },
    jobs: {
       getNewComments: {
-         subreddit: 'OnPatrolLive+Police247+LAFireandRescue',
+         subreddit: 'OnPatrolLive+Police247+LAFireandRescue+LAFireRescue',
       },
       getNewPosts: {
-         subreddit: 'OnPatrolLive+Police247+LAFireandRescue',
+         subreddit: 'OnPatrolLive+Police247+LAFireandRescue+LAFireRescue',
       },
       getNewModQueue: {
-         subreddit: 'OnPatrolLive+Police247+LAFireandRescue',
+         subreddit: 'OnPatrolLive+Police247+LAFireandRescue+LAFireRescue',
       },
       getNewModMail: {
-         subreddit: 'OnPatrolLive+Police247+LAFireandRescue',
+         subreddit: 'OnPatrolLive+Police247+LAFireandRescue+LAFireRescue',
       },
       getModLogStats: {
          subreddit: 'OnPatrolLive',
