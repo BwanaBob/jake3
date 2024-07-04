@@ -217,6 +217,7 @@ module.exports = {
          'https://www.redditstatic.com/avatars/defaults/v2/avatar_default_7.png'
       let p24AvatarURL = 'https://i.imgur.com/TjABABi.png'
       let oplAvatarURL = 'https://i.imgur.com/MbDgRbw.png'
+      let lafrAvatarURL = 'https://i.imgur.com/puXsvy4.jpg'
       let authorUser = comment.author
 
       if (comment.subreddit == 'OnPatrolLive') {
@@ -226,6 +227,11 @@ module.exports = {
          comment.subreddit == 'OPLTesting'
       ) {
          thisAvatarURL = p24AvatarURL
+      } else if (
+         comment.subreddit == 'LAFireandRescue' ||
+         comment.subreddit == 'LAFireRescue'
+      ) {
+         thisAvatarURL = lafrAvatarURL
       }
 
       const commentEmbed = new EmbedBuilder()
@@ -239,7 +245,7 @@ module.exports = {
          // .setTitle(`${comment.link_title.slice(0,config.commentTitleSize)}`)
          .setFooter({
             text: `${comment.link_title.slice(0, config.commentTitleSize)}`,
-            iconURL: `https://i.imgur.com/I6VOse4.png`
+            iconURL: `https://i.imgur.com/I6VOse4.png`,
          })
 
          .setDescription(`${comment.body.slice(0, config.commentSize)}`)
