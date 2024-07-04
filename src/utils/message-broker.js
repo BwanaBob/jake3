@@ -244,8 +244,8 @@ module.exports = {
          })
          // .setTitle(`${comment.link_title.slice(0,config.commentTitleSize)}`)
          .setFooter({
-            text: `${comment.link_title.slice(0, config.commentTitleSize)}`,
-            iconURL: `https://i.imgur.com/I6VOse4.png`,
+            text: `📌 ${comment.link_title.slice(0, config.commentTitleSize)}`,
+            // iconURL: `https://i.imgur.com/I6VOse4.png`,
          })
 
          .setDescription(`${comment.body.slice(0, config.commentSize)}`)
