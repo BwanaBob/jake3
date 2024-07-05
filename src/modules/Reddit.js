@@ -8,6 +8,7 @@ const {
    redditUsername,
    redditPassword,
 } = require('../credentials')
+const Logger = require('./Logger')
 const { axiosDefaultRequests, axiosDefaultRequestsMS } = require('../config')
 
 class Reddit {
@@ -18,6 +19,7 @@ class Reddit {
          maxRequests: axiosDefaultRequests,
          perMilliseconds: axiosDefaultRequestsMS,
       })
+      this.logger = new Logger()
       this.token = null
       this.tokenExpiresAt = null
    }
@@ -44,11 +46,25 @@ class Reddit {
          })
       } else {
          // Default rate limit
-         console.log(
-            `Reddit API: Setting rate limit to ${axiosDefaultRequests} per ${
-               axiosDefaultRequestsMS / 1000
-            } seconds (Default)`
-         )
+         // console.log(
+         //    '\x1b[33m%s\x1b[0m',
+         //    `Reddit API: Setting rate limit to ${axiosDefaultRequests} per ${
+         //       axiosDefaultRequestsMS / 1000
+         //    } seconds (Default)`
+         // )
+
+         this.logger.info({
+            emoji: '📡',
+            columns: [
+               'Reddit API',
+               'Rate Limit',
+               'Default',
+               `Set limit to ${axiosDefaultRequests} per ${
+                  axiosDefaultRequestsMS / 1000
+               } seconds`,
+            ],
+         })
+
          this.http = axiosRateLimit(axios.create(), {
             maxRequests: axiosDefaultRequests,
             perMilliseconds: axiosDefaultRequestsMS,
@@ -93,8 +109,33 @@ class Reddit {
    }
 
    async ensureValidToken() {
-      if (!this.token || Date.now() >= this.tokenExpiresAt) {
-         console.log(`Reddit API: Token expiring. Retrieving new token.`)
+      if (!this.token) {
+         // console.log(
+         //    '\x1b[33m%s\x1b[0m',
+         //    `Reddit API: Retrieving initial token.`
+         // )
+
+         this.logger.info({
+            emoji: '📡',
+            columns: ['Reddit API', 'Get Token', `Retrieving initial token.`],
+         })
+
+         await this.getOAuthToken()
+      } else if (Date.now() >= this.tokenExpiresAt) {
+         // console.log(
+         //    '\x1b[33m%s\x1b[0m',
+         //    `Reddit API: Token expiring. Retrieving new token.`
+         // )
+
+         this.logger.info({
+            emoji: '📡',
+            columns: [
+               'Reddit API',
+               'Refresh Token',
+               `Token Expiring. Retrieving fresh token.`,
+            ],
+         })
+
          await this.getOAuthToken()
       }
    }
@@ -213,7 +254,7 @@ class Reddit {
          'get',
          { comment: commentId }
       )
-      console.log(data.data.children)
+      // console.log(data.data.children)
       return data.data.children
    }
    async getNewComments(subreddit, limit = 25) {
@@ -346,11 +387,11 @@ class Reddit {
       await this.apiRequest(endpoint, 'post', data)
    }
 
-   async distinguishComment( commentId ) {
+   async distinguishComment(commentId) {
       const endpoint = `/api/distinguish`
       const data = {
          id: `t1_${commentId}`,
-         how: 'yes'
+         how: 'yes',
          // sticky,
       }
       await this.apiRequest(endpoint, 'post', data)

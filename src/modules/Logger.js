@@ -28,7 +28,7 @@ class Logger {
       }
 
       if (!logData.color) {
-         logData.color = '\x1b[33m%s\x1b[0m'
+         logData.color = config.logger.color || '\x1b[33m%s\x1b[0m'
       }
 
       if (!logData.emoji) {
