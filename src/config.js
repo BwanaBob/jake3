@@ -50,6 +50,7 @@ module.exports = {
    logger: {
       logLength: 140,
       dateLength: 23,
+      color: '\x1b[33m%s\x1b[0m',
       columns: {
          0: { min: 12, max: 12 },
          1: { min: 15, max: 15 },
