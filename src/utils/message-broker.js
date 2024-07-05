@@ -5,11 +5,19 @@ module.exports = {
    _getPostStatus(post) {
       // not yet used
       if (!post.banned_at_utc) {
-         return { status: 'Visible', subStatus: 'Visible' }
+         return {
+            status: 'Visible',
+            subStatus: 'Visible',
+            color: config.jobOutput.newPost.color,
+         }
       }
 
       if (post.spam) {
-         return { status: 'Removed', subStatus: 'Spam' }
+         return {
+            status: 'Removed',
+            subStatus: 'Spam',
+            color: config.jobOutput.spamPost.color,
+         }
       }
 
       if (
@@ -19,7 +27,11 @@ module.exports = {
          post.banned_by === true &&
          post.removed_by_category == 'reddit'
       ) {
-         return { status: 'Removed', subStatus: 'Spam' }
+         return {
+            status: 'Removed',
+            subStatus: 'Spam',
+            color: config.jobOutput.spamPost.color,
+         }
       }
 
       // if (
@@ -40,7 +52,11 @@ module.exports = {
          post.banned_by == 'AutoModerator' &&
          author_flair_css_class == 'shadow'
       ) {
-         return { status: 'Removed', subStatus: 'ShadowBanned' }
+         return {
+            status: 'Removed',
+            subStatus: 'ShadowBanned',
+            color: config.jobOutput.spamPost.color,
+         }
       }
 
       if (
@@ -50,14 +66,26 @@ module.exports = {
          post.banned_by &&
          post.banned_by == 'AutoModerator'
       ) {
-         return { status: 'Queued', subStatus: 'AutoModerator' }
+         return {
+            status: 'Queued',
+            subStatus: 'AutoModerator',
+            color: config.jobOutput.modQueuePost.color,
+         }
       }
 
       if (post.num_reports && post.num_reports > 0) {
-         return { status: 'Queued', subStatus: 'Reported' }
+         return {
+            status: 'Queued',
+            subStatus: 'Reported',
+            color: config.jobOutput.modQueuePost.color,
+         }
       }
 
-      return { status: 'Unknown', subStatus: 'Unknown' }
+      return {
+         status: 'Unknown',
+         subStatus: 'Unknown',
+         color: config.jobOutput.spamPost.color,
+      }
    },
 
    _makePostEmbed(post) {
@@ -77,11 +105,6 @@ module.exports = {
       const postEmbed = new EmbedBuilder()
          .setColor(config.jobOutput.newPost.embedColor)
          .setURL(`https://www.reddit.com${post.permalink}`)
-         .setAuthor({
-            name: authorUser,
-            url: `https://www.reddit.com${post.permalink}`,
-            iconURL: thisAvatarURL,
-         })
 
       if (post.author_flair_css_class == 'shadow') {
          // console.log('User is shadowed')
@@ -94,6 +117,12 @@ module.exports = {
          authorUser += ' [watch]'
          postEmbed.setColor(config.jobOutput.modQueuePost.embedColor)
       }
+
+      postEmbed.setAuthor({
+         name: authorUser,
+         url: `https://www.reddit.com${post.permalink}`,
+         iconURL: thisAvatarURL,
+      })
 
       postMessage = `**${post.title.slice(0, config.postSize)}**`
       if (post.selftext) {
@@ -237,11 +266,6 @@ module.exports = {
       const commentEmbed = new EmbedBuilder()
          .setColor(config.jobOutput.newComment.embedColor)
          .setURL(`https://www.reddit.com${comment.permalink}`)
-         .setAuthor({
-            name: authorUser,
-            url: `https://www.reddit.com${comment.permalink}`,
-            iconURL: thisAvatarURL,
-         })
          // .setTitle(`${comment.link_title.slice(0,config.commentTitleSize)}`)
          .setFooter({
             text: `📌 ${comment.link_title.slice(0, config.commentTitleSize)}`,
@@ -263,6 +287,12 @@ module.exports = {
          authorUser += ' [watch]'
          commentEmbed.setColor(config.jobOutput.modQueueComment.embedColor)
       }
+
+      commentEmbed.setAuthor({
+         name: authorUser,
+         url: `https://www.reddit.com${comment.permalink}`,
+         iconURL: thisAvatarURL,
+      })
 
       if (comment.ban_note && comment.ban_note !== 'remove not spam') {
          // commentEmbed.setFooter({ text: `Ban note: ${comment.ban_note}` });
