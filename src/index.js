@@ -1,12 +1,12 @@
 const path = require('path')
-const Scheduler = require('./modules/Scheduler')
+const scheduler = require('./modules/Scheduler')
 const reddit = require('./modules/Reddit')
 const { channel } = require('diagnostics_channel')
 const logger = require('./modules/Logger')
 const Discord = require('./modules/Discord')
 
 const { discordToken } = require('./credentials')
-const scheduler = new Scheduler()
+// const scheduler = new Scheduler()
 
 // const logger = new Logger()
 const discord = new Discord(discordToken)

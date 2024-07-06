@@ -6,8 +6,8 @@ const logger = require('../modules/Logger') // shared instance
 module.exports = () => ({
    name: 'tidy',
    // cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
-   cronExpression: '*/20 * * * * *', // Every 20 seconds (testing)
-   // cronExpression: '20 0 23 * * FRI,SAT', // Every Friday and Saturday at 11:00:20pm (live)
+   // cronExpression: '*/20 * * * * *', // Every 20 seconds (testing)
+   cronExpression: '20 0 23 * * FRI,SAT', // Every Friday and Saturday at 11:00:20pm (live)
    // cronExpression: '20 0 00 * * SUN', // Special 4 hour episode on Sat 12:00:20am (special)
    jobFunction: async () => {
       const subreddit = 'OnPatrolLive' // subreddit to search

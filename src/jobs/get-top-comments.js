@@ -29,14 +29,18 @@ async function getLatestPost() {
    return post
 }
 
-async function getPostById(reddit, logger, postId) {
+async function getPostById(postId) {
    logger.info({
       emoji: '🏅',
       columns: ['Top Comments', 'Find Post', postId],
    })
 
-   const post = await reddit.getPostById(postId)
-   return post
+   const posts = await reddit.getPostById(postId)
+   if (posts.length > 0) {
+      return posts[0]
+   } else {
+      return false;
+   }
 }
 
 module.exports = () => ({
@@ -48,12 +52,11 @@ module.exports = () => ({
    jobFunction: async () => {
       try {
          if (searchMode == 'latest') {
-            post = await getLatestPost(reddit, logger)
+            post = await getLatestPost()
          } else if (searchMode == 'id') {
-            post = await getPostById(reddit, logger, searchString)
+            post = await getPostById(searchString)
          }
          if (post) {
-            // console.log(post)
             const postId = post.data.id
             logger.info({
                emoji: '🏅',

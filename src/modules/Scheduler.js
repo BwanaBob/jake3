@@ -8,20 +8,19 @@ class Scheduler extends EventEmitter {
    constructor() {
       super()
       this.jobs = {}
-      // logger = new Logger()
    }
 
    async scheduleJob(name, cronExpression, jobFunction) {
-      const job = schedule.scheduleJob(cronExpression, async () => {
+      const scheduledJob = schedule.scheduleJob(cronExpression, async () => {
          try {
-            const result = await jobFunction()
-            this.emit('jobCompleted', name, result)
+            const result = await jobFunction();
+            this.emit('jobCompleted', name, result);
          } catch (error) {
-            this.emit('jobError', name, error)
+            this.emit('jobError', name, error);
          }
-      })
-      this.jobs[name] = job
-      this.emit('jobScheduled', name, cronExpression)
+      });
+      this.jobs[name] = { scheduledJob, jobFunction };
+      this.emit('jobScheduled', name, cronExpression);
    }
 
    cancelJob(name) {
@@ -51,19 +50,20 @@ class Scheduler extends EventEmitter {
    }
 
    async runJobNow(name) {
-      const job = this.jobs[name]
-      if (job) {
+      if (this.jobs[name]) {
          try {
-            const result = await job.job()
+            const result = await this.jobs[name].jobFunction()
             this.emit('jobCompleted', name, result)
+            return result
          } catch (error) {
             this.emit('jobError', name, error)
+            throw error
          }
       } else {
-         logger.info(`Job "${name}" not found`)
-         this.emit('jobNotFound', name)
+         throw new Error(`Job "${name}" not found.`)
       }
    }
 }
-
-module.exports = Scheduler
+const scheduler = new Scheduler()
+module.exports = scheduler // export an instance of the class so that the instance is shared across all modules
+// module.exports = Scheduler
