@@ -2,6 +2,7 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 const config = require('../config')
 const {
    subreddit,
+   searchMode,
    searchString,
    fetchCount,
    fetchDelay,
@@ -10,25 +11,45 @@ const {
    ineligibleUsers,
 } = config.jobs.getTopComments
 
+async function getLatestPost(reddit, logger) {
+   logger.info({
+      emoji: '🏅',
+      columns: ['Top Comments', 'Find Post', subreddit, searchString],
+   })
+
+   const posts = await reddit.searchPosts(subreddit, searchString, 10) // Search for the latest 10 posts
+   const exactMatchPosts = posts.filter((post) =>
+      post.data.title.includes('Live Thread')
+   ) // Filter for exact matches
+   const post = exactMatchPosts[0] // Get the most recent post
+   return post
+}
+
+async function getPostById(reddit, logger, postId) {
+   logger.info({
+      emoji: '🏅',
+      columns: ['Top Comments', 'Find Post', postId],
+   })
+
+   const post = await reddit.getPostById(postId)
+   return post
+}
+
 module.exports = ({ reddit, logger }) => ({
    name: 'getTopComments',
    // cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
-   // cronExpression: '0 * * * * *', // Every 60 seconds (testing)
-   cronExpression: '0 56 7 * * SAT,SUN', // Every Saturday and Sunday at 3am (live)
+   cronExpression: '0 * * * * *', // Every 60 seconds (testing)
+   // cronExpression: '0 56 7 * * SAT,SUN', // Every Saturday and Sunday at 3am (live)
+
    jobFunction: async () => {
       try {
-         logger.info({
-            emoji: '🏅',
-            columns: ['Top Comments', 'Find Post', subreddit, searchString],
-         })
-
-         const posts = await reddit.searchPosts(subreddit, searchString, 10) // Search for the latest 10 posts
-         const exactMatchPosts = posts.filter((post) =>
-            post.data.title.includes('Live Thread')
-         ) // Filter for exact matches
-         const post = exactMatchPosts[0] // Get the most recent post
-
+         if (searchMode == 'latest') {
+            post = await getLatestPost(reddit, logger)
+         } else if (searchMode == 'id') {
+            post = await getPostById(reddit, logger, searchString)
+         }
          if (post) {
+            // console.log(post)
             const postId = post.data.id
             logger.info({
                emoji: '🏅',
@@ -74,7 +95,10 @@ module.exports = ({ reddit, logger }) => ({
                const authorFlairText = comment.data.author_flair_text
                return (
                   !ineligibleUsers.includes(comment.data.author) &&
-                  !(authorFlairText && authorFlairText.toLowerCase().includes('cotn royalty'))
+                  !(
+                     authorFlairText &&
+                     authorFlairText.toLowerCase().includes('cotn royalty')
+                  )
                )
             })
 

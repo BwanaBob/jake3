@@ -317,6 +317,13 @@ class Reddit {
       return data.data.children
    }
 
+
+   async getPostById(postId) {
+      const data = await this.apiRequest(`/api/info?id=t3_${postId}`, 'get')
+      return data.data.children
+   }
+
+
    async searchPosts(subreddit, query, limit = 25) {
       const data = await this.apiRequest(`/r/${subreddit}/search.json`, 'get', {
          q: query,
