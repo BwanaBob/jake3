@@ -1,5 +1,5 @@
 const { Client, GatewayIntentBits, Collection } = require('discord.js')
-const Logger = require('./Logger')
+const logger = require('./Logger')
 const fs = require('node:fs')
 const path = require('node:path')
 
@@ -9,7 +9,7 @@ class Discord {
          intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
       })
       this.token = token
-      this.logger = new Logger()
+      // this.logger = new Logger()
       this.client.commands = new Collection()
       const commandsPath = path.join(__dirname, '../commands')
       const commandFiles = fs
@@ -24,12 +24,12 @@ class Discord {
          if ('data' in command && 'execute' in command) {
             this.client.commands.set(command.data.name, command)
             const cLoadedDate = new Date().toLocaleString()
-            this.logger.info({
+            logger.info({
                emoji: '💻',
                columns: ['Discord Cmd', 'Loaded', command.data.name],
             })
          } else {
-            this.logger.info({
+            logger.info({
                emoji: '⛔',
                columns: [
                   'Discord Cmd',

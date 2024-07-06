@@ -2,13 +2,13 @@ const schedule = require('node-schedule')
 const EventEmitter = require('events')
 const fs = require('fs')
 const path = require('path')
-const Logger = require('./Logger')
+const logger = require('./Logger')
 
 class Scheduler extends EventEmitter {
    constructor() {
       super()
       this.jobs = {}
-      this.logger = new Logger()
+      // logger = new Logger()
    }
 
    async scheduleJob(name, cronExpression, jobFunction) {
@@ -28,7 +28,7 @@ class Scheduler extends EventEmitter {
       if (this.jobs[name]) {
          this.jobs[name].cancel()
          delete this.jobs[name]
-         // this.logger.info(`Job "${name}" cancelled`)
+         // logger.info(`Job "${name}" cancelled`)
          this.emit('jobCancelled', name)
       }
    }
@@ -36,7 +36,7 @@ class Scheduler extends EventEmitter {
    loadJobsFromFolder(folderPath, dependencies) {
       fs.readdir(folderPath, (err, files) => {
          if (err) {
-            this.logger.info(`Error reading jobs folder: ${err}`)
+            logger.info(`Error reading jobs folder: ${err}`)
             return
          }
 
@@ -60,7 +60,7 @@ class Scheduler extends EventEmitter {
             this.emit('jobError', name, error)
          }
       } else {
-         this.logger.info(`Job "${name}" not found`)
+         logger.info(`Job "${name}" not found`)
          this.emit('jobNotFound', name)
       }
    }

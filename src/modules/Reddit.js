@@ -8,7 +8,7 @@ const {
    redditUsername,
    redditPassword,
 } = require('../credentials')
-const Logger = require('./Logger')
+const logger = require('./Logger')
 const { axiosDefaultRequests, axiosDefaultRequestsMS } = require('../config')
 
 class Reddit {
@@ -19,7 +19,7 @@ class Reddit {
          maxRequests: axiosDefaultRequests,
          perMilliseconds: axiosDefaultRequestsMS,
       })
-      this.logger = new Logger()
+      // this.logger = new Logger()
       this.token = null
       this.tokenExpiresAt = null
    }
@@ -53,7 +53,7 @@ class Reddit {
          //    } seconds (Default)`
          // )
 
-         this.logger.info({
+         logger.info({
             emoji: '📡',
             columns: [
                'Reddit API',
@@ -115,7 +115,7 @@ class Reddit {
          //    `Reddit API: Retrieving initial token.`
          // )
 
-         this.logger.info({
+         logger.info({
             emoji: '📡',
             columns: ['Reddit API', 'Get Token', `Retrieving initial token.`],
          })
@@ -127,7 +127,7 @@ class Reddit {
          //    `Reddit API: Token expiring. Retrieving new token.`
          // )
 
-         this.logger.info({
+         logger.info({
             emoji: '📡',
             columns: [
                'Reddit API',
@@ -405,4 +405,6 @@ class Reddit {
    }
 }
 
-module.exports = Reddit
+const reddit = new Reddit();
+module.exports = reddit; // export an instance of the class so that the instance is shared across all modules
+// module.exports = Reddit

@@ -1,3 +1,7 @@
+const reddit = require('../modules/Reddit') // shared instance
+const logger = require('../modules/Logger') // shared instance
+// const logger = new Logger()
+
 const config = require('../config')
 const { subreddit, startDate, startTime, endDate, endTime } =
    config.jobs.getModLogStats
@@ -126,7 +130,7 @@ const analyzeModlog = (entries, specificEndTime, logger) => {
    return sortedGroupedEntries;
 }
 
-module.exports = ({ reddit, logger }) => ({
+module.exports = () => ({
    name: 'getModLogStats',
 
    cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)

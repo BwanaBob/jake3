@@ -1,3 +1,7 @@
+const reddit = require('../modules/Reddit') // shared instance
+const logger = require('../modules/Logger') // shared instance
+// const logger = new Logger()
+
 const config = require('../config')
 const { subreddit } = config.jobs.getNewModMail
 const { readBehind } = config
@@ -46,7 +50,7 @@ function enrichMessages(data) {
    return messages
 }
 
-module.exports = ({ reddit, logger }) => ({
+module.exports = () => ({
    name: 'getNewModMail',
 
    // cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)

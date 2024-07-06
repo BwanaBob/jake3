@@ -72,5 +72,6 @@ class Logger {
       )
    }
 }
-
-module.exports = Logger
+const logger = new Logger();
+module.exports = logger; // export an instance of the class so that the instance is shared across all modules
+// module.exports = Logger

@@ -1,3 +1,7 @@
+const reddit = require('../modules/Reddit') // shared instance
+const logger = require('../modules/Logger') // shared instance
+// const logger = new Logger()
+
 const config = require('../config')
 const { subreddit } = config.jobs.getNewPosts
 const { readBehind } = config
@@ -5,7 +9,7 @@ const startTime = new Date() - (readBehind * 1000)// When the job was first sche
 
 let loggedPostIds = new Set()
 
-module.exports = ({ reddit, logger }) => ({
+module.exports = () => ({
    name: 'getNewPosts',
    // cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
 //    cronExpression: '*/15 * * * * *', // Every 15 seconds (testing)

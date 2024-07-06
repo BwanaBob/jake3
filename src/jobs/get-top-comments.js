@@ -1,3 +1,7 @@
+const reddit = require('../modules/Reddit') // shared instance
+const logger = require('../modules/Logger') // shared instance
+// const logger = new Logger()
+
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 const config = require('../config')
 const {
@@ -11,7 +15,7 @@ const {
    ineligibleUsers,
 } = config.jobs.getTopComments
 
-async function getLatestPost(reddit, logger) {
+async function getLatestPost() {
    logger.info({
       emoji: '🏅',
       columns: ['Top Comments', 'Find Post', subreddit, searchString],
@@ -35,7 +39,7 @@ async function getPostById(reddit, logger, postId) {
    return post
 }
 
-module.exports = ({ reddit, logger }) => ({
+module.exports = () => ({
    name: 'getTopComments',
    cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
    // cronExpression: '0 * * * * *', // Every 60 seconds (testing)

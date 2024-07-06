@@ -4,8 +4,8 @@ const {
    Collection,
    ThreadAutoArchiveDuration,
 } = require('discord.js')
-const Logger = require('../modules/Logger')
-const logger = new Logger()
+const logger = require('../modules/Logger')
+// const logger = new Logger()
 const setupDiscordChannels = require('../utils/discord-channels')
 
 module.exports = {
