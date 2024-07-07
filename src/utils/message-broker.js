@@ -2,151 +2,71 @@ const { EmbedBuilder, MessageFlagsBitField } = require('discord.js')
 const config = require('../config')
 
 module.exports = {
-   _getPostStatus(post) {
-      // not yet used
-      if (!post.banned_at_utc) {
-         return {
-            status: 'Visible',
-            subStatus: 'Visible',
-            color: config.jobOutput.newPost.color,
-         }
-      }
-
-      if (post.spam) {
-         return {
-            status: 'Removed',
-            subStatus: 'Spam',
-            color: config.jobOutput.spamPost.color,
-         }
-      }
-
-      if (
-         post.banned_at_utc &&
-         !post.ban_note &&
-         post.banned_by &&
-         post.banned_by === true &&
-         post.removed_by_category == 'reddit'
-      ) {
-         return {
-            status: 'Removed',
-            subStatus: 'Spam',
-            color: config.jobOutput.spamPost.color,
-         }
-      }
-
-      // if (
-      //    post.banned_at_utc &&
-      //    post.ban_note &&
-      //    post.ban_note == 'comfirm spam' &&
-      //    post.banned_by &&
-      //    post.banned_by == 'AutoModerator'
-      // ) {
-      //    return { status: 'Queued', subStatus: 'Automoderator ' } // this is on a comment karma one
-      // }
-
-      if (
-         post.banned_at_utc &&
-         post.ban_note &&
-         post.ban_note == 'remove not spam' &&
-         post.banned_by &&
-         post.banned_by == 'AutoModerator' &&
-         author_flair_css_class == 'shadow'
-      ) {
-         return {
-            status: 'Removed',
-            subStatus: 'ShadowBanned',
-            color: config.jobOutput.spamPost.color,
-         }
-      }
-
-      if (
-         post.banned_at_utc &&
-         post.ban_note &&
-         post.ban_note == 'remove not spam' &&
-         post.banned_by &&
-         post.banned_by == 'AutoModerator'
-      ) {
-         return {
-            status: 'Queued',
-            subStatus: 'AutoModerator',
-            color: config.jobOutput.modQueuePost.color,
-         }
-      }
-
-      if (post.num_reports && post.num_reports > 0) {
-         return {
-            status: 'Queued',
-            subStatus: 'Reported',
-            color: config.jobOutput.modQueuePost.color,
-         }
-      }
-
-      return {
-         status: 'Unknown',
-         subStatus: 'Unknown',
-         color: config.jobOutput.spamPost.color,
-      }
-   },
-
-   _makePostEmbed(post) {
+   _getSubmissionAvatar(submission) {
       let thisAvatarURL =
          'https://www.redditstatic.com/avatars/defaults/v2/avatar_default_7.png'
       let p24AvatarURL = 'https://i.imgur.com/TjABABi.png'
       let oplAvatarURL = 'https://i.imgur.com/MbDgRbw.png'
-      let postMessage = ''
-      let authorUser = post.author
+      let lafrAvatarURL = 'https://i.imgur.com/puXsvy4.jpg'
 
-      if (post.subreddit == 'OnPatrolLive' || post.subreddit == 'OPLTesting') {
+      if (submission.subreddit == 'OnPatrolLive' || submission.subreddit == 'OPLTesting') {
          thisAvatarURL = oplAvatarURL
-      } else if (post.subreddit == 'Police247') {
+      } else if (submission.subreddit == 'Police247') {
          thisAvatarURL = p24AvatarURL
+      } else if (
+         submission.subreddit == 'LAFireandRescue' ||
+         submission.subreddit == 'LAFireRescue'
+      ) {
+         thisAvatarURL = lafrAvatarURL
       }
+      return thisAvatarURL
+   },
 
-      const postEmbed = new EmbedBuilder()
-         .setColor(config.jobOutput.newPost.embedColor)
-         .setURL(`https://www.reddit.com${post.permalink}`)
-
-      if (post.author_flair_css_class == 'shadow') {
-         // console.log('User is shadowed')
-         thisAvatarURL = 'https://i.imgur.com/6eRa9QF.png'
-         authorUser += ' [shadow]'
-         postEmbed.setColor(config.jobOutput.spamPost.embedColor)
-      }
-      if (post.author_flair_css_class == 'watch') {
-         thisAvatarURL = 'https://i.imgur.com/SQ8Yka8.png'
-         authorUser += ' [watch]'
-         postEmbed.setColor(config.jobOutput.modQueuePost.embedColor)
-      }
-
-      postEmbed.setAuthor({
-         name: authorUser,
-         url: `https://www.reddit.com${post.permalink}`,
-         iconURL: thisAvatarURL,
-      })
-
-      postMessage = `**${post.title.slice(0, config.postSize)}**`
-      if (post.selftext) {
-         postMessage += `\n${post.selftext.slice(0, config.postSize)}`
-      }
-
+   _getPostEmoji(post) {
       var postEmoji = '📌'
       if (!post.is_self) {
          postEmoji = '🔗'
-         if (post.post_hint !== 'image') {
-            postMessage += `\n[Link](${post.url})`
-         }
       }
       if (post.post_hint == 'rich:video' || post.is_video == true) {
          postEmoji = '🎦'
       }
       if (post.post_hint == 'image') {
          postEmoji = '📸'
-         postEmbed.setImage(post.url)
+         // postEmbed.setImage(post.url)
       }
       if (post.poll_data) {
          postEmoji = '✅'
       }
+      return postEmoji
+   },
 
+   _getPostEmbed(post) {
+      // Create initial embed
+      const postEmbed = new EmbedBuilder()
+      // Get server based avatar image
+      thisAvatarURL = this._getSubmissionAvatar(post)
+      postEmbed.setAuthor({
+         name: post.author,
+         url: `https://www.reddit.com${post.permalink}`,
+         iconURL: thisAvatarURL,
+      })
+      // Handle special formatting based on post type
+      //    post Emoji for title based on post type
+      const postEmoji = this._getPostEmoji(post)
+      //    post description
+      let postMessage = `**${post.title.slice(0, config.postSize)}**`
+      if (post.selftext) {
+         postMessage += `\n${post.selftext.slice(0, config.postSize)}`
+      }
+      if (!post.is_self && post.post_hint !== 'image') {
+         postMessage += `\n[Link](${post.url})`
+      }
+      postEmbed.setDescription(`${postEmoji}  ${postMessage}`)
+      //    post image
+      if (post.post_hint == 'image') {
+         postEmbed.setImage(post.url)
+      }
+      //    post thumbnail
       if (
          post.thumbnail &&
          post.thumbnail !== 'default' &&
@@ -163,10 +83,125 @@ module.exports = {
             )
          }
       }
+      // end of post type based formatting
 
-      postEmbed.setDescription(`${postEmoji}  ${postMessage}`)
+      // Get visibility status and format accordingly
+      if (!post.banned_at_utc) {
+         postEmbed.setColor(config.jobOutput.newPost.embedColor)
+         // postEmbed.setFooter({ text: `` })
+         return postEmbed
+      }
 
-      if (post.ban_note && post.ban_note !== 'remove not spam') {
+      if (post.spam) {
+         // Never seen this
+         postEmbed.setColor(config.jobOutput.spamPost.embedColor)
+         postEmbed.setTitle('Spam Post')
+         postEmbed.setURL(
+            `https://www.reddit.com/mod/${post.subreddit}/queue?dx_mod_queue=enabled&queueType=removed`
+         )
+         postEmbed.setFooter({ text: `Unusual Spam Post - Leave for analysis` })
+         return postEmbed
+      }
+
+      if (
+         post.banned_at_utc &&
+         !post.ban_note &&
+         post.banned_by &&
+         post.banned_by === true &&
+         post.removed_by_category == 'reddit'
+      ) {
+         postEmbed.setColor(config.jobOutput.spamPost.embedColor)
+         postEmbed.setTitle('Removed Post')
+         postEmbed.setURL(
+            `https://www.reddit.com/mod/${post.subreddit}/queue?dx_mod_queue=enabled&queueType=removed`
+         )
+         postEmbed.setFooter({ text: `Reddit Spam Post - Uncommon` })
+         return postEmbed
+      }
+
+      if (
+         post.banned_at_utc &&
+         post.ban_note &&
+         post.ban_note == 'reinforce spam' &&
+         post.banned_by &&
+         post.banned_by === true &&
+         post.removed_by_category &&
+         post.removed_by_category == 'reddit'
+      ) {
+         // "Removed by Reddit's spam filter"
+         postEmbed.setColor(config.jobOutput.modQueuePost.embedColor)
+         postEmbed.setTitle('Queued Post')
+         postEmbed.setURL(`https://www.reddit.com/mod/${post.subreddit}/queue`)
+         postEmbed.setFooter({ text: `Marked as spam by Reddit` })
+         return postEmbed
+      }
+
+      // if (
+      //    post.banned_at_utc &&
+      //    post.ban_note &&
+      //    post.ban_note == 'comfirm spam' &&
+      //    post.banned_by &&
+      //    post.banned_by == 'AutoModerator'
+      // ) {
+      //    return { status: 'Queued', subStatus: 'Automoderator ' } // this is on a comment karma one. Likely both automod and reddit reputation filtered
+      // }
+
+      if (
+         post.banned_at_utc &&
+         post.ban_note &&
+         post.ban_note == 'remove not spam' &&
+         post.banned_by &&
+         post.banned_by == 'AutoModerator' &&
+         author_flair_css_class == 'shadow'
+      ) {
+         postEmbed.setColor(config.jobOutput.spamPost.embedColor)
+         postEmbed.setTitle('Removed Post')
+         postEmbed.setURL(
+            `https://www.reddit.com/mod/${post.subreddit}/queue?dx_mod_queue=enabled&queueType=removed`
+         )
+         postEmbed.setFooter({ text: `ShadowBanned by AutoModerator` })
+         return postEmbed
+      }
+
+      if (
+         post.banned_at_utc &&
+         post.ban_note &&
+         post.ban_note == 'remove not spam' &&
+         post.banned_by &&
+         post.banned_by == 'AutoModerator' &&
+         author_flair_css_class == 'watch'
+      ) {
+         postEmbed.setColor(config.jobOutput.spamPost.embedColor)
+         postEmbed.setTitle('Queued Post')
+         postEmbed.setURL(`https://www.reddit.com/mod/${post.subreddit}/queue`)
+         postEmbed.setFooter({ text: `Watch List by AutoModerator` })
+         return postEmbed
+      }
+
+      if (
+         post.banned_at_utc &&
+         post.ban_note &&
+         post.ban_note == 'remove not spam' &&
+         post.banned_by &&
+         post.banned_by == 'AutoModerator'
+      ) {
+         postEmbed.setColor(config.jobOutput.modQueuePost.embedColor)
+         postEmbed.setTitle('Queued Post')
+         postEmbed.setURL(`https://www.reddit.com/mod/${post.subreddit}/queue`)
+         postEmbed.setFooter({ text: `Filtered by AutoModerator` })
+         return postEmbed
+      }
+
+      if (post.num_reports && post.num_reports > 0) {
+         postEmbed.setColor(config.jobOutput.modQueuePost.embedColor)
+         postEmbed.setTitle('Queued Post')
+         postEmbed.setURL(`https://www.reddit.com/mod/${post.subreddit}/queue`)
+         postEmbed.setFooter({ text: `Reported` })
+         return postEmbed
+      }
+
+      // Unknown visibility
+      if (post.ban_note) {
          postEmbed.addFields({
             name: 'Ban Note',
             value: post.ban_note,
@@ -174,7 +209,7 @@ module.exports = {
          })
       }
 
-      if (post.banned_by && post.banned_by !== 'AutoModerator') {
+      if (post.banned_by) {
          if (post.banned_by === true) {
             postEmbed.addFields({
                name: 'Banned By',
@@ -206,37 +241,11 @@ module.exports = {
          })
       }
 
-      if (post.banned_at_utc && post.spam) {
-         postEmbed.setColor(config.jobOutput.spamPost.embedColor)
-         postEmbed.setTitle('Spam Post')
-         postEmbed.setURL(`https://www.reddit.com/r/OnPatrolLive/about/spam`)
-         return postEmbed
-      }
+      postEmbed.setColor(config.jobOutput.spamPost.embedColor)
+      postEmbed.setTitle('Unknown Post')
+      postEmbed.setURL(`https://www.reddit.com/mod/${post.subreddit}/queue`)
+      postEmbed.setFooter({ text: `Unusual Post - Leave for analysis` })
 
-      if (
-         post.banned_at_utc &&
-         (post.author_flair_css_class == 'shadow' ||
-            (post.ban_note && post.ban_note !== 'remove not spam'))
-      ) {
-         postEmbed.setColor(config.jobOutput.spamPost.embedColor)
-         postEmbed.setTitle('Removed Post')
-         postEmbed.setURL(
-            `https://www.reddit.com/mod/OnPatrolLive/queue?dx_mod_queue=enabled&queueType=removed&contentType=all&sort=sort_date&page=1&first=25&selectedSubreddits=OnPatrolLive`
-         )
-         return postEmbed
-      }
-
-      if (post.banned_at_utc) {
-         // console.log('Comment is in queue')
-         if (post.num_reports && post.num_reports > 0) {
-            postEmbed.setColor(config.jobOutput.reportedPost.embedColor)
-            postEmbed.setTitle('Reported Post')
-         } else {
-            postEmbed.setColor(config.jobOutput.modQueuePost.embedColor)
-            postEmbed.setTitle('Mod Queue Post')
-         }
-         postEmbed.setURL(`https://www.reddit.com/mod/${post.subreddit}/queue`)
-      }
       return postEmbed
    },
 
@@ -436,7 +445,8 @@ module.exports = {
                let messageEmbed = ''
                for (const item of response.data) {
                   if (item.kind == 't3') {
-                     messageEmbed = this._makePostEmbed(item.data)
+                     // messageEmbed = this._makePostEmbed(item.data)
+                     messageEmbed = this._getPostEmbed(item.data)
                   } else if (item.kind == 't1') {
                      messageEmbed = this._makeCommentEmbed(item.data)
                   } else {
@@ -529,7 +539,8 @@ module.exports = {
             if (response.status == 'success') {
                let messageEmbed = ''
                for (const post of response.data) {
-                  messageEmbed = this._makePostEmbed(post)
+                  // messageEmbed = this._makePostEmbed(post)
+                  messageEmbed = this._getPostEmbed(post)
                   message = { embeds: [messageEmbed] }
                   sendChannel = redditServers[post.subreddit]['Stream']
                   // sendChannel = client.params.get('streamChannelId')

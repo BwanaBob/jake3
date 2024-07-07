@@ -1,6 +1,5 @@
 const reddit = require('../modules/Reddit') // shared instance
 const logger = require('../modules/Logger') // shared instance
-// const logger = new Logger()
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 const config = require('../config')
