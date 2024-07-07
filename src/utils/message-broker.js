@@ -174,7 +174,7 @@ module.exports = {
          post.banned_by == 'AutoModerator' &&
          post.author_flair_css_class == 'watch'
       ) {
-         postEmbed.setColor(config.jobOutput.spamPost.embedColor)
+         postEmbed.setColor(config.jobOutput.modQueuePost.embedColor)
          postEmbed.setTitle('Queued Post')
          postEmbed.setURL(`https://www.reddit.com/mod/${post.subreddit}/queue`)
          postEmbed.setFooter({ text: `Watch List by AutoModerator` })
@@ -368,7 +368,7 @@ module.exports = {
          comment.banned_by == 'AutoModerator' &&
          comment.author_flair_css_class == 'watch'
       ) {
-         commentEmbed.setColor(config.jobOutput.spamComment.embedColor)
+         commentEmbed.setColor(config.jobOutput.modQueueComment.embedColor)
          commentEmbed.setTitle('Queued Comment')
          commentEmbed.setURL(
             `https://www.reddit.com/mod/${comment.subreddit}/queue`
