@@ -135,7 +135,7 @@ module.exports = {
          postEmbed.setColor(config.jobOutput.modQueuePost.embedColor)
          postEmbed.setTitle('Queued Post')
          postEmbed.setURL(`https://www.reddit.com/mod/${post.subreddit}/queue`)
-         postEmbed.setFooter({ text: `Marked as spam by Reddit` })
+         postEmbed.setFooter({ text: `Queued by Subreddit Settings (All Posts)` })
          return postEmbed
       }
 
@@ -329,7 +329,7 @@ module.exports = {
          commentEmbed.setURL(
             `https://www.reddit.com/mod/${comment.subreddit}/queue`
          )
-         commentEmbed.setFooter({ text: `${commentFooterPost}\nMarked as spam by Reddit` })
+         commentEmbed.setFooter({ text: `${commentFooterPost}\nQueued by Subreddit Spam Settings` })
          return commentEmbed
       }
 
