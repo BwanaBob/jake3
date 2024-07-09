@@ -43,7 +43,7 @@ module.exports = {
       return postEmoji
    },
 
-   _getPostEmbed(post) {
+   _getPostEmbed(post, jobName) {
       // Create initial embed
       const postEmbed = new EmbedBuilder()
       // Get server based avatar image
@@ -89,7 +89,7 @@ module.exports = {
       // end of post type based formatting
 
       // Get visibility status and format accordingly
-      if (!post.banned_at_utc) {
+      if (!post.banned_at_utc && jobName !== 'getNewModQueue') {
          postEmbed.setColor(config.jobOutput.newPost.embedColor)
          // postEmbed.setFooter({ text: `` })
          return postEmbed
@@ -135,7 +135,9 @@ module.exports = {
          postEmbed.setColor(config.jobOutput.modQueuePost.embedColor)
          postEmbed.setTitle('Queued Post')
          postEmbed.setURL(`https://www.reddit.com/mod/${post.subreddit}/queue`)
-         postEmbed.setFooter({ text: `Queued by Subreddit Settings (All Posts)` })
+         postEmbed.setFooter({
+            text: `Queued by Subreddit Settings (All Posts)`,
+         })
          return postEmbed
       }
 
@@ -260,11 +262,8 @@ module.exports = {
       return postEmbed
    },
 
-   _getCommentEmbed(comment) {
-      const commentFooterPost = `📌 ${comment.link_title.slice(
-         0,
-         config.commentTitleSize
-      )}`
+   _getCommentEmbed(comment, jobName) {
+      const commentFooterPost = `📌 ${comment.link_title.slice( 0, config.commentTitleSize )}`;
       // Create initial embed
       const commentEmbed = new EmbedBuilder()
          .setDescription(`${comment.body.slice(0, config.commentSize)}`)
@@ -278,7 +277,7 @@ module.exports = {
       })
 
       // Get visibility status and format accordingly
-      if (!comment.banned_at_utc) {
+      if (!comment.banned_at_utc && jobName !== 'getNewModQueue') {
          commentEmbed.setColor(config.jobOutput.newComment.embedColor)
          // commentEmbed.setFooter({ text: `` })
          return commentEmbed
@@ -310,7 +309,9 @@ module.exports = {
          commentEmbed.setURL(
             `https://www.reddit.com/mod/${comment.subreddit}/queue?dx_mod_queue=enabled&queueType=removed`
          )
-         commentEmbed.setFooter({ text: `${commentFooterPost}\nReddit Spam Comment - Uncommon` })
+         commentEmbed.setFooter({
+            text: `${commentFooterPost}\nReddit Spam Comment - Uncommon`,
+         })
          return commentEmbed
       }
 
@@ -329,7 +330,9 @@ module.exports = {
          commentEmbed.setURL(
             `https://www.reddit.com/mod/${comment.subreddit}/queue`
          )
-         commentEmbed.setFooter({ text: `${commentFooterPost}\nQueued by Subreddit Spam Settings` })
+         commentEmbed.setFooter({
+            text: `${commentFooterPost}\nQueued by Subreddit Spam Settings`,
+         })
          return commentEmbed
       }
 
@@ -356,7 +359,9 @@ module.exports = {
          commentEmbed.setURL(
             `https://www.reddit.com/mod/${comment.subreddit}/queue?dx_mod_queue=enabled&queueType=removed`
          )
-         commentEmbed.setFooter({ text: `${commentFooterPost}\nShadowBanned by AutoModerator` })
+         commentEmbed.setFooter({
+            text: `${commentFooterPost}\nShadowBanned by AutoModerator`,
+         })
          return commentEmbed
       }
 
@@ -373,7 +378,9 @@ module.exports = {
          commentEmbed.setURL(
             `https://www.reddit.com/mod/${comment.subreddit}/queue`
          )
-         commentEmbed.setFooter({ text: `${commentFooterPost}\nWatch List by AutoModerator` })
+         commentEmbed.setFooter({
+            text: `${commentFooterPost}\nWatch List by AutoModerator`,
+         })
          return commentEmbed
       }
 
@@ -389,7 +396,9 @@ module.exports = {
          commentEmbed.setURL(
             `https://www.reddit.com/mod/${comment.subreddit}/queue`
          )
-         commentEmbed.setFooter({ text: `${commentFooterPost}\nFiltered by AutoModerator` })
+         commentEmbed.setFooter({
+            text: `${commentFooterPost}\nFiltered by AutoModerator`,
+         })
          return commentEmbed
       }
 
@@ -405,7 +414,7 @@ module.exports = {
 
       // Unknown visibility
       if (comment.banned_at_utc) {
-         postEmbed.addFields({
+         commentEmbed.addFields({
             name: 'Ban Time',
             value: comment.banned_at_utc,
             inline: true,
@@ -457,150 +466,12 @@ module.exports = {
       commentEmbed.setURL(
          `https://www.reddit.com/mod/${comment.subreddit}/queue`
       )
-      commentEmbed.setFooter({ text: `${commentFooterPost}\nUnusual Comment - Leave for analysis` })
+      commentEmbed.setFooter({
+         text: `${commentFooterPost}\nUnusual Comment - Leave for analysis`,
+      })
 
       return commentEmbed
    },
-
-   // _makeCommentEmbed(comment) {
-   // // console.log(comment);
-   // let thisAvatarURL =
-   //    'https://www.redditstatic.com/avatars/defaults/v2/avatar_default_7.png'
-   // let p24AvatarURL = 'https://i.imgur.com/TjABABi.png'
-   // let oplAvatarURL = 'https://i.imgur.com/MbDgRbw.png'
-   // let lafrAvatarURL = 'https://i.imgur.com/puXsvy4.jpg'
-   // let authorUser = comment.author
-
-   // if (comment.subreddit == 'OnPatrolLive') {
-   //    thisAvatarURL = oplAvatarURL
-   // } else if (
-   //    comment.subreddit == 'Police247' ||
-   //    comment.subreddit == 'OPLTesting'
-   // ) {
-   //    thisAvatarURL = p24AvatarURL
-   // } else if (
-   //    comment.subreddit == 'LAFireandRescue' ||
-   //    comment.subreddit == 'LAFireRescue'
-   // ) {
-   //    thisAvatarURL = lafrAvatarURL
-   // }
-
-   // const commentEmbed = new EmbedBuilder()
-   //    .setColor(config.jobOutput.newComment.embedColor)
-   //    .setURL(`https://www.reddit.com${comment.permalink}`)
-   //    // .setTitle(`${comment.link_title.slice(0,config.commentTitleSize)}`)
-   //    .setFooter({
-   //       text: `📌 ${comment.link_title.slice(0, config.commentTitleSize)}`,
-   //       // iconURL: `https://i.imgur.com/I6VOse4.png`,
-   //    })
-
-   //    .setDescription(`${comment.body.slice(0, config.commentSize)}`)
-
-   // if (comment.author_flair_css_class == 'shadow') {
-   //    // console.log('User is shadowed')
-   //    thisAvatarURL = 'https://i.imgur.com/6eRa9QF.png'
-   //    authorUser += ' [shadow]'
-   //    commentEmbed.setColor(config.jobOutput.spamComment.embedColor)
-   // }
-
-   // if (comment.author_flair_css_class == 'watch') {
-   //    // console.log('User is on watchlist')
-   //    thisAvatarURL = 'https://i.imgur.com/SQ8Yka8.png'
-   //    authorUser += ' [watch]'
-   //    commentEmbed.setColor(config.jobOutput.modQueueComment.embedColor)
-   // }
-
-   // commentEmbed.setAuthor({
-   //    name: authorUser,
-   //    url: `https://www.reddit.com${comment.permalink}`,
-   //    iconURL: thisAvatarURL,
-   // })
-
-   // if (comment.ban_note && comment.ban_note !== 'remove not spam') {
-   //    // commentEmbed.setFooter({ text: `Ban note: ${comment.ban_note}` });
-   //    commentEmbed.addFields({
-   //       name: 'Ban Note',
-   //       value: comment.ban_note,
-   //       inline: true,
-   //    })
-   // }
-
-   // if (comment.banned_by && comment.banned_by !== 'AutoModerator') {
-   //    if (comment.banned_by === true) {
-   //       commentEmbed.addFields({
-   //          name: 'Banned By',
-   //          value: 'true',
-   //          inline: true,
-   //       })
-   //    } else {
-   //       commentEmbed.addFields({
-   //          name: 'Banned By',
-   //          value: comment.banned_by,
-   //          inline: true,
-   //       })
-   //    }
-   // }
-
-   // if (comment.collapsed_reason_code) {
-   //    commentEmbed.addFields({
-   //       name: 'Reason Code',
-   //       value: comment.collapsed_reason_code,
-   //       inline: true,
-   //    })
-   // }
-
-   // if (comment.banned_at_utc && comment.spam) {
-   //    // console.log('Comment is spam')
-   //    commentEmbed.setColor(config.jobOutput.spamComment.embedColor)
-   //    // commentEmbed.setTitle(`[Spam] ${comment.link_title.slice(0,config.commentTitleSize)}`)
-   //    commentEmbed.setTitle(`Spam Comment`)
-   //    commentEmbed.setURL(`https://www.reddit.com/r/OnPatrolLive/about/spam`)
-   //    return commentEmbed
-   // }
-
-   // if (
-   //    comment.banned_at_utc &&
-   //    (comment.author_flair_css_class == 'shadow' ||
-   //       (comment.ban_note && comment.ban_note !== 'remove not spam') ||
-   //       comment.body == '!tidy')
-   // ) {
-   //    // console.log('Comment is spam')
-   //    commentEmbed.setColor(config.jobOutput.spamComment.embedColor)
-   //    // commentEmbed.setTitle(`[Removed] ${comment.link_title.slice(0,config.commentTitleSize)}`)
-   //    commentEmbed.setTitle(`Removed Comment`)
-   //    commentEmbed.setURL(
-   //       `https://www.reddit.com/mod/OnPatrolLive/queue?dx_mod_queue=enabled&queueType=removed&contentType=all&sort=sort_date&page=1&first=25&selectedSubreddits=OnPatrolLive`
-   //    )
-   //    return commentEmbed
-   // }
-
-   // if (comment.banned_at_utc) {
-   //    // console.log('Comment is in queue')
-   //    if (comment.num_reports && comment.num_reports > 0) {
-   //       commentEmbed.setColor(config.jobOutput.reportedComment.embedColor)
-   //       commentEmbed.setTitle('Reported Comment')
-   //       // console.log('Comment is in reported')
-   //    } else {
-   //       commentEmbed.setColor(config.jobOutput.modQueueComment.embedColor)
-   //       // commentEmbed.setTitle(`[Queue] ${comment.link_title.slice(0,config.commentTitleSize)}`)
-   //       commentEmbed.setTitle(`Queued Comment`)
-   //    }
-   //    commentEmbed.setURL(
-   //       `https://www.reddit.com/mod/${comment.subreddit}/queue`
-   //    )
-   // }
-   //    return commentEmbed
-   // },
-
-   // // original sendMessage
-   // async sendMessage(client, channelId, message) {
-   //    // console.log(`Sending message from ${source} - ${subreddit}`)
-   //    const channel = await client.channels.cache.get(channelId)
-   //    const sentMessage = await channel.send(message).catch((err) => {
-   //       console.error(`[ERROR] Sending message ${data.id} -`, err.message)
-   //    })
-   //    // console.log(`Sent Message: ${sentMessage.id}`)
-   // },
 
    async sendMessage(client, channelId, message) {
       const { start, end } = config.quietHours
@@ -659,10 +530,10 @@ module.exports = {
                for (const item of response.data) {
                   if (item.kind == 't3') {
                      // messageEmbed = this._makePostEmbed(item.data)
-                     messageEmbed = this._getPostEmbed(item.data)
+                     messageEmbed = this._getPostEmbed(item.data, jobName)
                   } else if (item.kind == 't1') {
                      // messageEmbed = this._makeCommentEmbed(item.data)
-                     messageEmbed = this._getCommentEmbed(item.data)
+                     messageEmbed = this._getCommentEmbed(item.data, jobName)
                   } else {
                      break
                   }
@@ -742,7 +613,7 @@ module.exports = {
                let messageEmbed = ''
                for (const comment of response.data) {
                   // messageEmbed = this._makeCommentEmbed(comment)
-                  messageEmbed = this._getCommentEmbed(comment)
+                  messageEmbed = this._getCommentEmbed(comment, jobName)
                   message = { embeds: [messageEmbed] }
                   sendChannel = redditServers[comment.subreddit]['Stream']
                   // sendChannel = client.params.get('streamChannelId')
@@ -755,7 +626,7 @@ module.exports = {
                let messageEmbed = ''
                for (const post of response.data) {
                   // messageEmbed = this._makePostEmbed(post)
-                  messageEmbed = this._getPostEmbed(post)
+                  messageEmbed = this._getPostEmbed(post, jobName)
                   message = { embeds: [messageEmbed] }
                   sendChannel = redditServers[post.subreddit]['Stream']
                   // sendChannel = client.params.get('streamChannelId')
