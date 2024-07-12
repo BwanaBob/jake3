@@ -53,7 +53,7 @@ module.exports = () => ({
                }
 
                logger.info({
-                  emoji: '💬',
+                  emoji: '🛑',
                   columns: [
                      kindText,
                      item.data.subreddit,

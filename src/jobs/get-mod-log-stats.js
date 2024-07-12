@@ -102,7 +102,7 @@ const analyzeModlog = (entries, specificEndTime, logger) => {
       const approvedPercentage = (counts.approved / total) * 100
       const removedPercentage = (counts.removed / total) * 100
       logger.info({
-         emoji: '',
+         emoji: '📋',
          columns: [
             'Mod Log',
             {

@@ -74,7 +74,7 @@ module.exports = () => ({
             // console.log(message);
             if (!loggedMessageIds.has(message.id)) {
                logger.info({
-                  emoji: '💬',
+                  emoji: '📫',
                   columns: [
                      'New ModMail',
                      // 'Found',

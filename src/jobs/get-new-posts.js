@@ -16,7 +16,7 @@ module.exports = () => ({
    cronExpression: '26,56 * * * * *', // Every 30 seconds (live)
 
    jobFunction: async () => {
-      // logger.info({emoji: '💬', columns: ['getNewPosts', `Fetching`, subreddit]});
+      // logger.info({emoji: '📌', columns: ['getNewPosts', `Fetching`, subreddit]});
 
       try {
          const posts = await reddit.getNewPosts(subreddit, 6) // Fetch the latest 6 posts
@@ -29,7 +29,7 @@ module.exports = () => ({
                && new Date(post.data.created_utc * 1000) >= startTime
             ) {
                logger.info({
-                  emoji: '💬',
+                  emoji: '📌',
                   columns: [
                      'New Post',
                      // 'Found',
