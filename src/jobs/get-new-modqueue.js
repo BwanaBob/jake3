@@ -46,10 +46,10 @@ module.exports = () => ({
 
                if (item.kind == 't1') {
                   kindText = 'Queue Comment'
-                  descriptionText = item.data.body.slice(0, 50) ?? '<No Body>'
+                  descriptionText = item.data.body || '<No Body>'
                } else if (item.kind == 't3') {
                   kindText = 'Queue Post'
-                  descriptionText = item.data.title.slice(0, 50) ?? '<No Title>'
+                  descriptionText = item.data.title || '<No Title>'
                }
 
                logger.info({
