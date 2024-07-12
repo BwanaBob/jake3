@@ -207,9 +207,11 @@ module.exports = {
 
       // Unknown visibility
       if (post.banned_at_utc) {
+         const bannedAtDate = new Date(post.banned_at_utc * 1000);
+         const bannedAtString = bannedAtDate.toLocaleString();
          postEmbed.addFields({
             name: 'Ban Time',
-            value: post.banned_at_utc,
+            value: bannedAtString,
             inline: true,
          })
       }
@@ -414,9 +416,11 @@ module.exports = {
 
       // Unknown visibility
       if (comment.banned_at_utc) {
+         const bannedAtDate = new Date(comment.banned_at_utc * 1000);
+         const bannedAtString = bannedAtDate.toLocaleString();
          commentEmbed.addFields({
             name: 'Ban Time',
-            value: comment.banned_at_utc,
+            value: bannedAtString,
             inline: true,
          })
       }
