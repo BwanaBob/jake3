@@ -41,14 +41,25 @@ module.exports = () => ({
                new Date(item.data.created_utc * 1000) >= startTime
             ) {
                // console.log(item)
+               let kindText = 'Queue Item'
+               let descriptionText = '<unknown>'
+
+               if (item.kind == 't1') {
+                  kindText = 'Queue Comment'
+                  descriptionText = item.data.body.slice(0, 50) ?? '<No Body>'
+               } else if (item.kind == 't3') {
+                  kindText = 'Queue Post'
+                  descriptionText = item.data.title.slice(0, 50) ?? '<No Title>'
+               }
+
                logger.info({
                   emoji: '💬',
                   columns: [
-                     'New ModQueue',
+                     kindText,
                      item.data.subreddit,
-                     item.kind,
                      item.data.author,
-                     item.data.id,
+                     descriptionText,
+                     // item.data.id,
                      // description,
                   ],
                })
