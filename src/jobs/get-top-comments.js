@@ -44,9 +44,9 @@ async function getPostById(postId) {
 
 module.exports = () => ({
    name: 'getTopComments',
-   cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
+   // cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
    // cronExpression: '0 * * * * *', // Every 60 seconds (testing)
-   // cronExpression: '0 56 7 * * SAT,SUN', // Every Saturday and Sunday at 3am (live)
+   cronExpression: '0 0 3 * * SAT,SUN', // Every Saturday and Sunday at 3am (live)
 
    jobFunction: async () => {
       try {

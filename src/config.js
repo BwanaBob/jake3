@@ -91,9 +91,9 @@ module.exports = {
       },
       getTopComments: {
          subreddit: 'OnPatrolLive',
-         searchMode: 'id', // 'latest', 'date' or 'id'
-         searchString: '1bwvw9r',
-         // searchString: 'title:"Live Thread"',
+         searchMode: 'latest', // 'latest', 'date' or 'id'
+         // searchString: '1bwvw9r',
+         searchString: 'title:"Live Thread"',
          returnCount: 10, // number of top comments to return
          commentLimit: 100, // Comments per fetch to analize
          fetchCount: 5, // repeat fetches to get average score
