@@ -127,14 +127,15 @@ const analyzeModlog = (entries, specificEndTime, logger) => {
       })
       //   console.log(`✅ ${counts.approved}/${counts.removed} ⛔ (${approvedPercentage.toFixed(2)}% / ${removedPercentage.toFixed(2)}%) - Rule: ${ruleDetail}`);
    }
-   return sortedGroupedEntries;
+   return sortedGroupedEntries
 }
 
 module.exports = () => ({
    name: 'getModLogStats',
 
-   cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
-   // cronExpression: '0 * * * * *', // Every 1 minucd co   te (testing)
+   // cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
+   // cronExpression: '0 * * * * *', // Every 1 minute (testing)
+   cronExpression: '0 33 1 * * SUN', // Every Saturday and Sunday at 3am (live)
 
    jobFunction: async () => {
       // logger.info({emoji: '💬', columns: ['getModLog', `Starting`, subreddit]});
@@ -173,7 +174,7 @@ module.exports = () => ({
          }
          // console.log(allEntries)
          const results = analyzeModlog(allEntries, specificEndTime, logger)
-         return {status: 'success', data: results};
+         return { status: 'success', data: results }
       } catch (error) {
          console.error('Error:', error)
       }

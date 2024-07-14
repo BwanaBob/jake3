@@ -84,9 +84,9 @@ module.exports = {
       },
       getModLogStats: {
          subreddit: 'OnPatrolLive',
-         startDate: '2024-06-28',
+         startDate: '2024-07-12',
          startTime: '18:00:00',
-         endDate: '2024-06-30',
+         endDate: '2024-07-14',
          endTime: '00:30:00',
       },
       getTopComments: {
