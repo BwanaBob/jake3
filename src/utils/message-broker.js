@@ -206,10 +206,28 @@ module.exports = {
          return postEmbed
       }
 
+      if (
+         post.banned_at_utc &&
+         post.ban_note &&
+         post.ban_note == 'confirm spam' &&
+         post.banned_by &&
+         post.banned_by == true &&
+         post.collapsed_reason_code &&
+         post.collapsed_reason_code == 'CROWD_CONTROL'
+      ) {
+         postEmbed.setColor(config.jobOutput.modQueuePost.embedColor)
+         postEmbed.setTitle('Queued Post')
+         postEmbed.setURL(`https://www.reddit.com/mod/${post.subreddit}/queue`)
+         postEmbed.setFooter({
+            text: `Filtered by Reddit - Crowd Control (karma)`,
+         })
+         return postEmbed
+      }
+
       // Unknown visibility
       if (post.banned_at_utc) {
-         const bannedAtDate = new Date(post.banned_at_utc * 1000);
-         const bannedAtString = bannedAtDate.toLocaleString();
+         const bannedAtDate = new Date(post.banned_at_utc * 1000)
+         const bannedAtString = bannedAtDate.toLocaleString()
          postEmbed.addFields({
             name: 'Ban Time',
             value: bannedAtString,
@@ -266,7 +284,10 @@ module.exports = {
    },
 
    _getCommentEmbed(comment, jobName) {
-      const commentFooterPost = `📌 ${comment.link_title.slice( 0, config.commentTitleSize )}`;
+      const commentFooterPost = `📌 ${comment.link_title.slice(
+         0,
+         config.commentTitleSize
+      )}`
       // Create initial embed
       const commentEmbed = new EmbedBuilder()
          .setDescription(`${comment.body.slice(0, config.commentSize)}`)
@@ -415,10 +436,30 @@ module.exports = {
          return commentEmbed
       }
 
+      if (
+         comment.banned_at_utc &&
+         comment.ban_note &&
+         comment.ban_note == 'confirm spam' &&
+         comment.banned_by &&
+         comment.banned_by == true &&
+         comment.collapsed_reason_code &&
+         comment.collapsed_reason_code == 'CROWD_CONTROL'
+      ) {
+         commentEmbed.setColor(config.jobOutput.modQueueComment.embedColor)
+         commentEmbed.setTitle('Queued Comment')
+         commentEmbed.setURL(
+            `https://www.reddit.com/mod/${comment.subreddit}/queue`
+         )
+         commentEmbed.setFooter({
+            text: `${commentFooterPost}\nFiltered by Reddit - Crowd Control (karma)`,
+         })
+         return commentEmbed
+      }
+
       // Unknown visibility
       if (comment.banned_at_utc) {
-         const bannedAtDate = new Date(comment.banned_at_utc * 1000);
-         const bannedAtString = bannedAtDate.toLocaleString();
+         const bannedAtDate = new Date(comment.banned_at_utc * 1000)
+         const bannedAtString = bannedAtDate.toLocaleString()
          commentEmbed.addFields({
             name: 'Ban Time',
             value: bannedAtString,
