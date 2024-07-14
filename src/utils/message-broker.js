@@ -74,6 +74,7 @@ module.exports = {
          post.thumbnail &&
          post.thumbnail !== 'default' &&
          post.thumbnail !== 'self' &&
+         post.thumbnail !== 'spoiler' &&
          post.thumbnail !== 'nsfw' &&
          post.post_hint !== 'image'
       ) {
