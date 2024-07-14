@@ -755,7 +755,7 @@ module.exports = {
                // })
 
                message = { embeds: [statsEmbed] }
-               sendChannel = redditServers['Default']['Jobs']
+               sendChannel = redditServers['default']['Jobs']
                // sendChannel = client.params.get('jobsChannelId')
                this.sendMessage(client, sendChannel, message)
             }

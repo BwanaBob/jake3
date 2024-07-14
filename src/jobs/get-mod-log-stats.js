@@ -135,7 +135,7 @@ module.exports = () => ({
 
    // cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
    // cronExpression: '0 * * * * *', // Every 1 minute (testing)
-   cronExpression: '0 33 1 * * SUN', // Every Saturday and Sunday at 3am (live)
+   cronExpression: '0 37 1 * * SUN', // Every Saturday and Sunday at 3am (live)
 
    jobFunction: async () => {
       // logger.info({emoji: '💬', columns: ['getModLog', `Starting`, subreddit]});
