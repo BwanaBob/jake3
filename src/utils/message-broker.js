@@ -519,6 +519,110 @@ module.exports = {
       return commentEmbed
    },
 
+   _getModLogEmbed(item) {
+      const avatarAutoMod = 'https://i.imgur.com/2ordphG.png'
+      const avatarMod = 'https://i.imgur.com/ZCZdaTJ.png'
+      // Create initial embed
+      const itemEmbed = new EmbedBuilder()
+         .setColor(config.jobOutput.modLog.embedColor)
+         .setTitle(item.action)
+         .setURL(`https://www.reddit.com/mod/${item.subreddit}/log`)
+         .setFooter({
+            text: `r/${item.subreddit}`,
+         })
+
+      if (item.subreddit == 'AutoModerator') {
+         itemEmbed.setAuthor({
+            name: item.mod,
+            iconURL: avatarAutoMod,
+         })
+      } else {
+         itemEmbed.setAuthor({
+            name: item.mod,
+            iconURL: avatarMod,
+         })
+      }
+
+      // Specific formats
+      // comment approve/remove
+      if (
+         item.action &&
+         ['approvecomment', 'removecomment', 'spamcomment'].includes(
+            item.action
+         ) &&
+         item.details &&
+         // item.details == 'unspam' &&
+         item.target_author &&
+         item.target_body
+      ) {
+         // itemEmbed.setTitle(item.action)
+         itemEmbed.setDescription(
+            `**${item.target_author}**\n${item.target_body.slice(0, 150)}\n*${
+               item.details
+            }*`
+         )
+         return itemEmbed
+      }
+
+      // post approve/remove
+      if (
+         item.action &&
+         ['approvelink', 'removelink', 'spamlink'].includes(item.action) &&
+         item.details &&
+         // item.details == 'unspam' &&
+         item.target_author &&
+         item.target_title
+      ) {
+         let postText = `**${item.target_title.slice(0, 50)}**`
+         if (item.target_body) {
+            postText += `\n${item.target_body.slice(0, 150)}`
+         }
+         itemEmbed.setTitle(item.action)
+         itemEmbed.setDescription(
+            `${item.target_author}\n${postText}\n*${item.details}*`
+         )
+         return itemEmbed
+      }
+
+      if (item.details) {
+         itemEmbed.addFields({
+            name: 'Details',
+            value: item.details,
+            inline: true,
+         })
+      }
+      if (item.description) {
+         itemEmbed.addFields({
+            name: 'Description',
+            value: item.description.slice(0, 240),
+            inline: true,
+         })
+      }
+      if (item.target_author) {
+         itemEmbed.addFields({
+            name: 'Target Author',
+            value: item.target_author,
+            inline: true,
+         })
+      }
+      if (item.target_title) {
+         itemEmbed.addFields({
+            name: 'Target Title',
+            value: item.target_title.slice(0, 70),
+            inline: true,
+         })
+      }
+      if (item.target_body) {
+         itemEmbed.addFields({
+            name: 'Target Body',
+            value: item.target_body.slice(0, 70),
+            inline: true,
+         })
+      }
+
+      return itemEmbed
+   },
+
    async sendMessage(client, channelId, message) {
       const { start, end } = config.quietHours
 
@@ -679,65 +783,9 @@ module.exports = {
 
          case 'getNewModLog':
             if (response.status == 'success') {
-               // let messageEmbed = ''
+               let messageEmbed = ''
                for (const item of response.data) {
-                  // messageEmbed = this._getPostEmbed(item, jobName)
-
-                  const messageEmbed = new EmbedBuilder()
-                     .setColor(config.jobOutput.modLog.embedColor)
-                     .setTitle('Mod Log')
-                     .setURL(`https://www.reddit.com/mod/${item.subreddit}/log`)
-                     .setAuthor({
-                        name: item.mod,
-                        // iconURL: 'https://i.imgur.com/MbDgRbw.png',
-                     })
-                     // .setDescription(`${item.details.slice(0, 120)}`)
-                     .setFooter({
-                        text: `r/${item.subreddit}`,
-                     })
-                  if (item.action) {
-                     messageEmbed.addFields({
-                        name: 'Action',
-                        value: item.action,
-                        inline: true,
-                     })
-                  }
-                  if (item.details) {
-                     messageEmbed.addFields({
-                        name: 'Details',
-                        value: item.details,
-                        inline: true,
-                     })
-                  }
-                  if (item.description) {
-                     messageEmbed.addFields({
-                        name: 'Description',
-                        value: item.description.slice(0, 240),
-                        inline: true,
-                     })
-                  }
-                  if (item.target_author) {
-                     messageEmbed.addFields({
-                        name: 'Target Author',
-                        value: item.target_author,
-                        inline: true,
-                     })
-                  }
-                  if (item.target_title) {
-                     messageEmbed.addFields({
-                        name: 'Target Title',
-                        value: item.target_title.slice(0, 70),
-                        inline: true,
-                     })
-                  }
-                  if (item.target_body) {
-                     messageEmbed.addFields({
-                        name: 'Target Body',
-                        value: item.target_body.slice(0, 70),
-                        inline: true,
-                     })
-                  }
-
+                  messageEmbed = this._getModLogEmbed(item)
                   message = { embeds: [messageEmbed] }
                   sendChannel = redditServers[item.subreddit]['Mod Log']
                   this.sendMessage(client, sendChannel, message)
