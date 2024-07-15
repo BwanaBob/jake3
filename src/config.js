@@ -10,7 +10,7 @@ module.exports = {
       end: '08:00',
    },
    redditChannelName: 'reddit',
-   redditThreads: ['Jobs', 'Stream', 'Mod Mail', 'Mod Queue'], // threads each server must have to receive messages
+   redditThreads: ['Jobs', 'Stream', 'Mod Log', 'Mod Mail', 'Mod Queue'], // threads each server must have to receive messages
    subreddits: {
       default: {
          discordServerId: '391821567241224192',
@@ -44,6 +44,7 @@ module.exports = {
       spamPost: { embedColor: '#e91e63' },
       modQueuePost: { embedColor: '#f1aa0f' },
       reportedPost: { embedColor: '#c40ff1' },
+      modLog: { embedColor: '#cc44aa' },
       modMail: { embedColor: '#aa44cc' },
       modLogStats: { embedColor: '#3498db' },
    },
@@ -74,6 +75,9 @@ module.exports = {
          subreddit: 'OnPatrolLive+Police247+LAFireandRescue+LAFireRescue',
       },
       getNewPosts: {
+         subreddit: 'OnPatrolLive+Police247+LAFireandRescue+LAFireRescue',
+      },
+      getNewModLog: {
          subreddit: 'OnPatrolLive+Police247+LAFireandRescue+LAFireRescue',
       },
       getNewModQueue: {

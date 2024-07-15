@@ -658,11 +658,9 @@ module.exports = {
             if (response.status == 'success') {
                let messageEmbed = ''
                for (const comment of response.data) {
-                  // messageEmbed = this._makeCommentEmbed(comment)
                   messageEmbed = this._getCommentEmbed(comment, jobName)
                   message = { embeds: [messageEmbed] }
                   sendChannel = redditServers[comment.subreddit]['Stream']
-                  // sendChannel = client.params.get('streamChannelId')
                   this.sendMessage(client, sendChannel, message)
                }
             }
@@ -671,15 +669,82 @@ module.exports = {
             if (response.status == 'success') {
                let messageEmbed = ''
                for (const post of response.data) {
-                  // messageEmbed = this._makePostEmbed(post)
                   messageEmbed = this._getPostEmbed(post, jobName)
                   message = { embeds: [messageEmbed] }
                   sendChannel = redditServers[post.subreddit]['Stream']
-                  // sendChannel = client.params.get('streamChannelId')
                   this.sendMessage(client, sendChannel, message)
                }
             }
             break
+
+         case 'getNewModLog':
+            if (response.status == 'success') {
+               // let messageEmbed = ''
+               for (const item of response.data) {
+                  // messageEmbed = this._getPostEmbed(item, jobName)
+
+                  const messageEmbed = new EmbedBuilder()
+                     .setColor(config.jobOutput.modLog.embedColor)
+                     .setTitle('Mod Log')
+                     .setURL(`https://www.reddit.com/mod/${item.subreddit}/log`)
+                     .setAuthor({
+                        name: item.mod,
+                        // iconURL: 'https://i.imgur.com/MbDgRbw.png',
+                     })
+                     // .setDescription(`${item.details.slice(0, 120)}`)
+                     .setFooter({
+                        text: `r/${item.subreddit}`,
+                     })
+                  if (item.action) {
+                     messageEmbed.addFields({
+                        name: 'Action',
+                        value: item.action,
+                        inline: true,
+                     })
+                  }
+                  if (item.details) {
+                     messageEmbed.addFields({
+                        name: 'Details',
+                        value: item.details,
+                        inline: true,
+                     })
+                  }
+                  if (item.description) {
+                     messageEmbed.addFields({
+                        name: 'Description',
+                        value: item.description.slice(0, 240),
+                        inline: true,
+                     })
+                  }
+                  if (item.target_author) {
+                     messageEmbed.addFields({
+                        name: 'Target Author',
+                        value: item.target_author,
+                        inline: true,
+                     })
+                  }
+                  if (item.target_title) {
+                     messageEmbed.addFields({
+                        name: 'Target Title',
+                        value: item.target_title.slice(0, 70),
+                        inline: true,
+                     })
+                  }
+                  if (item.target_body) {
+                     messageEmbed.addFields({
+                        name: 'Target Body',
+                        value: item.target_body.slice(0, 70),
+                        inline: true,
+                     })
+                  }
+
+                  message = { embeds: [messageEmbed] }
+                  sendChannel = redditServers[item.subreddit]['Mod Log']
+                  this.sendMessage(client, sendChannel, message)
+               }
+            }
+            break
+
          case 'getNewModMail':
             if (response.status == 'success') {
                for (const mailMessage of response.data) {

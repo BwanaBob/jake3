@@ -1,0 +1,120 @@
+{
+  "kind": "modaction",
+  "data": {
+    "description": "community icon",
+    "target_body": null,
+    "mod_id36": "49bhl07",
+    "created_utc": 1721010546,
+    "subreddit": "LAFireRescue",
+    "target_title": null,
+    "target_permalink": null,
+    "subreddit_name_prefixed": "r/LAFireRescue",
+    "details": "added_styling",
+    "action": "community_styling",
+    "target_author": "",
+    "target_fullname": null,
+    "sr_id36": "8mdp0t",
+    "id": "ModAction_024a6dcd-4252-11ef-9b57-5158d218a189",
+    "mod": "BwanaRob"
+  }
+}
+{
+  "kind": "modaction",
+  "data": {
+    "description": "highlight color, background color, primary color",
+    "target_body": null,
+    "mod_id36": "49bhl07",
+    "created_utc": 1721010546,
+    "subreddit": "LAFireRescue",
+    "target_title": null,
+    "target_permalink": null,
+    "subreddit_name_prefixed": "r/LAFireRescue",
+    "details": "added_styling",
+    "action": "community_styling",
+    "target_author": "",
+    "target_fullname": null,
+    "sr_id36": "8mdp0t",
+    "id": "ModAction_02369002-4252-11ef-90c5-69558a410b98",
+    "mod": "BwanaRob"
+  }
+}
+{
+  "kind": "modaction",
+  "data": {
+    "description": "community icon",
+    "target_body": null,
+    "mod_id36": "49bhl07",
+    "created_utc": 1721010546,
+    "subreddit": "LAFireRescue",
+    "target_title": null,
+    "target_permalink": null,
+    "subreddit_name_prefixed": "r/LAFireRescue",
+    "details": "added_styling",
+    "action": "community_styling",
+    "target_author": "",
+    "target_fullname": null,
+    "sr_id36": "8mdp0t",
+    "id": "ModAction_024a6dcd-4252-11ef-9b57-5158d218a189",
+    "mod": "BwanaRob"
+  }
+}
+{
+  "kind": "modaction",
+  "data": {
+    "description": "highlight color, background color, primary color",
+    "target_body": null,
+    "mod_id36": "49bhl07",
+    "created_utc": 1721010546,
+    "subreddit": "LAFireRescue",
+    "target_title": null,
+    "target_permalink": null,
+    "subreddit_name_prefixed": "r/LAFireRescue",
+    "details": "added_styling",
+    "action": "community_styling",
+    "target_author": "",
+    "target_fullname": null,
+    "sr_id36": "8mdp0t",
+    "id": "ModAction_02369002-4252-11ef-90c5-69558a410b98",
+    "mod": "BwanaRob"
+  }
+}
+{
+  "kind": "modaction",
+  "data": {
+    "description": "",
+    "target_body": null,
+    "mod_id36": "49bhl07",
+    "created_utc": 1721011127,
+    "subreddit": "LAFireRescue",
+    "target_title": null,
+    "target_permalink": null,
+    "subreddit_name_prefixed": "r/LAFireRescue",
+    "details": "flair_template",
+    "action": "editflair",
+    "target_author": "",
+    "target_fullname": null,
+    "sr_id36": "8mdp0t",
+    "id": "ModAction_5c641ef9-4253-11ef-805a-f95af06fbc43",
+    "mod": "BwanaRob"
+  }
+}
+{
+  "kind": "modaction",
+  "data": {
+    "description": "",
+    "target_body": null,
+    "mod_id36": "49bhl07",
+    "created_utc": 1721011127,
+    "subreddit": "LAFireRescue",
+    "target_title": null,
+    "target_permalink": null,
+    "subreddit_name_prefixed": "r/LAFireRescue",
+    "details": "flair_template",
+    "action": "editflair",
+    "target_author": "",
+    "target_fullname": null,
+    "sr_id36": "8mdp0t",
+    "id": "ModAction_5c641ef9-4253-11ef-805a-f95af06fbc43",
+    "mod": "BwanaRob"
+  }
+}
