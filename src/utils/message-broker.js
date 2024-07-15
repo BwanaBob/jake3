@@ -527,9 +527,7 @@ module.exports = {
          .setColor(config.jobOutput.modLog.embedColor)
          .setTitle(item.action)
          .setURL(`https://www.reddit.com/mod/${item.subreddit}/log`)
-         .setFooter({
-            text: `r/${item.subreddit}`,
-         })
+         .setFooter({ text: `r/${item.subreddit}` })
 
       if (item.mod == 'AutoModerator') {
          itemEmbed.setAuthor({
@@ -556,11 +554,9 @@ module.exports = {
          item.target_body
       ) {
          // itemEmbed.setTitle(item.action)
-         itemEmbed.setDescription(
-            `**${item.target_author}**\n${item.target_body.slice(0, 150)}\n*${
-               item.details
-            }*`
-         )
+         // itemEmbed.setDescription(`**${item.target_author}**\n${item.target_body.slice(0, 150)}\n*${item.details}*`)
+         itemEmbed.setDescription(`**${item.target_author}**\n${item.target_body.slice(0, 150)}`)
+         itemEmbed.setFooter({ text: item.details })
          return itemEmbed
       }
 
@@ -579,8 +575,9 @@ module.exports = {
          }
          // itemEmbed.setTitle(item.action)
          itemEmbed.setDescription(
-            `${item.target_author}\n${postText}\n*${item.details}*`
+            `${item.target_author}\n${postText}`
          )
+         itemEmbed.setFooter({ text: item.details })
          return itemEmbed
       }
 
