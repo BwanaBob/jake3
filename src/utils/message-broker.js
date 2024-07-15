@@ -793,6 +793,28 @@ module.exports = {
             }
             break
 
+         case 'scheduleFast':
+            if (response.status == 'success') {
+               const jobEmbed = new EmbedBuilder()
+                  .setColor(config.jobOutput.scheduleFast.embedColor)
+                  .setTitle('Fast Schedule Enabled')
+               message = { embeds: [jobEmbed] }
+               sendChannel = redditServers['default']['Jobs']
+               this.sendMessage(client, sendChannel, message)
+            }
+            break
+
+         case 'scheduleSlow':
+            if (response.status == 'success') {
+               const jobEmbed = new EmbedBuilder()
+                  .setColor(config.jobOutput.scheduleSlow.embedColor)
+                  .setTitle('Slow Schedule Enabled')
+               message = { embeds: [jobEmbed] }
+               sendChannel = redditServers['default']['Jobs']
+               this.sendMessage(client, sendChannel, message)
+            }
+            break
+
          case 'getNewModMail':
             if (response.status == 'success') {
                for (const mailMessage of response.data) {

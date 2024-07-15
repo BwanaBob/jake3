@@ -10,7 +10,7 @@ let loggedModLogIds = new Set()
 
 const fs = require('fs')
 function saveItemsToFile(item) {
-   const filePath = 'mod-log.txt'
+   const filePath = 'modlog.txt'
    fs.appendFile(filePath, JSON.stringify(item, null, 2) + '\n', (err) => {
       if (err) {
          console.error('Error writing to file:', err)

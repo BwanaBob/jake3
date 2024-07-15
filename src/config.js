@@ -47,6 +47,8 @@ module.exports = {
       modLog: { embedColor: '#cc44aa' },
       modMail: { embedColor: '#aa44cc' },
       modLogStats: { embedColor: '#3498db' },
+      scheduleFast: { embedColor: '#3498db' },
+      scheduleSlow: { embedColor: '#3498db' },
    },
    logger: {
       logLength: 140,

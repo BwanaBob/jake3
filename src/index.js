@@ -23,6 +23,13 @@ scheduler.on('jobCancelled', (name) => {
    logger.info({ emoji: '⏰', columns: ['Scheduler', 'Cancel Job', name] })
 })
 
+scheduler.on('jobUpdated', (name, cronExpression) => {
+   logger.info({
+      emoji: '⏰',
+      columns: ['Scheduler', 'Updated Job', name, cronExpression],
+   })
+})
+
 scheduler.on('jobCompleted', (name, result) => {
    const discordResult = broker.processDiscordMessage(
       discord.client,
@@ -33,7 +40,6 @@ scheduler.on('jobCompleted', (name, result) => {
 
 const jobsFolderPath = path.join(__dirname, 'jobs')
 scheduler.loadJobsFromFolder(jobsFolderPath, { reddit, logger })
-
 ;(async () => {
    try {
       await discord.login()

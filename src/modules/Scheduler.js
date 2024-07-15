@@ -10,25 +10,50 @@ class Scheduler extends EventEmitter {
       this.jobs = {}
    }
 
+
    async scheduleJob(name, cronExpression, jobFunction) {
-      const scheduledJob = schedule.scheduleJob(cronExpression, async () => {
-         try {
-            const result = await jobFunction();
-            this.emit('jobCompleted', name, result);
-         } catch (error) {
-            this.emit('jobError', name, error);
-         }
+      const job = schedule.scheduleJob(cronExpression, async () => {
+          try {
+              const result = await jobFunction();
+              this.emit('jobCompleted', name, result);
+          } catch (error) {
+              this.emit('jobError', name, error);
+          }
       });
-      this.jobs[name] = { scheduledJob, jobFunction };
+      this.jobs[name] = { scheduleJob: job, jobFunction };
       this.emit('jobScheduled', name, cronExpression);
-   }
+  }
+
+
+   // async scheduleJob(name, cronExpression, jobFunction) {
+   //    const scheduledJob = schedule.scheduleJob(cronExpression, async () => {
+   //       try {
+   //          const result = await jobFunction()
+   //          this.emit('jobCompleted', name, result)
+   //       } catch (error) {
+   //          this.emit('jobError', name, error)
+   //       }
+   //    })
+   //    this.jobs[name] = { scheduledJob, jobFunction }
+   //    this.emit('jobScheduled', name, cronExpression)
+   // }
 
    cancelJob(name) {
       if (this.jobs[name]) {
-         this.jobs[name].cancel()
+         this.jobs[name].scheduleJob.cancel()
          delete this.jobs[name]
-         // logger.info(`Job "${name}" cancelled`)
          this.emit('jobCancelled', name)
+      }
+   }
+
+   async updateJob(name, newCronExpression) {
+      if (this.jobs[name]) {
+         const jobFunction = this.jobs[name].jobFunction
+         this.cancelJob(name)
+         this.scheduleJob(name, newCronExpression, jobFunction)
+         this.emit('jobUpdated', name, newCronExpression)
+      } else {
+         throw new Error(`Job "${name}" does not exist.`)
       }
    }
 
