@@ -531,7 +531,7 @@ module.exports = {
             text: `r/${item.subreddit}`,
          })
 
-      if (item.subreddit == 'AutoModerator') {
+      if (item.mod == 'AutoModerator') {
          itemEmbed.setAuthor({
             name: item.mod,
             iconURL: avatarAutoMod,
@@ -577,7 +577,7 @@ module.exports = {
          if (item.target_body) {
             postText += `\n${item.target_body.slice(0, 150)}`
          }
-         itemEmbed.setTitle(item.action)
+         // itemEmbed.setTitle(item.action)
          itemEmbed.setDescription(
             `${item.target_author}\n${postText}\n*${item.details}*`
          )
