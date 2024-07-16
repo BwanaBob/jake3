@@ -522,10 +522,11 @@ module.exports = {
    _getModLogEmbed(item) {
       const avatarAutoMod = 'https://i.imgur.com/2ordphG.png'
       const avatarMod = 'https://i.imgur.com/ZCZdaTJ.png'
+
       // Create initial embed
       const itemEmbed = new EmbedBuilder()
          .setColor(config.jobOutput.modLog.embedColor)
-         .setTitle(item.action)
+         .setTitle(config.jobs.getNewModLog.actions[item.action]?.text || item.action) 
          .setURL(`https://www.reddit.com/mod/${item.subreddit}/log`)
          .setFooter({ text: `r/${item.subreddit}` })
 
@@ -555,7 +556,9 @@ module.exports = {
       ) {
          // itemEmbed.setTitle(item.action)
          // itemEmbed.setDescription(`**${item.target_author}**\n${item.target_body.slice(0, 150)}\n*${item.details}*`)
-         itemEmbed.setDescription(`**${item.target_author}**\n${item.target_body.slice(0, 150)}`)
+         itemEmbed.setDescription(
+            `**${item.target_author}**\n${item.target_body.slice(0, 150)}`
+         )
          itemEmbed.setFooter({ text: item.details })
          return itemEmbed
       }
@@ -574,9 +577,7 @@ module.exports = {
             postText += `\n${item.target_body.slice(0, 150)}`
          }
          // itemEmbed.setTitle(item.action)
-         itemEmbed.setDescription(
-            `${item.target_author}\n${postText}`
-         )
+         itemEmbed.setDescription(`${item.target_author}\n${postText}`)
          itemEmbed.setFooter({ text: item.details })
          return itemEmbed
       }
@@ -780,12 +781,15 @@ module.exports = {
 
          case 'getNewModLog':
             if (response.status == 'success') {
-               let messageEmbed = ''
                for (const item of response.data) {
-                  messageEmbed = this._getModLogEmbed(item)
-                  message = { embeds: [messageEmbed] }
-                  sendChannel = redditServers[item.subreddit]['Mod Log']
-                  this.sendMessage(client, sendChannel, message)
+                  const actionEnabled =
+                     config.jobs.getNewModLog.actions[item.action]?.enabled
+                  if (actionEnabled !== false) {
+                     const messageEmbed = this._getModLogEmbed(item)
+                     message = { embeds: [messageEmbed] }
+                     sendChannel = redditServers[item.subreddit]['Mod Log']
+                     this.sendMessage(client, sendChannel, message)
+                  }
                }
             }
             break
