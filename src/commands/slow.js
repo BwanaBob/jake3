@@ -12,7 +12,7 @@ module.exports = {
    async execute(interaction) {
       await interaction.reply({
          content: 'Slow command received. Modifying schedule.',
-         ephemeral: false,
+         ephemeral: true,
       })
       scheduler.runJobNow('scheduleSlow')
    },
