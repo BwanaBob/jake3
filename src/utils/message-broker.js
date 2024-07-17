@@ -1,6 +1,6 @@
 const { EmbedBuilder, MessageFlagsBitField } = require('discord.js')
 const config = require('../config')
-const { decode } = require('html-entities');
+const { decode } = require('html-entities')
 
 module.exports = {
    _getSubmissionAvatar(submission) {
@@ -527,7 +527,9 @@ module.exports = {
       // Create initial embed
       const itemEmbed = new EmbedBuilder()
          .setColor(config.jobOutput.modLog.embedColor)
-         .setTitle(config.jobs.getNewModLog.actions[item.action]?.text || item.action) 
+         .setTitle(
+            config.jobs.getNewModLog.actions[item.action]?.text || item.action
+         )
          .setURL(`https://www.reddit.com/mod/${item.subreddit}/log`)
          .setFooter({ text: `r/${item.subreddit}` })
 
@@ -583,6 +585,31 @@ module.exports = {
          return itemEmbed
       }
 
+      // add removal reason
+      if (
+         item.action &&
+         item.action == 'addremovalreason' &&
+         item.target_author
+      ) {
+         itemEmbed.addFields({
+            name: 'Reason',
+            value: item.description,
+            inline: false,
+         })
+         let postText = item.target_author
+
+         if (item.target_title) {
+            // item is post
+            postText += `\n**${item.target_title.slice(0, 50)}**`
+         }
+         if (item.target_body) {
+            postText += `\n${item.target_body.slice(0, 150)}`
+         }
+         itemEmbed.setDescription(`${postText}`)
+         return itemEmbed
+      }
+
+      // Default undefined type
       if (item.details) {
          itemEmbed.addFields({
             name: 'Details',

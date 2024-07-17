@@ -1,7 +1,5 @@
 const reddit = require('../modules/Reddit') // shared instance
 const logger = require('../modules/Logger') // shared instance
-// const logger = new Logger()
-
 const config = require('../config')
 const { subreddit } = config.jobs.getNewModQueue
 const { readBehind } = config
