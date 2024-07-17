@@ -1,3 +1,4 @@
+const { decode } = require('html-entities')
 const reddit = require('../modules/Reddit') // shared instance
 const logger = require('../modules/Logger') // shared instance
 // const logger = new Logger()
@@ -42,6 +43,9 @@ module.exports = () => ({
                !loggedCommentIds.has(commentId) &&
                new Date(comment.data.created_utc * 1000) >= startTime
             ) {
+               // decode body and parent post title
+               comment.data.body = decode(comment.data.body);
+               comment.data.link_title = decode(comment.data.link_title);
                logger.info({
                   emoji: '💬',
                   columns: [

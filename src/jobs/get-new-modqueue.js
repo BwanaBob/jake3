@@ -1,3 +1,4 @@
+const { decode } = require('html-entities')
 const reddit = require('../modules/Reddit') // shared instance
 const logger = require('../modules/Logger') // shared instance
 const config = require('../config')
@@ -38,6 +39,13 @@ module.exports = () => ({
                !loggedItemIds.has(itemId) &&
                new Date(item.data.created_utc * 1000) >= startTime
             ) {
+               // decode fields
+               if (item.data.title) {
+                  item.data.title = decode(item.data.title)
+               }
+               if (item.data.body) {
+                  item.data.body = decode(item.data.body)
+               }
                // console.log(item)
                let kindText = 'Queue Item'
                let descriptionText = '<unknown>'

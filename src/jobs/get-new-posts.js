@@ -1,3 +1,4 @@
+const { decode } = require('html-entities')
 const reddit = require('../modules/Reddit') // shared instance
 const logger = require('../modules/Logger') // shared instance
 // const logger = new Logger()
@@ -5,14 +6,14 @@ const logger = require('../modules/Logger') // shared instance
 const config = require('../config')
 const { subreddit } = config.jobs.getNewPosts
 const { readBehind } = config
-const startTime = new Date() - (readBehind * 1000)// When the job was first scheduled
+const startTime = new Date() - readBehind * 1000 // When the job was first scheduled
 
 let loggedPostIds = new Set()
 
 module.exports = () => ({
    name: 'getNewPosts',
    // cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
-//    cronExpression: '*/15 * * * * *', // Every 15 seconds (testing)
+   //    cronExpression: '*/15 * * * * *', // Every 15 seconds (testing)
    cronExpression: '26,56 * * * * *', // Every 30 seconds (live)
 
    jobFunction: async () => {
@@ -25,9 +26,14 @@ module.exports = () => ({
          posts.forEach((post) => {
             const postId = post.data.id
             if (
-               !loggedPostIds.has(postId)
-               && new Date(post.data.created_utc * 1000) >= startTime
+               !loggedPostIds.has(postId) &&
+               new Date(post.data.created_utc * 1000) >= startTime
             ) {
+               //decode fields
+               post.data.title = decode(post.data.title)
+               if (post.data.selftext) {
+                  post.data.selftext = decode(post.data.selftext)
+               }
                logger.info({
                   emoji: '📌',
                   columns: [
@@ -44,10 +50,7 @@ module.exports = () => ({
          })
          return { status: 'success', data: newPosts }
       } catch (error) {
-         console.error(
-            'getNewPosts: Error fetching new posts:',
-            error.message
-         )
+         console.error('getNewPosts: Error fetching new posts:', error.message)
          throw error
       }
    },

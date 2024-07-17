@@ -41,6 +41,8 @@ module.exports = () => ({
                !loggedModLogIds.has(itemId) &&
                new Date(item.data.created_utc * 1000) >= startTime
             ) {
+               // decode fields
+               item.data.details = decode(item.data.details);
                logger.info({
                   emoji: '👮',
                   columns: [
@@ -48,7 +50,7 @@ module.exports = () => ({
                      item.data.subreddit,
                      item.data.mod,
                      item.data.action,
-                     decode(item.data.details),
+                     item.data.details,
                   ],
                })
                newItems.push(item.data)

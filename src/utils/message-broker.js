@@ -1,6 +1,5 @@
 const { EmbedBuilder, MessageFlagsBitField } = require('discord.js')
 const config = require('../config')
-const { decode } = require('html-entities')
 
 module.exports = {
    _getSubmissionAvatar(submission) {
@@ -562,7 +561,7 @@ module.exports = {
          itemEmbed.setDescription(
             `**${item.target_author}**\n${item.target_body.slice(0, 150)}`
          )
-         itemEmbed.setFooter({ text: `${decode(item.details)}` })
+         itemEmbed.setFooter({ text: `${item.details}` })
          return itemEmbed
       }
 
@@ -581,7 +580,7 @@ module.exports = {
          }
          // itemEmbed.setTitle(item.action)
          itemEmbed.setDescription(`${item.target_author}\n${postText}`)
-         itemEmbed.setFooter({ text: `${decode(item.details)}` })
+         itemEmbed.setFooter({ text: `${item.details}` })
          return itemEmbed
       }
 
@@ -613,7 +612,7 @@ module.exports = {
       if (item.details) {
          itemEmbed.addFields({
             name: 'Details',
-            value: decode(item.details),
+            value: item.details,
             inline: true,
          })
       }
