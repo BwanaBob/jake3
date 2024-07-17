@@ -1,3 +1,4 @@
+const { decode } = require('html-entities');
 const reddit = require('../modules/Reddit') // shared instance
 const logger = require('../modules/Logger') // shared instance
 // const logger = new Logger()
@@ -30,7 +31,7 @@ const analyzeModlog = (entries, specificEndTime, logger) => {
          entry.data.created_utc <= specificEndTime // filter candidates by end time, but not later approvals and removals
       ) {
          autoModRemovals[entry.data.target_fullname] = {
-            details: entry.data.details,
+            details: decode(entry.data.details),
             approved: false,
             removed: false,
          }

@@ -1,3 +1,4 @@
+const { decode } = require('html-entities');
 const reddit = require('../modules/Reddit') // shared instance
 const logger = require('../modules/Logger') // shared instance
 // const logger = new Logger()
@@ -47,7 +48,7 @@ module.exports = () => ({
                      item.data.subreddit,
                      item.data.mod,
                      item.data.action,
-                     item.data.details,
+                     decode(item.data.details),
                   ],
                })
                newItems.push(item.data)
