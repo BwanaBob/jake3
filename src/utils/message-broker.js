@@ -570,7 +570,6 @@ module.exports = {
          item.action &&
          ['approvelink', 'removelink', 'spamlink'].includes(item.action) &&
          item.details &&
-         // item.details == 'unspam' &&
          item.target_author &&
          item.target_title
       ) {
@@ -578,7 +577,6 @@ module.exports = {
          if (item.target_body) {
             postText += `\n${item.target_body.slice(0, 150)}`
          }
-         // itemEmbed.setTitle(item.action)
          itemEmbed.setDescription(`${item.target_author}\n${postText}`)
          itemEmbed.setFooter({ text: `${item.details}` })
          return itemEmbed
