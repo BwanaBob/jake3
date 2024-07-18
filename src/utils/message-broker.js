@@ -608,12 +608,9 @@ module.exports = {
 
       // Default undefined type
       if (item.details) {
-         itemEmbed.addFields({
-            name: 'Details',
-            value: item.details,
-            inline: true,
-         })
+         itemEmbed.setFooter({ text: `${item.details}` })
       }
+
       if (item.description) {
          itemEmbed.addFields({
             name: 'Description',
@@ -621,28 +618,45 @@ module.exports = {
             inline: true,
          })
       }
-      if (item.target_author) {
-         itemEmbed.addFields({
-            name: 'Target Author',
-            value: item.target_author,
-            inline: true,
-         })
-      }
-      if (item.target_title) {
-         itemEmbed.addFields({
-            name: 'Target Title',
-            value: item.target_title.slice(0, 70),
-            inline: true,
-         })
-      }
-      if (item.target_body) {
-         itemEmbed.addFields({
-            name: 'Target Body',
-            value: item.target_body.slice(0, 70),
-            inline: true,
-         })
-      }
 
+      if (item.target_fullname) {
+         // acts on a post or comment. put related fields in the embed description
+         let descriptionText = ''
+
+         if (item.target_author) {
+            descriptionText += item.target_author
+         }
+         if (item.target_title) {
+            descriptionText += `\n**${item.target_title}**`
+         }
+         if (item.target_body) {
+            descriptionText += `\n${item.target_body}`
+         }
+         itemEmbed.setDescription(descriptionText)
+      } else {
+         // probably won't have any of these (without target_fullname), but just in case
+         if (item.target_author) {
+            itemEmbed.addFields({
+               name: 'Target Author',
+               value: item.target_author,
+               inline: true,
+            })
+         }
+         if (item.target_title) {
+            itemEmbed.addFields({
+               name: 'Target Title',
+               value: item.target_title.slice(0, 70),
+               inline: true,
+            })
+         }
+         if (item.target_body) {
+            itemEmbed.addFields({
+               name: 'Target Body',
+               value: item.target_body.slice(0, 70),
+               inline: true,
+            })
+         }
+      }
       return itemEmbed
    },
 
