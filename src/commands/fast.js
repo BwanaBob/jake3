@@ -14,6 +14,6 @@ module.exports = {
          content: 'Fast command received. Modifying schedule.',
          ephemeral: true,
       })
-      scheduler.runJobNow('scheduleFasat')
+      scheduler.runJobNow('scheduleFast')
    },
 }
