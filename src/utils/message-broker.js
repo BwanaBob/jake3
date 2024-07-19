@@ -50,7 +50,7 @@ module.exports = {
       postEmbed.setAuthor({
          name: post.author,
          url: `https://www.reddit.com${post.permalink}`,
-         iconURL: `attachment://${thisAttachment.name}`,
+         iconURL: `attachment://${thisAttachment}`,
       })
       // Handle special formatting based on post type
       //    post Emoji for title based on post type
