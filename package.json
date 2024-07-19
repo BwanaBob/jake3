@@ -1,6 +1,6 @@
 {
   "name": "jake3",
-  "version": "1.0.0",
+  "version": "1.4.2",
   "description": "Monitor reddit for moddable activity",
   "main": "index.js",
   "scripts": {
