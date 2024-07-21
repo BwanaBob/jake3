@@ -555,7 +555,7 @@ module.exports = {
          // itemEmbed.setTitle(item.action)
          // itemEmbed.setDescription(`**${item.target_author}**\n${item.target_body.slice(0, 150)}\n*${item.details}*`)
          itemEmbed.setDescription(
-            `**${item.target_author}**\n${item.target_body.slice(0, 150)}`
+            `**${item.target_author}**\n${item.target_body.slice(0, config.commentSize)}`
          )
          itemEmbed.setFooter({ text: `${item.details}` })
          return { embeds: [itemEmbed], files: [thisAttachment]}
@@ -569,9 +569,9 @@ module.exports = {
          item.target_author &&
          item.target_title
       ) {
-         let postText = `**${item.target_title.slice(0, 50)}**`
+         let postText = `**${item.target_title.slice(0, config.commentTitleSize)}**`
          if (item.target_body) {
-            postText += `\n${item.target_body.slice(0, 150)}`
+            postText += `\n${item.target_body.slice(0, config.commentSize)}`
          }
          itemEmbed.setDescription(`${item.target_author}\n${postText}`)
          itemEmbed.setFooter({ text: `${item.details}` })
@@ -593,10 +593,10 @@ module.exports = {
 
          if (item.target_title) {
             // item is post
-            postText += `\n**${item.target_title.slice(0, 50)}**`
+            postText += `\n**${item.target_title.slice(0, config.commentTitleSize)}**`
          }
          if (item.target_body) {
-            postText += `\n${item.target_body.slice(0, 150)}`
+            postText += `\n${item.target_body.slice(0, config.commentSize)}`
          }
          itemEmbed.setDescription(`${postText}`)
          return { embeds: [itemEmbed], files: [thisAttachment]}
@@ -623,10 +623,10 @@ module.exports = {
             descriptionText += item.target_author
          }
          if (item.target_title) {
-            descriptionText += `\n**${item.target_title}**`
+            descriptionText += `\n**${item.target_title.slice(0, config.commentTitleSize)}**`
          }
          if (item.target_body) {
-            descriptionText += `\n${item.target_body}`
+            descriptionText += `\n${item.target_body.slice(0, config.commentSize)}`
          }
          itemEmbed.setDescription(descriptionText)
       } else {
@@ -641,14 +641,14 @@ module.exports = {
          if (item.target_title) {
             itemEmbed.addFields({
                name: 'Target Title',
-               value: item.target_title.slice(0, 70),
+               value: item.target_title.slice(0, config.commentTitleSize),
                inline: true,
             })
          }
          if (item.target_body) {
             itemEmbed.addFields({
                name: 'Target Body',
-               value: item.target_body.slice(0, 70),
+               value: item.target_body.slice(0, config.commentSize),
                inline: true,
             })
          }
@@ -829,7 +829,7 @@ module.exports = {
                   .setColor(config.jobOutput.scheduleFast.embedColor)
                   .setTitle('Fast Schedule Enabled')
                message = { embeds: [jobEmbed] }
-               sendChannel = redditServers['default']['Jobs']
+               sendChannel = redditServers['OnPatrolLive']['Jobs']
                this.sendMessage(client, sendChannel, message)
             }
             break
@@ -840,7 +840,7 @@ module.exports = {
                   .setColor(config.jobOutput.scheduleSlow.embedColor)
                   .setTitle('Slow Schedule Enabled')
                message = { embeds: [jobEmbed] }
-               sendChannel = redditServers['default']['Jobs']
+               sendChannel = redditServers['OnPatrolLive']['Jobs']
                this.sendMessage(client, sendChannel, message)
             }
             break
