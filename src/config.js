@@ -20,6 +20,10 @@ module.exports = {
          discordServerId: '325206992413130753',
          notifyRole: '1171955876609937564',
       },
+      OnPatrolLiveTVShow: {
+         discordServerId: '391821567241224192',
+         notifyRole: '391837678967980035',
+      },
       Police247: {
          discordServerId: '1239702141401305109',
          notifyRole: '1255242494870945904',
@@ -82,13 +86,13 @@ module.exports = {
    },
    jobs: {
       getNewComments: {
-         subreddit: 'OnPatrolLive+Police247+LAFireandRescue+BodycamCops+KillerCases',
+         subreddit: 'OnPatrolLive+Police247+LAFireandRescue+BodycamCops+KillerCases+OnPatrolLiveTVShow',
       },
       getNewPosts: {
-         subreddit: 'OnPatrolLive+Police247+LAFireandRescue+BodycamCops+KillerCases',
+         subreddit: 'OnPatrolLive+Police247+LAFireandRescue+BodycamCops+KillerCases+OnPatrolLiveTVShow',
       },
       getNewModLog: {
-         subreddit: 'OnPatrolLive+Police247+LAFireandRescue+BodycamCops+KillerCases',
+         subreddit: 'OnPatrolLive+Police247+LAFireandRescue+BodycamCops+KillerCases+OnPatrolLiveTVShow',
          actions: {
             banuser: { text: "Ban User", enabled: true }, 
             unbanuser: { text: "Unban User", enabled: true }, 
@@ -184,10 +188,10 @@ module.exports = {
             approve_award: { text: "Approve Award", enabled: true },          }
       },
       getNewModQueue: {
-         subreddit: 'OnPatrolLive+Police247+LAFireandRescue+BodycamCops+KillerCases',
+         subreddit: 'OnPatrolLive+Police247+LAFireandRescue+BodycamCops+KillerCases+OnPatrolLiveTVShow',
       },
       getNewModMail: {
-         subreddit: 'OnPatrolLive+Police247+LAFireandRescue+BodycamCops+KillerCases',
+         subreddit: 'OnPatrolLive+Police247+LAFireandRescue+BodycamCops+KillerCases+OnPatrolLiveTVShow',
       },
       getModLogStats: {
          subreddit: 'OnPatrolLive',
