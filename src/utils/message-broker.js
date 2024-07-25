@@ -1,24 +1,55 @@
-const { EmbedBuilder, AttachmentBuilder, MessageFlagsBitField } = require('discord.js')
+const {
+   EmbedBuilder,
+   AttachmentBuilder,
+   MessageFlagsBitField,
+} = require('discord.js')
 const config = require('../config')
-const attachmentAvatarDefault = new AttachmentBuilder("./resources/avatar-default.png", {name: "avatar-default.png"});
-const attachmentAvatarLAFR = new AttachmentBuilder("./resources/avatar-lafr-logo.png", {name: "avatar-lafr-logo.png"});
-const attachmentAvatarKillerCases = new AttachmentBuilder("./resources/avatar-default.png", {name: "avatar-default.png"});
-const attachmentAvatarOPL = new AttachmentBuilder("./resources/avatar-opl-logo.png", {name: "avatar-opl-logo.png"});
-const attachmentAvatarP24 = new AttachmentBuilder("./resources/avatar-p24-logo.png", {name: "avatar-p24-logo.png"});
-const attachmentAvatarAutoMod = new AttachmentBuilder("./resources/avatar-automoderator-shield.png", {name: "avatar-automoderator-shield.png"});
-const attachmentAvatarMod = new AttachmentBuilder("./resources/avatar-police-car-light-blue.png", {name: "avatar-police-car-light-blue.png"});
+const attachmentAvatarDefault = new AttachmentBuilder(
+   './resources/avatar-default.png',
+   { name: 'avatar-default.png' }
+)
+const attachmentAvatarLAFR = new AttachmentBuilder(
+   './resources/avatar-lafr-logo.png',
+   { name: 'avatar-lafr-logo.png' }
+)
+const attachmentAvatarKillerCases = new AttachmentBuilder(
+   './resources/avatar-default.png',
+   { name: 'avatar-default.png' }
+)
+const attachmentAvatarOPL = new AttachmentBuilder(
+   './resources/avatar-opl-logo.png',
+   { name: 'avatar-opl-logo.png' }
+)
+const attachmentAvatarP24 = new AttachmentBuilder(
+   './resources/avatar-p24-logo.png',
+   { name: 'avatar-p24-logo.png' }
+)
+const attachmentAvatarAutoMod = new AttachmentBuilder(
+   './resources/avatar-automoderator-shield.png',
+   { name: 'avatar-automoderator-shield.png' }
+)
+const attachmentAvatarMod = new AttachmentBuilder(
+   './resources/avatar-police-car-light-blue.png',
+   { name: 'avatar-police-car-light-blue.png' }
+)
 
 module.exports = {
    _getSubmissionAttachment(submission) {
       let thisAvatar = attachmentAvatarDefault
 
-      if (submission.subreddit == 'OnPatrolLive' || submission.subreddit == 'OPLTesting' ) {
+      if (
+         submission.subreddit == 'OnPatrolLive' ||
+         submission.subreddit == 'OPLTesting'
+      ) {
          thisAvatar = attachmentAvatarOPL
       } else if (submission.subreddit == 'Police247') {
          thisAvatar = attachmentAvatarP24
       } else if (submission.subreddit == 'KillerCases') {
          thisAvatar = attachmentAvatarKillerCases
-      } else if (submission.subreddit == 'LAFireandRescue' || submission.subreddit == 'LAFireRescue' ) {
+      } else if (
+         submission.subreddit == 'LAFireandRescue' ||
+         submission.subreddit == 'LAFireRescue'
+      ) {
          thisAvatar = attachmentAvatarLAFR
       }
       return thisAvatar
@@ -92,7 +123,7 @@ module.exports = {
       if (!post.banned_at_utc && jobName !== 'getNewModQueue') {
          postEmbed.setColor(config.jobOutput.newPost.embedColor)
          // postEmbed.setFooter({ text: `` })
-         return { embeds: [postEmbed], files: [thisAttachment]}
+         return { embeds: [postEmbed], files: [thisAttachment] }
       }
 
       if (post.banned_at_utc && post.spam) {
@@ -103,7 +134,7 @@ module.exports = {
             `https://www.reddit.com/mod/${post.subreddit}/queue?dx_mod_queue=enabled&queueType=removed`
          )
          postEmbed.setFooter({ text: `Unusual Spam Post - Leave for analysis` })
-         return { embeds: [postEmbed], files: [thisAttachment]}
+         return { embeds: [postEmbed], files: [thisAttachment] }
       }
 
       if (
@@ -119,7 +150,7 @@ module.exports = {
             `https://www.reddit.com/mod/${post.subreddit}/queue?dx_mod_queue=enabled&queueType=removed`
          )
          postEmbed.setFooter({ text: `Reddit Spam Post - Uncommon` })
-         return { embeds: [postEmbed], files: [thisAttachment]}
+         return { embeds: [postEmbed], files: [thisAttachment] }
       }
 
       if (
@@ -138,7 +169,7 @@ module.exports = {
          postEmbed.setFooter({
             text: `Queued by Subreddit Settings (All Posts)`,
          })
-         return { embeds: [postEmbed], files: [thisAttachment]}
+         return { embeds: [postEmbed], files: [thisAttachment] }
       }
 
       // if (
@@ -165,7 +196,7 @@ module.exports = {
             `https://www.reddit.com/mod/${post.subreddit}/queue?dx_mod_queue=enabled&queueType=removed`
          )
          postEmbed.setFooter({ text: `ShadowBanned by AutoModerator` })
-         return { embeds: [postEmbed], files: [thisAttachment]}
+         return { embeds: [postEmbed], files: [thisAttachment] }
       }
 
       if (
@@ -180,7 +211,7 @@ module.exports = {
          postEmbed.setTitle('Queued Post')
          postEmbed.setURL(`https://www.reddit.com/mod/${post.subreddit}/queue`)
          postEmbed.setFooter({ text: `Watch List by AutoModerator` })
-         return { embeds: [postEmbed], files: [thisAttachment]}
+         return { embeds: [postEmbed], files: [thisAttachment] }
       }
 
       if (
@@ -194,7 +225,7 @@ module.exports = {
          postEmbed.setTitle('Queued Post')
          postEmbed.setURL(`https://www.reddit.com/mod/${post.subreddit}/queue`)
          postEmbed.setFooter({ text: `Filtered by AutoModerator` })
-         return { embeds: [postEmbed], files: [thisAttachment]}
+         return { embeds: [postEmbed], files: [thisAttachment] }
       }
 
       if (post.num_reports && post.num_reports > 0) {
@@ -202,7 +233,7 @@ module.exports = {
          postEmbed.setTitle('Queued Post')
          postEmbed.setURL(`https://www.reddit.com/mod/${post.subreddit}/queue`)
          postEmbed.setFooter({ text: `Reported` })
-         return { embeds: [postEmbed], files: [thisAttachment]}
+         return { embeds: [postEmbed], files: [thisAttachment] }
       }
 
       if (
@@ -220,7 +251,7 @@ module.exports = {
          postEmbed.setFooter({
             text: `Filtered by Reddit - Crowd Control (karma)`,
          })
-         return { embeds: [postEmbed], files: [thisAttachment]}
+         return { embeds: [postEmbed], files: [thisAttachment] }
       }
 
       // Unknown visibility
@@ -279,7 +310,7 @@ module.exports = {
       postEmbed.setURL(`https://www.reddit.com/mod/${post.subreddit}/queue`)
       postEmbed.setFooter({ text: `Unusual Post - Leave for analysis` })
 
-      return { embeds: [postEmbed], files: [thisAttachment]}
+      return { embeds: [postEmbed], files: [thisAttachment] }
    },
 
    _getCommentMessage(comment, jobName) {
@@ -303,7 +334,7 @@ module.exports = {
       if (!comment.banned_at_utc && jobName !== 'getNewModQueue') {
          commentEmbed.setColor(config.jobOutput.newComment.embedColor)
          // commentEmbed.setFooter({ text: `` })
-         return { embeds: [commentEmbed], files: [thisAttachment]}
+         return { embeds: [commentEmbed], files: [thisAttachment] }
       }
 
       if (comment.banned_at_utc && comment.spam) {
@@ -317,7 +348,7 @@ module.exports = {
             .setFooter({
                text: `${commentFooterPost}\nUnusual Spam Comment - Leave for analysis`,
             })
-         return { embeds: [commentEmbed], files: [thisAttachment]}
+         return { embeds: [commentEmbed], files: [thisAttachment] }
       }
 
       if (
@@ -335,7 +366,7 @@ module.exports = {
          commentEmbed.setFooter({
             text: `${commentFooterPost}\nReddit Spam Comment - Uncommon`,
          })
-         return { embeds: [commentEmbed], files: [thisAttachment]}
+         return { embeds: [commentEmbed], files: [thisAttachment] }
       }
 
       if (
@@ -356,7 +387,7 @@ module.exports = {
          commentEmbed.setFooter({
             text: `${commentFooterPost}\nQueued by Subreddit Spam Settings`,
          })
-         return { embeds: [commentEmbed], files: [thisAttachment]}
+         return { embeds: [commentEmbed], files: [thisAttachment] }
       }
 
       // if (
@@ -385,7 +416,7 @@ module.exports = {
          commentEmbed.setFooter({
             text: `${commentFooterPost}\nShadowBanned by AutoModerator`,
          })
-         return { embeds: [commentEmbed], files: [thisAttachment]}
+         return { embeds: [commentEmbed], files: [thisAttachment] }
       }
 
       if (
@@ -404,7 +435,7 @@ module.exports = {
          commentEmbed.setFooter({
             text: `${commentFooterPost}\nWatch List by AutoModerator`,
          })
-         return { embeds: [commentEmbed], files: [thisAttachment]}
+         return { embeds: [commentEmbed], files: [thisAttachment] }
       }
 
       if (
@@ -422,7 +453,7 @@ module.exports = {
          commentEmbed.setFooter({
             text: `${commentFooterPost}\nFiltered by AutoModerator`,
          })
-         return { embeds: [commentEmbed], files: [thisAttachment]}
+         return { embeds: [commentEmbed], files: [thisAttachment] }
       }
 
       if (comment.num_reports && comment.num_reports > 0) {
@@ -432,7 +463,7 @@ module.exports = {
             `https://www.reddit.com/mod/${comment.subreddit}/queue`
          )
          commentEmbed.setFooter({ text: `${commentFooterPost}\nReported` })
-         return { embeds: [commentEmbed], files: [thisAttachment]}
+         return { embeds: [commentEmbed], files: [thisAttachment] }
       }
 
       if (
@@ -452,7 +483,7 @@ module.exports = {
          commentEmbed.setFooter({
             text: `${commentFooterPost}\nFiltered by Reddit - Crowd Control (karma)`,
          })
-         return { embeds: [commentEmbed], files: [thisAttachment]}
+         return { embeds: [commentEmbed], files: [thisAttachment] }
       }
 
       // Unknown visibility
@@ -515,11 +546,11 @@ module.exports = {
          text: `${commentFooterPost}\nUnusual Comment - Leave for analysis`,
       })
 
-      return { embeds: [commentEmbed], files: [thisAttachment]}
+      return { embeds: [commentEmbed], files: [thisAttachment] }
    },
 
    _getModLogMessage(item) {
-      let thisAttachment = attachmentAvatarDefault;
+      let thisAttachment = attachmentAvatarDefault
 
       // Create initial embed
       const itemEmbed = new EmbedBuilder()
@@ -531,9 +562,9 @@ module.exports = {
          .setFooter({ text: `r/${item.subreddit}` })
 
       if (item.mod == 'AutoModerator') {
-         thisAttachment = attachmentAvatarAutoMod;
+         thisAttachment = attachmentAvatarAutoMod
       } else {
-         thisAttachment = attachmentAvatarMod;
+         thisAttachment = attachmentAvatarMod
       }
       itemEmbed.setAuthor({
          name: item.mod,
@@ -555,10 +586,13 @@ module.exports = {
          // itemEmbed.setTitle(item.action)
          // itemEmbed.setDescription(`**${item.target_author}**\n${item.target_body.slice(0, 150)}\n*${item.details}*`)
          itemEmbed.setDescription(
-            `**${item.target_author}**\n${item.target_body.slice(0, config.commentSize)}`
+            `**${item.target_author}**\n${item.target_body.slice(
+               0,
+               config.commentSize
+            )}`
          )
          itemEmbed.setFooter({ text: `${item.details}` })
-         return { embeds: [itemEmbed], files: [thisAttachment]}
+         return { embeds: [itemEmbed], files: [thisAttachment] }
       }
 
       // post approve/remove
@@ -569,13 +603,16 @@ module.exports = {
          item.target_author &&
          item.target_title
       ) {
-         let postText = `**${item.target_title.slice(0, config.commentTitleSize)}**`
+         let postText = `**${item.target_title.slice(
+            0,
+            config.commentTitleSize
+         )}**`
          if (item.target_body) {
             postText += `\n${item.target_body.slice(0, config.commentSize)}`
          }
          itemEmbed.setDescription(`${item.target_author}\n${postText}`)
          itemEmbed.setFooter({ text: `${item.details}` })
-         return { embeds: [itemEmbed], files: [thisAttachment]}
+         return { embeds: [itemEmbed], files: [thisAttachment] }
       }
 
       // add removal reason
@@ -593,13 +630,16 @@ module.exports = {
 
          if (item.target_title) {
             // item is post
-            postText += `\n**${item.target_title.slice(0, config.commentTitleSize)}**`
+            postText += `\n**${item.target_title.slice(
+               0,
+               config.commentTitleSize
+            )}**`
          }
          if (item.target_body) {
             postText += `\n${item.target_body.slice(0, config.commentSize)}`
          }
          itemEmbed.setDescription(`${postText}`)
-         return { embeds: [itemEmbed], files: [thisAttachment]}
+         return { embeds: [itemEmbed], files: [thisAttachment] }
       }
 
       // Default undefined type
@@ -623,10 +663,16 @@ module.exports = {
             descriptionText += item.target_author
          }
          if (item.target_title) {
-            descriptionText += `\n**${item.target_title.slice(0, config.commentTitleSize)}**`
+            descriptionText += `\n**${item.target_title.slice(
+               0,
+               config.commentTitleSize
+            )}**`
          }
          if (item.target_body) {
-            descriptionText += `\n${item.target_body.slice(0, config.commentSize)}`
+            descriptionText += `\n${item.target_body.slice(
+               0,
+               config.commentSize
+            )}`
          }
          itemEmbed.setDescription(descriptionText)
       } else {
@@ -653,7 +699,7 @@ module.exports = {
             })
          }
       }
-      return { embeds: [itemEmbed], files: [thisAttachment]}
+      return { embeds: [itemEmbed], files: [thisAttachment] }
    },
 
    async sendMessage(client, channelId, message) {
@@ -792,6 +838,15 @@ module.exports = {
             if (response.status == 'success') {
                for (const comment of response.data) {
                   let message = this._getCommentMessage(comment, jobName)
+                  // ping bingo mod if bingo is mentioned
+                  const bingoExpression = new RegExp('\\bbingo\\b');
+                  if (
+                     comment.subreddit == 'OnPatrolLive' &&
+                     comment.body.match(bingoExpression)
+                  ) {
+                     const bingoPing = '1119713563641118901'
+                     message.content = `<@&${bingoPing}>`
+                  }
                   sendChannel = redditServers[comment.subreddit]['Stream']
                   this.sendMessage(client, sendChannel, message)
                }
@@ -801,6 +856,16 @@ module.exports = {
             if (response.status == 'success') {
                for (const post of response.data) {
                   let message = this._getPostMessage(post, jobName)
+                  // ping bingo mod if bingo is mentioned
+                  const bingoExpression = new RegExp('\\bbingo\\b');
+                  if (
+                     post.subreddit == 'OnPatrolLive' &&
+                     (post.title.match(bingoExpression) ||
+                        post.selftext.match(bingoExpression))
+                  ) {
+                     const bingoPing = '1119713563641118901'
+                     message.content = `<@&${bingoPing}>`
+                  }
                   sendChannel = redditServers[post.subreddit]['Stream']
                   this.sendMessage(client, sendChannel, message)
                }
@@ -867,7 +932,8 @@ module.exports = {
                      })
 
                   message = {
-                     embeds: [messageEmbed], files: [attachmentAvatarDefault]
+                     embeds: [messageEmbed],
+                     files: [attachmentAvatarDefault],
                   }
                   // const modPing = '1171955876609937564'
                   const modPing =
