@@ -844,8 +844,10 @@ module.exports = {
                      comment.subreddit == 'OnPatrolLive' &&
                      comment.body.match(bingoExpression)
                   ) {
-                     const bingoPing = '1119713563641118901'
-                     message.content = `<@&${bingoPing}>`
+                     const bingoModChannel = "1250581630754623549";
+                     this.sendMessage(client, bingoModChannel, message)
+                     // const bingoPing = '1119713563641118901';
+                     // message.content = `<@&${bingoPing}>`
                   }
                   sendChannel = redditServers[comment.subreddit]['Stream']
                   this.sendMessage(client, sendChannel, message)
@@ -863,8 +865,10 @@ module.exports = {
                      (post.title.match(bingoExpression) ||
                         post.selftext.match(bingoExpression))
                   ) {
-                     const bingoPing = '1119713563641118901'
-                     message.content = `<@&${bingoPing}>`
+                     const bingoModChannel = "1250581630754623549";
+                     this.sendMessage(client, bingoModChannel, message)
+                     // const bingoPing = '1119713563641118901'
+                     // message.content = `<@&${bingoPing}>`
                   }
                   sendChannel = redditServers[post.subreddit]['Stream']
                   this.sendMessage(client, sendChannel, message)
