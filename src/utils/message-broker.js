@@ -839,7 +839,7 @@ module.exports = {
                for (const comment of response.data) {
                   let message = this._getCommentMessage(comment, jobName)
                   // ping bingo mod if bingo is mentioned
-                  const bingoExpression = new RegExp('\\b(thatsa)?bingo\\b');
+                  const bingoExpression = new RegExp('\\b(thatsa)?bingo\\b', 'i');
                   if (
                      comment.subreddit == 'OnPatrolLive' &&
                      comment.body.match(bingoExpression)
@@ -859,7 +859,7 @@ module.exports = {
                for (const post of response.data) {
                   let message = this._getPostMessage(post, jobName)
                   // ping bingo mod if bingo is mentioned
-                  const bingoExpression = new RegExp('\\b(thatsa)?bingo\\b');
+                  const bingoExpression = new RegExp('\\b(thatsa)?bingo\\b', 'i');
                   if (
                      post.subreddit == 'OnPatrolLive' &&
                      (post.title.match(bingoExpression) ||
