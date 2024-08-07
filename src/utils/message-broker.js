@@ -228,6 +228,21 @@ module.exports = {
          return { embeds: [postEmbed], files: [thisAttachment] }
       }
 
+      if (
+         post.banned_at_utc &&
+         post.ban_note &&
+         post.ban_note !== 'remove not spam' &&
+         post.banned_by &&
+         post.banned_by == 'AutoModerator'
+      ) {
+         postEmbed.setColor(config.jobOutput.modQueuePost.embedColor)
+         postEmbed.setTitle('Queued Post')
+         postEmbed.setURL(`https://www.reddit.com/mod/${post.subreddit}/queue`)
+         postEmbed.setFooter({ text: `Filtered by AutoModerator and Reddit` })
+         return { embeds: [postEmbed], files: [thisAttachment] }
+      }
+
+
       if (post.num_reports && post.num_reports > 0) {
          postEmbed.setColor(config.jobOutput.modQueuePost.embedColor)
          postEmbed.setTitle('Queued Post')
@@ -452,6 +467,24 @@ module.exports = {
          )
          commentEmbed.setFooter({
             text: `${commentFooterPost}\nFiltered by AutoModerator`,
+         })
+         return { embeds: [commentEmbed], files: [thisAttachment] }
+      }
+
+      if (
+         comment.banned_at_utc &&
+         comment.ban_note &&
+         comment.ban_note !== 'remove not spam' &&
+         comment.banned_by &&
+         comment.banned_by == 'AutoModerator'
+      ) {
+         commentEmbed.setColor(config.jobOutput.modQueueComment.embedColor)
+         commentEmbed.setTitle('Queued Comment')
+         commentEmbed.setURL(
+            `https://www.reddit.com/mod/${comment.subreddit}/queue`
+         )
+         commentEmbed.setFooter({
+            text: `${commentFooterPost}\nFiltered by AutoModerator and Reddit`,
          })
          return { embeds: [commentEmbed], files: [thisAttachment] }
       }
