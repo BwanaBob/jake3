@@ -9,6 +9,18 @@ const { readBehind } = config
 const startTime = new Date() - readBehind * 1000 // When the job was first scheduled
 
 let loggedPostIds = new Set()
+const fs = require('fs')
+
+function saveItemsToFile(item) {
+   const filePath = 'posts.txt'
+   fs.appendFile(filePath, JSON.stringify(item, null, 2) + '\n', (err) => {
+      if (err) {
+         console.error('Error writing to file:', err)
+      } else {
+         // console.log('Comment saved to', filePath)
+      }
+   })
+}
 
 module.exports = () => ({
    name: 'getNewPosts',
@@ -46,6 +58,7 @@ module.exports = () => ({
                })
                newPosts.push(post.data)
                loggedPostIds.add(postId) // Mark the Post as logged
+               saveItemsToFile(post)
             }
          })
          return { status: 'success', data: newPosts }
