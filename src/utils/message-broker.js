@@ -55,6 +55,53 @@ module.exports = {
       return thisAvatar
    },
 
+   async _downloadImage(url) {
+      const response = await fetch(url, {
+         headers: {
+            Accept: 'image/webp,image/apng,image/*,*/*;q=0.8',
+            'User-Agent':
+               'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0',
+            Referer: 'https://www.reddit.com/', // Set referer to the main Reddit domain
+         },
+      })
+      if (!response.ok) {
+         throw new Error(`Failed to fetch image. Status: ${response.status}`)
+      }
+      // const buffer = await response.buffer();
+      const arrayBuffer = await response.arrayBuffer()
+      const imageBuffer = Buffer.from(arrayBuffer)
+      return imageBuffer
+   },
+
+   async _getCommentImage(comment) {
+      if (comment.media_metadata) {
+         const mediaMetadata = comment.media_metadata
+         const mediaId = Object.keys(mediaMetadata)[0] // Get the first key in media_metadata
+         const media = mediaMetadata[mediaId]
+         // console.log(media)
+         if (media.t && media.t == 'giphy') {
+            // const gifIdMatch = media.ext.match(/\/gifs\/[^\/]+\/([a-zA-Z0-9]+)/)
+            const gifIdMatch = media.ext.match(
+               /\/gifs\/(?:[a-zA-Z0-9_-]+\/)?([a-zA-Z0-9]+)/
+            )
+            if (gifIdMatch && gifIdMatch[1]) {
+               const gifId = gifIdMatch[1]
+               // console.log(gifId)
+               return { url: `https://i.giphy.com/media/${gifId}/giphy.gif` }
+            }
+         }
+
+         if (media.s.u) {
+            const imageURL = decodeURIComponent(
+               media.s.u.replace(/&amp;/g, '&')
+            )
+            const imageBuffer = await this._downloadImage(imageURL)
+            return { buffer: imageBuffer }
+         }
+      }
+      return false
+   },
+
    _getPostEmoji(post) {
       var postEmoji = '📌'
       if (!post.is_self) {
@@ -242,7 +289,6 @@ module.exports = {
          return { embeds: [postEmbed], files: [thisAttachment] }
       }
 
-
       if (post.num_reports && post.num_reports > 0) {
          postEmbed.setColor(config.jobOutput.modQueuePost.embedColor)
          postEmbed.setTitle('Queued Post')
@@ -328,7 +374,7 @@ module.exports = {
       return { embeds: [postEmbed], files: [thisAttachment] }
    },
 
-   _getCommentMessage(comment, jobName) {
+   async _getCommentMessage(comment, jobName) {
       const commentFooterPost = `📌 ${comment.link_title.slice(
          0,
          config.commentTitleSize
@@ -338,18 +384,38 @@ module.exports = {
          .setDescription(`${comment.body.slice(0, config.commentSize)}`)
          .setFooter({ text: commentFooterPost })
       // Get server based avatar image
-      let thisAttachment = this._getSubmissionAttachment(comment)
+      let commentUserAttachment = this._getSubmissionAttachment(comment)
+      let commentEmbedAttachments = [commentUserAttachment]
       commentEmbed.setAuthor({
          name: comment.author,
          url: `https://www.reddit.com${comment.permalink}`,
-         iconURL: `attachment://${thisAttachment.name}`,
+         iconURL: `attachment://${commentUserAttachment.name}`,
       })
+
+      // Get image
+      if (comment.media_metadata) {
+         let commentImage = await this._getCommentImage(comment)
+         if (commentImage) {
+            if (commentImage.buffer) {
+               const commentImageAttachment = new AttachmentBuilder(
+                  commentImage.buffer,
+                  {
+                     name: 'image.jpeg',
+                  }
+               )
+               commentEmbedAttachments.push(commentImageAttachment)
+               commentEmbed.setImage('attachment://image.jpeg')
+            } else if (commentImage.url) {
+               commentEmbed.setImage(commentImage.url)
+            }
+         }
+      }
 
       // Get visibility status and format accordingly
       if (!comment.banned_at_utc && jobName !== 'getNewModQueue') {
          commentEmbed.setColor(config.jobOutput.newComment.embedColor)
          // commentEmbed.setFooter({ text: `` })
-         return { embeds: [commentEmbed], files: [thisAttachment] }
+         return { embeds: [commentEmbed], files: commentEmbedAttachments }
       }
 
       if (comment.banned_at_utc && comment.spam) {
@@ -363,7 +429,7 @@ module.exports = {
             .setFooter({
                text: `${commentFooterPost}\nUnusual Spam Comment - Leave for analysis`,
             })
-         return { embeds: [commentEmbed], files: [thisAttachment] }
+         return { embeds: [commentEmbed], files: commentEmbedAttachments }
       }
 
       if (
@@ -381,7 +447,7 @@ module.exports = {
          commentEmbed.setFooter({
             text: `${commentFooterPost}\nReddit Spam Comment - Uncommon`,
          })
-         return { embeds: [commentEmbed], files: [thisAttachment] }
+         return { embeds: [commentEmbed], files: commentEmbedAttachments }
       }
 
       if (
@@ -402,7 +468,7 @@ module.exports = {
          commentEmbed.setFooter({
             text: `${commentFooterPost}\nQueued by Subreddit Spam Settings`,
          })
-         return { embeds: [commentEmbed], files: [thisAttachment] }
+         return { embeds: [commentEmbed], files: commentEmbedAttachments }
       }
 
       // if (
@@ -431,7 +497,7 @@ module.exports = {
          commentEmbed.setFooter({
             text: `${commentFooterPost}\nShadowBanned by AutoModerator`,
          })
-         return { embeds: [commentEmbed], files: [thisAttachment] }
+         return { embeds: [commentEmbed], files: commentEmbedAttachments }
       }
 
       if (
@@ -450,7 +516,7 @@ module.exports = {
          commentEmbed.setFooter({
             text: `${commentFooterPost}\nWatch List by AutoModerator`,
          })
-         return { embeds: [commentEmbed], files: [thisAttachment] }
+         return { embeds: [commentEmbed], files: commentEmbedAttachments }
       }
 
       if (
@@ -468,7 +534,7 @@ module.exports = {
          commentEmbed.setFooter({
             text: `${commentFooterPost}\nFiltered by AutoModerator`,
          })
-         return { embeds: [commentEmbed], files: [thisAttachment] }
+         return { embeds: [commentEmbed], files: commentEmbedAttachments }
       }
 
       if (
@@ -486,7 +552,7 @@ module.exports = {
          commentEmbed.setFooter({
             text: `${commentFooterPost}\nFiltered by AutoModerator and Reddit`,
          })
-         return { embeds: [commentEmbed], files: [thisAttachment] }
+         return { embeds: [commentEmbed], files: commentEmbedAttachments }
       }
 
       if (comment.num_reports && comment.num_reports > 0) {
@@ -496,7 +562,7 @@ module.exports = {
             `https://www.reddit.com/mod/${comment.subreddit}/queue`
          )
          commentEmbed.setFooter({ text: `${commentFooterPost}\nReported` })
-         return { embeds: [commentEmbed], files: [thisAttachment] }
+         return { embeds: [commentEmbed], files: commentEmbedAttachments }
       }
 
       if (
@@ -516,7 +582,7 @@ module.exports = {
          commentEmbed.setFooter({
             text: `${commentFooterPost}\nFiltered by Reddit - Crowd Control (karma)`,
          })
-         return { embeds: [commentEmbed], files: [thisAttachment] }
+         return { embeds: [commentEmbed], files: commentEmbedAttachments }
       }
 
       // Unknown visibility
@@ -579,7 +645,7 @@ module.exports = {
          text: `${commentFooterPost}\nUnusual Comment - Leave for analysis`,
       })
 
-      return { embeds: [commentEmbed], files: [thisAttachment] }
+      return { embeds: [commentEmbed], files: commentEmbedAttachments }
    },
 
    _getModLogMessage(item) {
@@ -795,7 +861,7 @@ module.exports = {
                      message = this._getPostMessage(item.data, jobName)
                   } else if (item.kind == 't1') {
                      // messageEmbed = this._makeCommentEmbed(item.data)
-                     message = this._getCommentMessage(item.data, jobName)
+                     message = await this._getCommentMessage(item.data, jobName)
                   } else {
                      break
                   }
@@ -870,14 +936,17 @@ module.exports = {
          case 'getNewComments':
             if (response.status == 'success') {
                for (const comment of response.data) {
-                  let message = this._getCommentMessage(comment, jobName)
+                  let message = await this._getCommentMessage(comment, jobName)
                   // ping bingo mod if bingo is mentioned
-                  const bingoExpression = new RegExp('\\b(thatsa)?bingo\\b', 'i');
+                  const bingoExpression = new RegExp(
+                     '\\b(thatsa)?bingo\\b',
+                     'i'
+                  )
                   if (
                      comment.subreddit == 'OnPatrolLive' &&
                      comment.body.match(bingoExpression)
                   ) {
-                     const bingoModChannel = "1250581630754623549";
+                     const bingoModChannel = '1250581630754623549'
                      this.sendMessage(client, bingoModChannel, message)
                      // const bingoPing = '1119713563641118901';
                      // message.content = `<@&${bingoPing}>`
@@ -892,13 +961,16 @@ module.exports = {
                for (const post of response.data) {
                   let message = this._getPostMessage(post, jobName)
                   // ping bingo mod if bingo is mentioned
-                  const bingoExpression = new RegExp('\\b(thatsa)?bingo\\b', 'i');
+                  const bingoExpression = new RegExp(
+                     '\\b(thatsa)?bingo\\b',
+                     'i'
+                  )
                   if (
                      post.subreddit == 'OnPatrolLive' &&
                      (post.title.match(bingoExpression) ||
                         post.selftext.match(bingoExpression))
                   ) {
-                     const bingoModChannel = "1250581630754623549";
+                     const bingoModChannel = '1250581630754623549'
                      this.sendMessage(client, bingoModChannel, message)
                      // const bingoPing = '1119713563641118901'
                      // message.content = `<@&${bingoPing}>`
