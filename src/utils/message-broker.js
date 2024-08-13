@@ -961,12 +961,11 @@ module.exports = {
                for (const post of response.data) {
                   let message = this._getPostMessage(post, jobName)
                   // ping bingo mod if bingo is mentioned
-                  const bingoExpression = new RegExp(
-                     '\\b(thatsa)?bingo\\b',
-                     'i'
-                  )
+                  const bingoExpression = new RegExp('\\b(thatsa)?bingo\\b','i')
+                  const ignoreTitleExpression = new RegExp('\\bLive.Thread\\b','i')
                   if (
                      post.subreddit == 'OnPatrolLive' &&
+                     (!post.title.match(ignoreTitleExpression)) &&
                      (post.title.match(bingoExpression) ||
                         post.selftext.match(bingoExpression))
                   ) {
