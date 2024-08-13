@@ -67,10 +67,19 @@ module.exports = {
       if (!response.ok) {
          throw new Error(`Failed to fetch image. Status: ${response.status}`)
       }
+      const contentType = response.headers.get('content-type')
+      let imageName = 'image.jpg'
+      if (contentType.includes('gif')) {
+         imageName = 'image.gif'
+      }
+      if (contentType.includes('png')) {
+         imageName = 'image.png'
+      }
+
       // const buffer = await response.buffer();
       const arrayBuffer = await response.arrayBuffer()
       const imageBuffer = Buffer.from(arrayBuffer)
-      return imageBuffer
+      return { name: imageName, buffer: imageBuffer }
    },
 
    async _getCommentImage(comment) {
@@ -96,7 +105,7 @@ module.exports = {
                media.s.u.replace(/&amp;/g, '&')
             )
             const imageBuffer = await this._downloadImage(imageURL)
-            return { buffer: imageBuffer }
+            return { name: imageBuffer.name, buffer: imageBuffer.buffer }
          }
 
          if (media.s.gif) {
@@ -104,7 +113,7 @@ module.exports = {
                media.s.gif.replace(/&amp;/g, '&')
             )
             const imageBuffer = await this._downloadImage(imageURL)
-            return { buffer: imageBuffer }
+            return { name: imageBuffer.name, buffer: imageBuffer.buffer }
          }
       }
       return false
@@ -408,11 +417,11 @@ module.exports = {
                const commentImageAttachment = new AttachmentBuilder(
                   commentImage.buffer,
                   {
-                     name: 'image.jpeg',
+                     name: commentImage.name,
                   }
                )
                commentEmbedAttachments.push(commentImageAttachment)
-               commentEmbed.setImage('attachment://image.jpeg')
+               commentEmbed.setImage(`attachment://${commentImage.name}`)
             } else if (commentImage.url) {
                commentEmbed.setImage(commentImage.url)
             }
