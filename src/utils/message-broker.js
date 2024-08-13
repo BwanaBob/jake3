@@ -96,7 +96,8 @@ module.exports = {
             if (gifIdMatch && gifIdMatch[1]) {
                const gifId = gifIdMatch[1]
                // console.log(gifId)
-               return { url: `https://i.giphy.com/media/${gifId}/giphy.gif` }
+               const removeBodyText = `![gif](${media.id})`;
+               return { url: `https://i.giphy.com/media/${gifId}/giphy.gif`, removeBodyText: removeBodyText, addEmbedURL: media.ext }
             }
          }
 
@@ -105,7 +106,7 @@ module.exports = {
                media.s.u.replace(/&amp;/g, '&')
             )
             const imageBuffer = await this._downloadImage(imageURL)
-            return { name: imageBuffer.name, buffer: imageBuffer.buffer }
+            return { name: imageBuffer.name, buffer: imageBuffer.buffer, removeBodyText: imageURL, addEmbedURL: imageURL }
          }
 
          if (media.s.gif) {
@@ -113,7 +114,7 @@ module.exports = {
                media.s.gif.replace(/&amp;/g, '&')
             )
             const imageBuffer = await this._downloadImage(imageURL)
-            return { name: imageBuffer.name, buffer: imageBuffer.buffer }
+            return { name: imageBuffer.name, buffer: imageBuffer.buffer, removeBodyText: imageURL, addEmbedURL: imageURL }
          }
       }
       return false
@@ -425,6 +426,12 @@ module.exports = {
             } else if (commentImage.url) {
                commentEmbed.setImage(commentImage.url)
             }
+            // remove url from the body
+            // const cleanedBody = comment.body.replace(commentImage.removeBodyText, '').trim();
+            const cleanedBody = comment.body.replace(commentImage.removeBodyText, '').replace(/\n\s*\n/g, '\n').trim();
+            commentEmbed.setDescription(`${cleanedBody.slice(0, config.commentSize)}`);
+            commentEmbed.setTitle('Comment with image');
+            commentEmbed.setURL(commentImage.addEmbedURL);
          }
       }
 
