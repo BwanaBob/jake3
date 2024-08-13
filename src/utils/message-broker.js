@@ -98,6 +98,14 @@ module.exports = {
             const imageBuffer = await this._downloadImage(imageURL)
             return { buffer: imageBuffer }
          }
+
+         if (media.s.gif) {
+            const imageURL = decodeURIComponent(
+               media.s.gif.replace(/&amp;/g, '&')
+            )
+            const imageBuffer = await this._downloadImage(imageURL)
+            return { buffer: imageBuffer }
+         }
       }
       return false
    },
@@ -961,11 +969,17 @@ module.exports = {
                for (const post of response.data) {
                   let message = this._getPostMessage(post, jobName)
                   // ping bingo mod if bingo is mentioned
-                  const bingoExpression = new RegExp('\\b(thatsa)?bingo\\b','i')
-                  const ignoreTitleExpression = new RegExp('\\bLive.Thread\\b','i')
+                  const bingoExpression = new RegExp(
+                     '\\b(thatsa)?bingo\\b',
+                     'i'
+                  )
+                  const ignoreTitleExpression = new RegExp(
+                     '\\bLive.Thread\\b',
+                     'i'
+                  )
                   if (
                      post.subreddit == 'OnPatrolLive' &&
-                     (!post.title.match(ignoreTitleExpression)) &&
+                     !post.title.match(ignoreTitleExpression) &&
                      (post.title.match(bingoExpression) ||
                         post.selftext.match(bingoExpression))
                   ) {
