@@ -711,7 +711,7 @@ module.exports = {
          itemEmbed.setDescription(
             `**${item.target_author}**\n${item.target_body.slice(
                0,
-               config.commentSize
+               config.modLogCommentSize
             )}`
          )
          itemEmbed.setFooter({ text: `${item.details}` })
@@ -728,11 +728,11 @@ module.exports = {
       ) {
          let postText = `**${item.target_title.slice(
             0,
-            config.commentTitleSize
+            config.modLogTitleSize
          )}**`
-         if (item.target_body) {
-            postText += `\n${item.target_body.slice(0, config.commentSize)}`
-         }
+         // if (item.target_body) {
+         //    postText += `\n${item.target_body.slice(0, config.modLogCommentSize)}`
+         // }
          itemEmbed.setDescription(`${item.target_author}\n${postText}`)
          itemEmbed.setFooter({ text: `${item.details}` })
          return { embeds: [itemEmbed], files: [thisAttachment] }
@@ -755,11 +755,11 @@ module.exports = {
             // item is post
             postText += `\n**${item.target_title.slice(
                0,
-               config.commentTitleSize
+               config.modLogCommentSize
             )}**`
          }
          if (item.target_body) {
-            postText += `\n${item.target_body.slice(0, config.commentSize)}`
+            postText += `\n${item.target_body.slice(0, config.modLogCommentSize)}`
          }
          itemEmbed.setDescription(`${postText}`)
          return { embeds: [itemEmbed], files: [thisAttachment] }
@@ -773,7 +773,7 @@ module.exports = {
       if (item.description) {
          itemEmbed.addFields({
             name: 'Description',
-            value: item.description.slice(0, 240),
+            value: item.description.slice(0, config.modLogDescriptionSize),
             inline: true,
          })
       }
@@ -788,13 +788,13 @@ module.exports = {
          if (item.target_title) {
             descriptionText += `\n**${item.target_title.slice(
                0,
-               config.commentTitleSize
+               config.modLogTitleSize
             )}**`
          }
          if (item.target_body) {
             descriptionText += `\n${item.target_body.slice(
                0,
-               config.commentSize
+               config.modLogCommentSize
             )}`
          }
          itemEmbed.setDescription(descriptionText)
@@ -810,14 +810,14 @@ module.exports = {
          if (item.target_title) {
             itemEmbed.addFields({
                name: 'Target Title',
-               value: item.target_title.slice(0, config.commentTitleSize),
+               value: item.target_title.slice(0, config.modLogTitleSize),
                inline: true,
             })
          }
          if (item.target_body) {
             itemEmbed.addFields({
                name: 'Target Body',
-               value: item.target_body.slice(0, config.commentSize),
+               value: item.target_body.slice(0, config.modLogCommentSize),
                inline: true,
             })
          }

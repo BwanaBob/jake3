@@ -4,6 +4,9 @@ module.exports = {
    readBehind: 120, // read data seconds before application started
    commentSize: 800,
    commentTitleSize: 65,
+   modLogCommentSize: 65,
+   modLogTitleSize: 65,
+   modLogDescriptionSize: 240,
    postSize: 800,
    quietHours: {
       start: '23:10',
