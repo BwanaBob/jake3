@@ -25,10 +25,23 @@ const verifyDiscordServer = async function (discordServer, redditServerName) {
       )
       if (currentChannel) {
          //  console.log(`Reddit channel found: ${currentChannel.name}`)
+         let fetchedThreads
+         try {
+            fetchedThreads = await currentChannel.threads.fetch({
+               type: 'GUILD_PUBLIC_THREAD',
+               // archived: { fetchAll: true },
+            })
+         } catch (error) {
+            console.error('Error fetching threads:', error)
+         }
+         // console.log(fetchedThreads);
+
          for (const threadName of config.redditThreads) {
-            const findThread = await currentChannel.threads.cache.find(
-               (x) => x.name === threadName
-            )
+            // const findThread = await currentChannel.threads.cache.find(
+            //    (x) => x.name === threadName
+            // )
+            let findThread = fetchedThreads?.threads.find(x => x.name === threadName);
+
             if (findThread) {
                //    console.log(`${threadName} found - joining`)
                if (findThread.joinable) {
