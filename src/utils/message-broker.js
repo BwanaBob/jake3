@@ -956,11 +956,6 @@ module.exports = {
                   value: 'Processed',
                   inline: false,
                })
-               // tidyEmbed.addFields({
-               //    name: 'Post Id',
-               //    value: response.data.id,
-               //    inline: false,
-               // })
                tidyEmbed.addFields({
                   name: 'Post Title',
                   value: `[${response.data.title}](${response.data.url})`,
@@ -976,7 +971,9 @@ module.exports = {
             }
             message = { embeds: [tidyEmbed] }
             sendChannel = client.params.get('jobsChannelId')
+            const modChannel = '1250589626717175910';
             this.sendMessage(client, sendChannel, message)
+            this.sendMessage(client, modChannel, message)
             break
          case 'getNewComments':
             if (response.status == 'success') {
