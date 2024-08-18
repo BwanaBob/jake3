@@ -1,4 +1,5 @@
 const config = require('../config')
+const logger = require('../modules/Logger')
 const { Collection, ThreadAutoArchiveDuration } = require('discord.js')
 // const Logger = require('../modules/Logger')
 // const logger = new Logger()
@@ -40,7 +41,9 @@ const verifyDiscordServer = async function (discordServer, redditServerName) {
             // const findThread = await currentChannel.threads.cache.find(
             //    (x) => x.name === threadName
             // )
-            let findThread = fetchedThreads?.threads.find(x => x.name === threadName);
+            let findThread = fetchedThreads?.threads.find(
+               (x) => x.name === threadName
+            )
 
             if (findThread) {
                //    console.log(`${threadName} found - joining`)
@@ -51,7 +54,15 @@ const verifyDiscordServer = async function (discordServer, redditServerName) {
                redditServers[redditServerName][threadName] = findThread.id
                discordServers[discordServer.id][threadName] = findThread.id
             } else {
-               console.log(`${threadName} NOT found - creating`)
+               logger.info({
+                  emoji: '🧵',
+                  columns: [
+                     'Threads',
+                     'Create Missing',
+                     discordServer.name,
+                     threadName,
+                  ],
+               })
                try {
                   const createdThread = await currentChannel.threads.create({
                      name: threadName,
