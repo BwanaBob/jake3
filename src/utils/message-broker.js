@@ -96,8 +96,12 @@ module.exports = {
             if (gifIdMatch && gifIdMatch[1]) {
                const gifId = gifIdMatch[1]
                // console.log(gifId)
-               const removeBodyText = `![gif](${media.id})`;
-               return { url: `https://i.giphy.com/media/${gifId}/giphy.gif`, removeBodyText: removeBodyText, addEmbedURL: media.ext }
+               const removeBodyText = `![gif](${media.id})`
+               return {
+                  url: `https://i.giphy.com/media/${gifId}/giphy.gif`,
+                  removeBodyText: removeBodyText,
+                  addEmbedURL: media.ext,
+               }
             }
          }
 
@@ -106,7 +110,12 @@ module.exports = {
                media.s.u.replace(/&amp;/g, '&')
             )
             const imageBuffer = await this._downloadImage(imageURL)
-            return { name: imageBuffer.name, buffer: imageBuffer.buffer, removeBodyText: imageURL, addEmbedURL: imageURL }
+            return {
+               name: imageBuffer.name,
+               buffer: imageBuffer.buffer,
+               removeBodyText: imageURL,
+               addEmbedURL: imageURL,
+            }
          }
 
          if (media.s.gif) {
@@ -114,7 +123,12 @@ module.exports = {
                media.s.gif.replace(/&amp;/g, '&')
             )
             const imageBuffer = await this._downloadImage(imageURL)
-            return { name: imageBuffer.name, buffer: imageBuffer.buffer, removeBodyText: imageURL, addEmbedURL: imageURL }
+            return {
+               name: imageBuffer.name,
+               buffer: imageBuffer.buffer,
+               removeBodyText: imageURL,
+               addEmbedURL: imageURL,
+            }
          }
       }
       return false
@@ -428,10 +442,15 @@ module.exports = {
             }
             // remove url from the body
             // const cleanedBody = comment.body.replace(commentImage.removeBodyText, '').trim();
-            const cleanedBody = comment.body.replace(commentImage.removeBodyText, '').replace(/\n\s*\n/g, '\n').trim();
-            commentEmbed.setDescription(`${cleanedBody.slice(0, config.commentSize)}`);
-            commentEmbed.setTitle('Comment with image');
-            commentEmbed.setURL(commentImage.addEmbedURL);
+            const cleanedBody = comment.body
+               .replace(commentImage.removeBodyText, '')
+               .replace(/\n\s*\n/g, '\n')
+               .trim()
+            commentEmbed.setDescription(
+               `${cleanedBody.slice(0, config.commentSize)}`
+            )
+            commentEmbed.setTitle('Comment with image')
+            commentEmbed.setURL(commentImage.addEmbedURL)
          }
       }
 
@@ -755,11 +774,14 @@ module.exports = {
             // item is post
             postText += `\n**${item.target_title.slice(
                0,
-               config.modLogCommentSize
+               config.modLogTitleSize
             )}**`
          }
          if (item.target_body) {
-            postText += `\n${item.target_body.slice(0, config.modLogCommentSize)}`
+            postText += `\n${item.target_body.slice(
+               0,
+               config.modLogCommentSize
+            )}`
          }
          itemEmbed.setDescription(`${postText}`)
          return { embeds: [itemEmbed], files: [thisAttachment] }
@@ -790,8 +812,8 @@ module.exports = {
                0,
                config.modLogTitleSize
             )}**`
-         }
-         if (item.target_body) {
+         } else if (item.target_body) {
+            // only add body if no title exists
             descriptionText += `\n${item.target_body.slice(
                0,
                config.modLogCommentSize
@@ -813,8 +835,7 @@ module.exports = {
                value: item.target_title.slice(0, config.modLogTitleSize),
                inline: true,
             })
-         }
-         if (item.target_body) {
+         } else if (item.target_body) {
             itemEmbed.addFields({
                name: 'Target Body',
                value: item.target_body.slice(0, config.modLogCommentSize),
