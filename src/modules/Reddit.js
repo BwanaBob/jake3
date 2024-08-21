@@ -345,6 +345,18 @@ class Reddit {
       return data.data.children
    }
 
+   async getTempBans(subreddit, limit = 25) {
+      const data = await this.apiRequest(`/r/${subreddit}/about/banned`, 'get', {
+         limit,
+         // after,
+         // mod,
+         // show: 'all',
+      })
+      // console.log(data.data.children);
+      return data.data.children
+
+   }
+
    async getCommentsForPost(postId, limit = 100) {
       const data = await this.apiRequest(`/comments/${postId}.json`, 'get', {
          sort: 'top',

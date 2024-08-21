@@ -8,9 +8,6 @@ let redditServers = {} // to be stored in client config and used by message-brok
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
 const verifyDiscordServer = async function (discordServer, redditServerName) {
-   //    console.log(
-   //       `Verifying channel: ${config.redditChannelName} for /r/${redditServerName} on ${discordServer.name}`
-   //    )
    if (discordServers[discordServer.id].complete === true) {
       Object.assign(
          redditServers[redditServerName],
@@ -25,7 +22,6 @@ const verifyDiscordServer = async function (discordServer, redditServerName) {
          (channel) => channel.name === config.redditChannelName
       )
       if (currentChannel) {
-         //  console.log(`Reddit channel found: ${currentChannel.name}`)
          let fetchedThreads
          try {
             fetchedThreads = await currentChannel.threads.fetch({
@@ -71,11 +67,12 @@ const verifyDiscordServer = async function (discordServer, redditServerName) {
                      reason: `A separate thread for ${threadName}`,
                   })
                   await createdThread.setArchived(false) // unarchived
-                  await delay(2000)
                   // add thread to redditServers
                   redditServers[redditServerName][threadName] = createdThread.id
                   discordServers[discordServer.id][threadName] =
                      createdThread.id
+
+                  await delay(2000)
                } catch (error) {
                   console.error('Error creating thread:', error)
                }

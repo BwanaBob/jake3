@@ -193,6 +193,9 @@ module.exports = {
       getNewModQueue: {
          subreddit: 'OnPatrolLive+Police247+LAFireandRescue+BodycamCops+KillerCases+OnPatrolLiveTVShow',
       },
+      getTempBans: {
+         subreddit: 'OnPatrolLive',
+      },
       getNewModMail: {
          subreddit: 'OnPatrolLive+Police247+LAFireandRescue+BodycamCops+KillerCases+OnPatrolLiveTVShow',
       },

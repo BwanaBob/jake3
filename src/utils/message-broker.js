@@ -971,7 +971,7 @@ module.exports = {
             }
             message = { embeds: [tidyEmbed] }
             sendChannel = client.params.get('jobsChannelId')
-            const modChannel = '1250589626717175910';
+            const modChannel = '1250589626717175910'
             this.sendMessage(client, sendChannel, message)
             this.sendMessage(client, modChannel, message)
             break
@@ -1041,6 +1041,31 @@ module.exports = {
                      this.sendMessage(client, sendChannel, message)
                   }
                }
+            }
+            break
+
+         case 'getTempBans':
+            if (response.status == 'success') {
+               const bansEmbed = new EmbedBuilder()
+                  .setColor(config.jobOutput.tidy.embedColor)
+                  .setTitle('Current Temporary Bans')
+                  .setFooter({ text: `r/OnPatrolLive` })
+                  .setDescription('TBD')
+
+               let banList = ''
+
+               if (response.data.length > 0) {
+                  for (const ban of response.data) {
+                     banList += `${ban.days_left || 0}: `
+                     banList += `[${ban.name}](https://www.reddit.com/mod/OnPatrolLive/banned?userNameSearch=${ban.name})\n`
+                  }
+               } else {
+                  banList = 'None'
+               }
+               bansEmbed.setDescription(banList)
+               message = { embeds: [bansEmbed] }
+               sendChannel = client.params.get('jobsChannelId')
+               this.sendMessage(client, sendChannel, message)
             }
             break
 
