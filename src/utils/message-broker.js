@@ -1056,8 +1056,12 @@ module.exports = {
 
                if (response.data.length > 0) {
                   for (const ban of response.data) {
-                     banList += `${ban.days_left || 0}: `
-                     banList += `[${ban.name}](https://www.reddit.com/mod/OnPatrolLive/banned?userNameSearch=${ban.name})\n`
+                     banList += `${ban.days_left || 0} - `
+                     banList += `[${ban.name}](https://www.reddit.com/mod/OnPatrolLive/banned?userNameSearch=${ban.name})`
+                     if (ban.note && ban.note !== '') {
+                        banList += ` - ${ban.note.slice(0, 50)}`
+                     }
+                     banList += `\n`
                   }
                } else {
                   banList = 'None'
