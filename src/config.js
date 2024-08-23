@@ -196,6 +196,9 @@ module.exports = {
       getTempBans: {
          subreddit: 'OnPatrolLive',
       },
+      getUnusedFlairs: {
+         subreddit: 'OnPatrolLive',
+      },
       getNewModMail: {
          subreddit: 'OnPatrolLive+Police247+LAFireandRescue+BodycamCops+KillerCases+OnPatrolLiveTVShow',
       },

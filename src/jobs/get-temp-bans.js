@@ -6,7 +6,7 @@ const { subreddit } = config.jobs.getTempBans
 module.exports = () => ({
    name: 'getTempBans',
    cronExpression: '0 30 17 * * FRI,SAT', // pre-showtime (5:30pm cst) - live
-//    cronExpression: '*/15 * * * * *', // Every 15 seconds (testing)
+   // cronExpression: '*/15 * * * * *', // Every 15 seconds (testing)
    jobFunction: async () => {
       try {
          const banData = await reddit.getTempBans(subreddit) // Fetch the bans
@@ -20,6 +20,10 @@ module.exports = () => ({
                //    date: new Date(ban.date * 1000).toISOString(),
                id: ban.id,
             }))
+         logger.info({
+            emoji: '🔨',
+            columns: ['TempBans', 'Found', `${bans.length}`],
+         })
          return { status: 'success', data: bans }
       } catch (error) {
          console.error(`Failed to retrieve temporary bans: ${error.message}`)

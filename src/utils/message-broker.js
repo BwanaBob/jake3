@@ -1073,6 +1073,32 @@ module.exports = {
             }
             break
 
+            case 'getUnusedFlairs':
+
+            if (response.status == 'success') {
+               const flairEmbed = new EmbedBuilder()
+                  .setColor(config.jobOutput.tidy.embedColor)
+                  .setTitle('Unused User Flairs')
+                  .setFooter({ text: `r/OnPatrolLive` })
+                  .setDescription('TBD')
+
+               let flairList = ''
+
+               if (response.data.length > 0) {
+                  for (const flair of response.data) {
+                     flairList += `${flair.text || "<none>" }`
+                     flairList += `\n`
+                  }
+               } else {
+                  flairList = 'None'
+               }
+               flairEmbed.setDescription(flairList)
+               message = { embeds: [flairEmbed] }
+               sendChannel = client.params.get('jobsChannelId')
+               this.sendMessage(client, sendChannel, message)
+            }
+            break
+
          case 'scheduleFast':
             if (response.status == 'success') {
                const jobEmbed = new EmbedBuilder()

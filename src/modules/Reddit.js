@@ -317,12 +317,10 @@ class Reddit {
       return data.data.children
    }
 
-
    async getPostById(postId) {
       const data = await this.apiRequest(`/api/info?id=t3_${postId}`, 'get')
       return data.data.children
    }
-
 
    async searchPosts(subreddit, query, limit = 25) {
       const data = await this.apiRequest(`/r/${subreddit}/search.json`, 'get', {
@@ -346,15 +344,18 @@ class Reddit {
    }
 
    async getTempBans(subreddit, limit = 25) {
-      const data = await this.apiRequest(`/r/${subreddit}/about/banned`, 'get', {
-         limit,
-         // after,
-         // mod,
-         // show: 'all',
-      })
+      const data = await this.apiRequest(
+         `/r/${subreddit}/about/banned`,
+         'get',
+         {
+            limit,
+            // after,
+            // mod,
+            // show: 'all',
+         }
+      )
       // console.log(data.data.children);
       return data.data.children
-
    }
 
    async getCommentsForPost(postId, limit = 100) {
@@ -383,6 +384,48 @@ class Reddit {
       }
 
       return allComments
+   }
+
+   async getSubredditFlairs(subreddit, limit = 100) {
+      let allFlairs = []
+      let after = null
+
+      do {
+         const response = await this.apiRequest(
+            `/r/${subreddit}/api/user_flair_v2`,
+            'get',
+            { limit, after }
+         )
+// console.log(response[0]);
+         if (response ) {
+            allFlairs = allFlairs.concat(response)
+            after = response.after // Move to the next page if there's a cursor to the next page
+         } else {
+            after = null
+         }
+      } while (after)
+// console.log(allFlairs)
+      return allFlairs
+   }
+
+   async getUsersWithFlairs(subreddit, limit = 1000) {
+      const usersWithFlairs = []
+
+      let after = null
+      do {
+         const response = await this.apiRequest(
+            `/r/${subreddit}/api/flairlist`,
+            'get',
+            { limit, after , show: 'all'}
+         )
+         // console.log(response);
+         const users = response.users
+
+         usersWithFlairs.push(...users)
+         after = response.after // Set 'after' to the token for the next page
+      } while (after)
+      // console.log(usersWithFlairs)
+      return usersWithFlairs
    }
 
    async updatePostFlair(postId, flairTemplateId, flairText = '') {
@@ -417,6 +460,6 @@ class Reddit {
    }
 }
 
-const reddit = new Reddit();
-module.exports = reddit; // export an instance of the class so that the instance is shared across all modules
+const reddit = new Reddit()
+module.exports = reddit // export an instance of the class so that the instance is shared across all modules
 // module.exports = Reddit
