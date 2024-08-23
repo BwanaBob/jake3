@@ -30,7 +30,7 @@ module.exports = () => ({
 
          logger.info({
             emoji: '📛',
-            columns: ['UnusedFlair', 'Found', `${unusedFlairs.length}`],
+            columns: ['UnusedFlair', subreddit, 'Found', `${unusedFlairs.length}`],
          })
 
          return { status: 'success', data: unusedFlairs }

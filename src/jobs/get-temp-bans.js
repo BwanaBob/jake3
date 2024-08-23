@@ -5,7 +5,7 @@ const { subreddit } = config.jobs.getTempBans
 
 module.exports = () => ({
    name: 'getTempBans',
-   cronExpression: '0 30 17 * * FRI,SAT', // pre-showtime (5:30pm cst) - live
+   cronExpression: '0 29 16 * * FRI,SAT', // pre-showtime (4:30pm cst) - live
    // cronExpression: '*/15 * * * * *', // Every 15 seconds (testing)
    jobFunction: async () => {
       try {
@@ -22,7 +22,7 @@ module.exports = () => ({
             }))
          logger.info({
             emoji: '🔨',
-            columns: ['TempBans', 'Found', `${bans.length}`],
+            columns: ['TempBans', subreddit, 'Found', `${bans.length}`],
          })
          return { status: 'success', data: bans }
       } catch (error) {
