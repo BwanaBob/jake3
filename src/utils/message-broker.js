@@ -961,19 +961,25 @@ module.exports = {
                   value: `[${response.data.title}](${response.data.url})`,
                   inline: false,
                })
-               tidyEmbed.setFooter({ text: `r/${response.data.subreddit}` })
             } else {
                tidyEmbed.addFields({
                   name: 'Status',
-                  value: 'No Active Live Thread Located',
+                  value: response.status,
                   inline: false,
                })
             }
+            if (response.data?.subreddit) {
+               tidyEmbed.setFooter({ text: `r/${response.data.subreddit}` })
+            }
             message = { embeds: [tidyEmbed] }
-            sendChannel = client.params.get('jobsChannelId')
-            const modChannel = '1250589626717175910'
+            // sendChannel = client.params.get('jobsChannelId')
+            sendChannel = redditServers[response.data.subreddit]['Jobs']
             this.sendMessage(client, sendChannel, message)
-            this.sendMessage(client, modChannel, message)
+            if (response.data.subreddit == 'OnPatrolLive') {
+               const modChannel = '1250589626717175910'
+               this.sendMessage(client, modChannel, message)
+            }
+
             break
          case 'getNewComments':
             if (response.status == 'success') {
@@ -1073,8 +1079,7 @@ module.exports = {
             }
             break
 
-            case 'getUnusedFlairs':
-
+         case 'getUnusedFlairs':
             if (response.status == 'success') {
                const flairEmbed = new EmbedBuilder()
                   .setColor(config.jobOutput.tidy.embedColor)
@@ -1086,7 +1091,7 @@ module.exports = {
 
                if (response.data.length > 0) {
                   for (const flair of response.data) {
-                     flairList += `${flair.text || "<none>" }`
+                     flairList += `${flair.text || '<none>'}`
                      flairList += `\n`
                   }
                } else {

@@ -9,7 +9,7 @@ module.exports = () => ({
    // cronExpression: '*/15 * * * * *', // Every 15 seconds (testing)
    jobFunction: async () => {
       try {
-         const allFlairs = await reddit.getSubredditFlairs(subreddit)
+         const allFlairs = await reddit.getSubredditUserFlairs(subreddit)
          //  console.log(allFlairs[0])
          const allUsersWithFlairs = await reddit.getUsersWithFlairs(subreddit)
          //  console.log(allUsersWithFlairs[0])

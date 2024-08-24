@@ -386,7 +386,7 @@ class Reddit {
       return allComments
    }
 
-   async getSubredditFlairs(subreddit, limit = 100) {
+   async getSubredditUserFlairs(subreddit, limit = 100) {
       let allFlairs = []
       let after = null
 
