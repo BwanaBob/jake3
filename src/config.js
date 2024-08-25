@@ -286,7 +286,7 @@ module.exports = {
          subreddit: 'OnPatrolLive',
       },
       tidy: {
-         subreddit: 'OnPatrolLiveTVShow',          // subreddit to search
+         subreddit: 'OnPatrolLive',          // subreddit to search
          searchString: 'Live Thread',        // Post title to locate
          searchSize: 20,                     // How many posts to return in search
          searchFlairName: 'Live Thread',     // Post flair to locate and change
