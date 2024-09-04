@@ -1104,6 +1104,35 @@ module.exports = {
             }
             break
 
+         case 'getCotNFlairs':
+            if (response.status == 'success') {
+               // console.log(response.data);
+               const flairEmbed = new EmbedBuilder()
+                  .setColor(config.jobOutput.tidy.embedColor)
+                  .setTitle('CotN User Flairs')
+                  .setFooter({ text: response.subreddit })
+                  .setDescription('TBD')
+
+               let flairUserList = ''
+
+               if (response.data.length > 0) {
+                  for (const flairUser of response.data) {
+                     flairUserList += `${flairUser.user || '<none>'}`
+                     flairUserList += `|`
+                     flairUserList += `${flairUser.flair_text || '<none>'}`
+                     flairUserList += `\n`
+                     // console.log(`${flairUser.user} | ${flairUser.flair_text}`)
+                  }
+               } else {
+                  flairUserList = 'None'
+               }
+               flairEmbed.setDescription(flairUserList)
+               message = { embeds: [flairEmbed] }
+               sendChannel = client.params.get('jobsChannelId')
+               this.sendMessage(client, sendChannel, message)
+            }
+            break
+
          case 'scheduleFast':
             if (response.status == 'success') {
                const jobEmbed = new EmbedBuilder()

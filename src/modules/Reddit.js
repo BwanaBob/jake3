@@ -396,35 +396,39 @@ class Reddit {
             'get',
             { limit, after }
          )
-// console.log(response[0]);
-         if (response ) {
+         // console.log(response[0]);
+         if (response) {
             allFlairs = allFlairs.concat(response)
             after = response.after // Move to the next page if there's a cursor to the next page
          } else {
             after = null
          }
       } while (after)
-// console.log(allFlairs)
+      // console.log(allFlairs)
       return allFlairs
    }
 
    async getUsersWithFlairs(subreddit, limit = 1000) {
       const usersWithFlairs = []
+      let next = null // Change from 'after' to 'next'
 
-      let after = null
       do {
          const response = await this.apiRequest(
             `/r/${subreddit}/api/flairlist`,
             'get',
-            { limit, after , show: 'all'}
+            { limit, after: next, show: 'all' } // Use 'next' for pagination
          )
-         // console.log(response);
-         const users = response.users
 
-         usersWithFlairs.push(...users)
-         after = response.after // Set 'after' to the token for the next page
-      } while (after)
-      // console.log(usersWithFlairs)
+         const users = response.users
+         if (users) {
+            usersWithFlairs.push(...users)
+         } else {
+            console.warn('No users found in this batch')
+         }
+
+         next = response.next // Update the pagination token
+      } while (next)
+
       return usersWithFlairs
    }
 

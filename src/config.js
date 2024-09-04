@@ -285,6 +285,9 @@ module.exports = {
       getUnusedFlairs: {
          subreddit: 'OnPatrolLive',
       },
+      getCotNFlairs: {
+         subreddit: 'OnPatrolLive',
+      },
       tidy: {
          subreddit: 'OnPatrolLive',          // subreddit to search
          searchString: 'Live Thread',        // Post title to locate
