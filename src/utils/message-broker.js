@@ -1107,29 +1107,59 @@ module.exports = {
          case 'getCotNFlairs':
             if (response.status == 'success') {
                // console.log(response.data);
-               const flairEmbed = new EmbedBuilder()
+               const flairWinnerEmbed = new EmbedBuilder()
                   .setColor(config.jobOutput.tidy.embedColor)
-                  .setTitle('CotN User Flairs')
+                  .setTitle('CotN Winner User Flairs')
+                  .setFooter({ text: response.subreddit })
+                  .setDescription('TBD')
+               const flairRoyalEmbed = new EmbedBuilder()
+                  .setColor(config.jobOutput.tidy.embedColor)
+                  .setTitle('CotN Royal User Flairs')
                   .setFooter({ text: response.subreddit })
                   .setDescription('TBD')
 
-               let flairUserList = ''
+               let flairWinnerUserList = ''
+               let flairRoyalUserList = ''
 
                if (response.data.length > 0) {
                   for (const flairUser of response.data) {
-                     flairUserList += `${flairUser.user || '<none>'}`
-                     flairUserList += `|`
-                     flairUserList += `${flairUser.flair_text || '<none>'}`
-                     flairUserList += `\n`
-                     // console.log(`${flairUser.user} | ${flairUser.flair_text}`)
+                     if (
+                        flairUser.flair_text
+                           .trim()
+                           .toLowerCase()
+                           .normalize('NFKD')
+                           .includes('royal')
+                     ) {
+                        flairRoyalUserList += `${flairUser.user || '<none>'}`
+                        flairRoyalUserList += `|`
+                        flairRoyalUserList += `${
+                           flairUser.flair_text || '<none>'
+                        }`
+                        flairRoyalUserList += `\n`
+                        // console.log(`${flairUser.user} | ${flairUser.flair_text}`)
+                     } else {
+                        flairWinnerUserList += `${flairUser.user || '<none>'}`
+                        flairWinnerUserList += `|`
+                        flairWinnerUserList += `${
+                           flairUser.flair_text || '<none>'
+                        }`
+                        flairWinnerUserList += `\n`
+                        // console.log(`${flairUser.user} | ${flairUser.flair_text}`)
+                     }
                   }
                } else {
-                  flairUserList = 'None'
+                  flairWinnerUserList = 'None'
+                  flairRoyalUserList = 'None'
                }
-               flairEmbed.setDescription(flairUserList)
-               message = { embeds: [flairEmbed] }
+               flairWinnerEmbed.setDescription(flairWinnerUserList)
+               flairRoyalEmbed.setDescription(flairRoyalUserList)
+
+               const winnerMessage = { embeds: [flairWinnerEmbed] }
+               const royalMessage = { embeds: [flairRoyalEmbed] }
                sendChannel = client.params.get('jobsChannelId')
-               this.sendMessage(client, sendChannel, message)
+               this.sendMessage(client, sendChannel, winnerMessage).then(() =>
+                  this.sendMessage(client, sendChannel, royalMessage)
+               )
             }
             break
 
