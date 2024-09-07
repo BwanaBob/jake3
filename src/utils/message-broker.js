@@ -446,9 +446,11 @@ module.exports = {
                .replace(commentImage.removeBodyText, '')
                .replace(/\n\s*\n/g, '\n')
                .trim()
-            commentEmbed.setDescription(
-               `${cleanedBody.slice(0, config.commentSize)}`
-            )
+            if (cleanedBody) {
+               commentEmbed.setDescription(
+                  `${cleanedBody.slice(0, config.commentSize)}`
+               )
+            }
             commentEmbed.setTitle('Comment with image')
             commentEmbed.setURL(commentImage.addEmbedURL)
          }
