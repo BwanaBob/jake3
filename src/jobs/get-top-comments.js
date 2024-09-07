@@ -103,7 +103,8 @@ module.exports = () => ({
                   !ineligibleUsers.includes(comment.data.author) &&
                   !(
                      authorFlairText &&
-                     authorFlairText.toLowerCase().includes('cotn royalty')
+                     // authorFlairText.toLowerCase().includes('cotn royalty')
+                     authorFlairText.toLowerCase().includes(':s3r:')
                   )
                )
             })

@@ -286,7 +286,7 @@ module.exports = {
          subreddit: 'OnPatrolLive',
       },
       getCotNFlairs: {
-         subreddit: 'OnPatrolLive',
+         subreddit: 'livepd',
       },
       tidy: {
          subreddit: 'OnPatrolLive',          // subreddit to search
