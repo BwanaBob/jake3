@@ -286,7 +286,10 @@ module.exports = {
          subreddit: 'OnPatrolLive',
       },
       getCotNFlairs: {
-         subreddit: 'livepd',
+         subreddit: 'OnPatrolLiveTVShow',
+      },
+      getFlairUsage: {
+         subreddit: 'OnPatrolLive',
       },
       tidy: {
          subreddit: 'OnPatrolLive',          // subreddit to search

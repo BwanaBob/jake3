@@ -50,7 +50,7 @@ async function getCurrentLiveThread() {
 async function getTargetFlairId() {
    // Look up the flair ID by name
    try {
-      const flairs = await reddit.getSubredditFlairs(subreddit)
+      const flairs = await reddit.getSubredditPostFlairs(subreddit)
       const targetFlair = flairs.find(
          (flair) => flair.text.toLowerCase() == targetFlairName.toLowerCase()
       )

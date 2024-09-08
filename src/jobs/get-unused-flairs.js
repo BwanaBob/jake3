@@ -5,7 +5,8 @@ const { subreddit } = config.jobs.getUnusedFlairs
 
 module.exports = () => ({
    name: 'getUnusedFlairs',
-   cronExpression: '0 30 16 * * FRI', // pre-showtime (4:30pm cst) - live
+   cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
+   // cronExpression: '0 30 16 * * FRI', // pre-showtime (4:30pm cst) - live
    // cronExpression: '*/15 * * * * *', // Every 15 seconds (testing)
    jobFunction: async () => {
       try {

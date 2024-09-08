@@ -197,10 +197,6 @@ class Reddit {
       return data.data.children
    }
 
-   async getSubredditFlairs(subreddit) {
-      return await this.apiRequest(`/r/${subreddit}/api/link_flair_v2`, 'get')
-   }
-
    async getSubredditSettings(subreddit) {
       return await this.apiRequest(`/r/${subreddit}/about/edit`, 'get')
    }
@@ -386,7 +382,11 @@ class Reddit {
       return allComments
    }
 
-   async getSubredditUserFlairs(subreddit, limit = 100) {
+   async getSubredditPostFlairs(subreddit) {
+      return await this.apiRequest(`/r/${subreddit}/api/link_flair_v2`, 'get')
+   }
+
+   async getSubredditUserFlairs(subreddit, limit = 1000) {
       let allFlairs = []
       let after = null
 
@@ -416,7 +416,7 @@ class Reddit {
          const response = await this.apiRequest(
             `/r/${subreddit}/api/flairlist`,
             'get',
-            { limit, after: next, show: 'all' } // Use 'next' for pagination
+            { limit, after: next } // Use 'next' for pagination
          )
 
          const users = response.users
@@ -428,7 +428,7 @@ class Reddit {
 
          next = response.next // Update the pagination token
       } while (next)
-
+      // console.log(usersWithFlairs);
       return usersWithFlairs
    }
 

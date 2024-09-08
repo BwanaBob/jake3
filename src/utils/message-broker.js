@@ -1058,7 +1058,7 @@ module.exports = {
                   .setColor(config.jobOutput.tidy.embedColor)
                   .setTitle('Current Temporary Bans')
                   .setFooter({ text: `r/OnPatrolLive` })
-                  .setDescription('TBD')
+                  .setDescription('<none>')
 
                let banList = ''
 
@@ -1087,7 +1087,7 @@ module.exports = {
                   .setColor(config.jobOutput.tidy.embedColor)
                   .setTitle('Unused User Flairs')
                   .setFooter({ text: `r/OnPatrolLive` })
-                  .setDescription('TBD')
+                  .setDescription('<none>')
 
                let flairList = ''
 
@@ -1124,6 +1124,7 @@ module.exports = {
                let flairRoyalUserList = ''
 
                if (response.data.length > 0) {
+                  // console.log(response.data)
                   for (const flairUser of response.data) {
                      if (
                         flairUser.flair_text
@@ -1153,8 +1154,12 @@ module.exports = {
                   flairWinnerUserList = 'None'
                   flairRoyalUserList = 'None'
                }
-               flairWinnerEmbed.setDescription(flairWinnerUserList)
-               flairRoyalEmbed.setDescription(flairRoyalUserList)
+               if (flairWinnerUserList) {
+                  flairWinnerEmbed.setDescription(flairWinnerUserList)
+               }
+               if (flairRoyalUserList) {
+                  flairRoyalEmbed.setDescription(flairRoyalUserList)
+               }
 
                const winnerMessage = { embeds: [flairWinnerEmbed] }
                const royalMessage = { embeds: [flairRoyalEmbed] }
@@ -1163,6 +1168,36 @@ module.exports = {
                   this.sendMessage(client, sendChannel, royalMessage)
                )
             }
+            break
+
+         case 'getFlairUsage':
+            if (response.status == 'success') {
+               const flairEmbed = new EmbedBuilder()
+                  .setColor(config.jobOutput.tidy.embedColor)
+                  .setTitle('User Flair Usage')
+                  .setFooter({ text: response.subreddit })
+                  .setDescription('<none>')
+               let flairList = ''
+
+               // console.log(response.data)
+               response.data.sortedFlairUsage.forEach(flair => {
+                     // flairList += `${flair.flair_text || '<none>'}`
+                     flairList += `${flair.count || '0'}`
+                     flairList += ` - `
+                     flairList += `${flair.css_class || '<none>'}`
+                     flairList += `\n`
+                     // console.log(`${flairUser.user} | ${flairUser.flair_text}`)
+                  }
+               )
+
+               if (flairList) {
+                  flairEmbed.setDescription(flairList)
+               }
+               const flairMessage = { embeds: [flairEmbed] }
+               sendChannel = client.params.get('jobsChannelId')
+               this.sendMessage(client, sendChannel, flairMessage)
+            }
+
             break
 
          case 'scheduleFast':
