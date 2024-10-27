@@ -330,6 +330,7 @@ module.exports = {
             'HatchlingChibi',
             'LydiaTheTattooedLady',
             'BizarroRick',
+            'MjolnirHammertime',
          ],
       },
    },
