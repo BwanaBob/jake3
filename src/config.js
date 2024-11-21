@@ -65,6 +65,7 @@ module.exports = {
       scheduleFast: { embedColor: '#3498db' },
       scheduleSlow: { embedColor: '#3498db' },
       blueSkyPostBingo: { embedColor: '#3498db' },
+      blueSkyPostThread: { embedColor: '#e94e43' },
    },
    logger: {
       logLength: 140,
@@ -98,6 +99,10 @@ module.exports = {
             './resources/bingo-splash-octopus.png',
             './resources/bingo-splash-turtle.png',
          ]
+      },
+      blueSkyPostThread:{
+         postText:"🚨 Join us on Reddit for tonight's LIVE thread at r/OnPatrolLive! 🎥👮‍♀️ We're a thriving part of #OPNation, sharing thoughts, lives, snark, pets, and playing Bingo. 💙\nCome hang out, discuss in real-time, and be part of the conversation.\n👉 reddit.com/r/OnPatrolLive\n#OPLive #OnPatrolLive #Reddit",
+         imagePath: './resources/reddit-live-thread.png'
       },
       getNewComments: {
          subreddit:
