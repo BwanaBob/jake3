@@ -64,6 +64,7 @@ module.exports = {
       modLogStats: { embedColor: '#3498db' },
       scheduleFast: { embedColor: '#3498db' },
       scheduleSlow: { embedColor: '#3498db' },
+      blueSkyPostBingo: { embedColor: '#3498db' },
    },
    logger: {
       logLength: 140,
@@ -88,7 +89,7 @@ module.exports = {
       },
    },
    jobs: {
-      blueSkyBingoPost:{
+      blueSkyPostBingo:{
          postText:"#OPNation, #OnPatrolLive starts in 1 hour! Don't forget to grab your #OPLBingo cards and play along. #OPLive\nwww.thatsabingo.com",
          imagePaths: [
             './resources/bingo-splash-emoji.png',

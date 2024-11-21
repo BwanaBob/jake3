@@ -1,5 +1,6 @@
 const { AtpAgent, RichText } = require('@atproto/api')
 const fs = require('fs')
+const logger = require('./Logger')
 
 class BlueSky {
    constructor(username, password) {
@@ -14,12 +15,15 @@ class BlueSky {
 
    async login() {
       try {
-         console.log('Logging in with credentials...')
+        //  console.log('Logging in with credentials...')
          await this.agent.login({
             identifier: this.username,
             password: this.password,
          })
-         console.log('Logged in successfully.')
+         logger.info({
+            emoji: '🦋',
+            columns: ['BlueSky', 'Logged In', this.username],
+         })
       } catch (err) {
          console.warn('Failed to login:', err.message)
       }
@@ -57,8 +61,11 @@ class BlueSky {
                },
             }
          )
+         logger.info({
+            emoji: '🦋',
+            columns: ['BlueSky', 'Post Created'],
+         })
 
-         console.log('Post created successfully!')
       } catch (err) {
          console.error('Failed to create a post:', err)
       }

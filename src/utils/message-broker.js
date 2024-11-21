@@ -1221,6 +1221,17 @@ module.exports = {
                this.sendMessage(client, sendChannel, message)
             }
             break
+            
+            case 'blueSkyPostBingo':
+               if (response.status == 'success') {
+                  const jobEmbed = new EmbedBuilder()
+                     .setColor(config.jobOutput.blueSkyPostBingo.embedColor)
+                     .setTitle('BlueSky Bingo Post Successful')
+                  message = { embeds: [jobEmbed] }
+                  sendChannel = redditServers['OnPatrolLive']['Jobs']
+                  this.sendMessage(client, sendChannel, message)
+               }
+               break
 
          case 'getNewModMail':
             if (response.status == 'success') {
