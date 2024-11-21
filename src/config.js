@@ -88,6 +88,16 @@ module.exports = {
       },
    },
    jobs: {
+      blueSkyBingoPost:{
+         postText:"#OPNation, #OnPatrolLive starts in 1 hour! Don't forget to grab your #OPLBingo cards and play along. #OPLive\nwww.thatsabingo.com",
+         imagePaths: [
+            './resources/bingo-splash-emoji.png',
+            './resources/bingo-splash-kaiju.png',
+            './resources/bingo-splash-kitten.png',
+            './resources/bingo-splash-octopus.png',
+            './resources/bingo-splash-turtle.png',
+         ]
+      },
       getNewComments: {
          subreddit:
             'OnPatrolLive+Police247+LAFireandRescue+BodycamCops+KillerCases+OnPatrolLiveTVShow',

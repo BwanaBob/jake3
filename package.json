@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@atproto/api": "^0.13.16",
     "axios": "^1.7.2",
     "axios-rate-limit": "^1.4.0",
     "discord.js": "^14.15.3",
