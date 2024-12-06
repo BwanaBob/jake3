@@ -91,17 +91,17 @@ module.exports = {
    },
    jobs: {
       blueSkyPostBingo:{
-         postText:'Hey #OPNation, #OnPatrolLive starts in 1 hour! Time to grab your bingo cards to play along live.\n"Snow" returns to the list tonight as well as "Hands Up".\n🟠 www.thatsabingo.com\n#OPLBingo #OPLive',
+         postText:"#OPNation, #OnPatrolLive starts in 1 hour! Remember to get your bingo cards and come play with us live.\nwww.thatsabingo.com\n#OPLBingo #OPLive",
          imagePaths: [
-            './resources/bingo-splash-kaiju.png',
-            './resources/bingo-splash-emoji.png',
-            './resources/bingo-splash-kitten.png',
-            './resources/bingo-splash-octopus.png',
-            './resources/bingo-splash-turtle.png',
+            './resources/bingo-splash-christmas-ferrets.png',
+            './resources/bingo-splash-christmas-donkey.png',
+            './resources/bingo-splash-christmas-elf.png',
+            './resources/bingo-splash-christmas-cow.png',
+            './resources/bingo-splash-christmas-snowman.png',
          ]
       },
       blueSkyPostThread:{
-         postText:"🚨 Tonight's LIVE thread is up at r/OnPatrolLive! 🎥👮‍♀️\nCome park and snark with #OPNation.\n👉 reddit.com/r/OnPatrolLive\n#OPLive #OnPatrolLive #Reddit",
+         postText:"🚨 Happy Friday everyone! Tonight's LIVE thread is up at r/OnPatrolLive! 🎥👮‍♀️\nCome join in the conversation. Maybe play some bingo with #OPNation.\n👉 reddit.com/r/OnPatrolLive\n#OPLive #OnPatrolLive #Reddit",
          imagePath: './resources/reddit-live-thread.png'
       },
       getNewComments: {
