@@ -91,7 +91,7 @@ module.exports = {
    },
    jobs: {
       blueSkyPostBingo:{
-         postText:"#OnPatrolLive starts in just one hour! Grab some bingo cards and come play live.\nwww.thatsabingo.com\n#OPLBingo #OPLive #OPNation",
+         postText:"Happy holidays, #OPNation! Our #OnPatrolLive weekend begins in one hour. Grab your bingo cards and come play live.\nwww.thatsabingo.com\n#OPLive",
          imagePaths: [
             './resources/bingo-splash-christmas-ferrets.png',
             './resources/bingo-splash-christmas-donkey.png',
@@ -101,7 +101,7 @@ module.exports = {
          ]
       },
       blueSkyPostThread:{
-         postText:"🚨 Tonight's LIVE thread at r/OnPatrolLive is up.\nCome join the chat, grab a bingo card, and hang out with #OPNation.\n👉 reddit.com/r/OnPatrolLive\n#OPLive #OnPatrolLive #Reddit",
+         postText:"🚨 The final #OnPatrolLive weekend of 2024 kicks off tonight! Come hang with #OPNation in the live thread at r/OnPatrolLive. Maybe follow along with some bingo cards too.\n👉 reddit.com/r/OnPatrolLive\n#OPLive #Reddit",
          imagePath: './resources/reddit-live-thread.png'
       },
       getNewComments: {
