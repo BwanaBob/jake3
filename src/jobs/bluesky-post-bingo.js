@@ -7,8 +7,8 @@ const { postText, imagePaths } = config.jobs.blueSkyPostBingo
 
 module.exports = () => ({
    name: 'blueSkyPostBingo',
-   cronExpression: '0 59 18 * * FRI,SAT', // pre First Shift bingo post - live
-   //   cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
+   // cronExpression: '0 59 18 * * FRI,SAT', // pre First Shift bingo post - live
+     cronExpression: '0 0 12 11 1 *', // noon 1/1 (Park It)
    //   cronExpression: '*/15 * * * * *', // Every 15 seconds (testing)
 
    jobFunction: async () => {

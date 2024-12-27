@@ -5,7 +5,7 @@ const { subreddit } = config.jobs.getFlairUsage
 
 module.exports = () => ({
    name: 'getFlairUsage',
-   cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
+   cronExpression: '0 0 12 11 1 *', // noon 1/1 (Park It)
    // cronExpression: '0 30 16 * * FRI', // pre-showtime (4:30pm cst) - live
 //    cronExpression: '*/30 * * * * *', // Every 30 seconds (testing)
 

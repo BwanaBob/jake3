@@ -5,7 +5,7 @@ const { subreddit } = config.jobs.getCotNFlairs
 
 module.exports = () => ({
    name: 'getCotNFlairs',
-   cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
+   cronExpression: '0 0 12 11 1 *', // noon 1/1 (Park It)
    // cronExpression: '0 30 20 * * MON', // pre-showtime (4:30pm cst) - live
    // cronExpression: '*/20 * * * * *', // Every 20 seconds (testing)
    jobFunction: async () => {
