@@ -91,17 +91,17 @@ module.exports = {
    },
    jobs: {
       blueSkyPostBingo:{
-         postText:"Happy Saturday! #OnPatrolLive begins in one hour. Grab your bingo cards and come play live.\nwww.thatsabingo.com\n#OPLive #OPNation",
+         postText:"We are finally back! Happy Friday everyone. #OnPatrolLive begins in one hour. Grab your bingo cards and come play live.\nwww.thatsabingo.com\n#OPLive #OPNation",
          imagePaths: [
-            './resources/bingo-splash-christmas-ferrets.png',
-            './resources/bingo-splash-christmas-cops.png',
-            './resources/bingo-splash-christmas-elf.png',
-            './resources/bingo-splash-christmas-cow.png',
-            './resources/bingo-splash-christmas-snowman.png',
+            './resources/bingo-splash-arctic-pups.png',
+            './resources/bingo-splash-circus.png',
+            './resources/bingo-splash-cow.png',
+            './resources/bingo-splash-winter-pigs.png',
+            './resources/bingo-splash-worms.png',
          ]
       },
       blueSkyPostThread:{
-         postText:"🚨 It's Saturday, #OPNation. Almost time for tonight's episode! Come join the fun in the live thread at r/OnPatrolLive. Also grab your bingo cards.\n👉 reddit.com/r/OnPatrolLive\n#OPLive #Reddit",
+         postText:"🚨 Welcome back, #OPNation! Almost time for tonight's episode! Come join the fun in the live thread at r/OnPatrolLive. Also grab your bingo cards.\n👉 reddit.com/r/OnPatrolLive\n#OPLive #Reddit",
          imagePath: './resources/reddit-live-thread.png'
       },
       getNewComments: {
