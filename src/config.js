@@ -91,7 +91,7 @@ module.exports = {
    },
    jobs: {
       blueSkyPostBingo:{
-         postText:"We are finally back! Happy Friday everyone. #OnPatrolLive begins in one hour. Grab your bingo cards and come play live.\nwww.thatsabingo.com\n#OPLive #OPNation",
+         postText:"We are finally back! #OnPatrolLive begins in one hour with our new department: the Clayton County Sheriff's Office in Georgia. Can't wait to get back into bingo with all of you! Grab your bingo cards and come play live.\nwww.thatsabingo.com\n#OPLive #OPNation",
          imagePaths: [
             './resources/bingo-splash-arctic-pups.png',
             './resources/bingo-splash-circus.png',
@@ -101,7 +101,7 @@ module.exports = {
          ]
       },
       blueSkyPostThread:{
-         postText:"🚨 Welcome back, #OPNation! Almost time for tonight's episode! Come join the fun in the live thread at r/OnPatrolLive. Also grab your bingo cards.\n👉 reddit.com/r/OnPatrolLive\n#OPLive #Reddit",
+         postText:"🚨 Welcome back, #OPNation! Almost time for tonight's long awaited episode with Clayton County Sheriff's Office in Georgia joining the lineup! Come join the live thread at r/OnPatrolLive and grab your bingo cards.\n👉 reddit.com/r/OnPatrolLive\n#OPLive #Reddit",
          imagePath: './resources/reddit-live-thread.png'
       },
       getNewComments: {
