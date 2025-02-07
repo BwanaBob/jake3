@@ -91,7 +91,7 @@ module.exports = {
    },
    jobs: {
       blueSkyPostBingo:{
-         postText:"Tonight's exciting updated lineup joins #OnPatrolLive in an hour! Come grab your bingo cards and play along.\nwww.thatsabingo.com\n#OPLive #OPNation",
+         postText:"It's finally Friday! Tonight's #OnPatrolLive starts in an hour! Grab your bingo cards and play along.\nwww.thatsabingo.com\n#OPLive #OPNation",
          imagePaths: [
             './resources/bingo-splash-ferrets-4.png',
             './resources/bingo-splash-penguins.png',
