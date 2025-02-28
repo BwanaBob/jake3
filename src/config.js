@@ -91,13 +91,13 @@ module.exports = {
    },
    jobs: {
       blueSkyPostBingo:{
-         postText:"Greetings, #OPNation! Can't wait for #OnPatrolLive in one hour! Come get your bingo cards and play along.\nwww.thatsabingo.com\n#OnPatrolLive #OPNation",
+         postText:"🚔🚨 It’s almost showtime, #OPNation! Grab your boards and get ready to play On Patrol: Live Bingo! Spot the action, mark your squares, and compete with fellow fans in real time. Will you get THAT’S A BINGO tonight? 🎉😆\nPlay here ➡️ www.thatsabingo.com\n#OPLive #OnPatrolLive",
          imagePaths: [
             './resources/bingo-splash-ferrets-4.png',
             './resources/bingo-splash-kiss.png',
             './resources/bingo-splash-kukaburra.png',
-            './resources/bingo-splash-cow.png',
-            './resources/bingo-splash-v-wolf.png',
+            './resources/bingo-splash-bike-week.png',
+            './resources/bingo-splash-banana.png',
          ]
       },
       blueSkyPostThread:{
