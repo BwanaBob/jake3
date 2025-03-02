@@ -13,11 +13,8 @@ module.exports = () => ({
 
    jobFunction: async () => {
       try {
-         // Calculate the current day of the year
-         const currentDay = new Date().getDate()
-         // Use modulo to select the array index
-         const selectedIndex = currentDay % imagePaths.length
-         //   console.log(imagePaths[selectedIndex])
+         const daysSinceEpoch = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
+         const selectedIndex = daysSinceEpoch % imagePaths.length;
          await bluesky.createPostWithImage(postText, imagePaths[selectedIndex])
          return { status: 'success' }
       } catch (error) {
