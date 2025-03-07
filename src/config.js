@@ -91,13 +91,14 @@ module.exports = {
    },
    jobs: {
       blueSkyPostBingo:{
-         postText:"🚨 Saturday night brings us more #OnPatrolLive, more #Bingo, and more #DaytonaBikeWeek. Grab some bingo cards and play along with us!\n➡️ www.thatsabingo.com\n#OPLive #OPNation",
+         postText:"🚨 Friday again! Finally time to get back to #OPLive. Get your bingo cards and play along!\n➡️ www.thatsabingo.com\n#OPLive #OPNation",
+         singleImage: "./resources/bingo-splash-banana.png",
          imagePaths: [
-            './resources/bingo-splash-ferrets-4.png',
-            './resources/bingo-splash-kiss.png',
-            './resources/bingo-splash-kukaburra.png',
-            './resources/bingo-splash-bike-week.png',
-            './resources/bingo-splash-banana.png',
+            './resources/bingo-splash-chibi-shop.png',
+            './resources/bingo-splash-easter-bunny.png',
+            './resources/bingo-splash-leprechaun.png',
+            './resources/bingo-splash-lucky.png',
+            './resources/bingo-splash-spring-flowers.png',
          ]
       },
       blueSkyPostThread:{
