@@ -91,7 +91,7 @@ module.exports = {
    },
    jobs: {
       blueSkyPostBingo:{
-         postText:"🚨 Another Friday night is upon us, #OPNation! Bike week may be over, but spring break in Daytona could bring us some excitement. Sticks is also back in studio, promising to take a razor to Dan's face.\nIt all kicks off in one hour, so grab your bingo cards and play along!\n➡️ www.thatsabingo.com\n#OPLive #OnPatrolLive",
+         postText:"🚨 Happy Saturday, #OPNation!\n#OnPatrolLive kicks off in one hour, so grab your lucky bingo cards and play along!\n➡️ www.thatsabingo.com\n#OPLive #OnPatrolLive",
          singleImage: "./resources/bingo-splash-leprechaun.png",
          imagePaths: [
             './resources/bingo-splash-chibi-shop.png',
