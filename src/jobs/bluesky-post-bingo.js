@@ -1,8 +1,8 @@
-const scheduler = require('../../modules/Scheduler.js')
-const BlueSky = require('../../modules/BlueSky.js')
-const { blueSkyBingoUsername, blueSkyBingoPassword } = require('../../credentials.js')
+const scheduler = require('../modules/Scheduler.js')
+const BlueSky = require('../modules/BlueSky.js')
+const { blueSkyBingoUsername, blueSkyBingoPassword } = require('../credentials.js')
 const bluesky = new BlueSky(blueSkyBingoUsername, blueSkyBingoPassword)
-const config = require('../../config.js')
+const config = require('../config.js')
 const { postText, imagePaths, singleImage } = config.jobs.blueSkyPostBingo
 
 module.exports = () => ({
