@@ -91,8 +91,8 @@ module.exports = {
    },
    jobs: {
       blueSkyPostBingo:{
-         postText:"🚨 Welcome back, #OPNation! It's been a torturously long 2 weeks since we got together for a live show. Let's grab our bingo cards and get back into it in one hour!\n➡️ www.thatsabingo.com\n#OPLive #OnPatrolLive",
-         singleImage: "./resources/bingo-splash-muppet-cop.png",
+         postText:"🚨 Saturday returns and so does bingo! Get some bingo cards and play along in one hour!\nOh Yeah!\n➡️ www.thatsabingo.com\n#OPNation #OPLive #OnPatrolLive",
+         singleImage: "./resources/bingo-splash-punch.png",
          imagePaths: [
             './resources/bingo-splash-chibi-shop.png',
             './resources/bingo-splash-easter-bunny.png',
