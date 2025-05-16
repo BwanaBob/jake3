@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "Jake",
+      name: "jake",
       script: "src/index.js",
       exec_mode: "fork", 
       instances: 1,
