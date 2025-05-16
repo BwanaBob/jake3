@@ -7,12 +7,10 @@ module.exports = {
       instances: 1,
       autorestart: true,
       watch: true,
-      watch_options: {
-        ignore_watch: [
-          "logs",
-          "*.txt"
-        ],
-      },
+      ignore_watch: [
+        "logs",
+        "*.txt"
+      ],
       max_memory_restart: "300M",
       env: {
         NODE_ENV: "development"
