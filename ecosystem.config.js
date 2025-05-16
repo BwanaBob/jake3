@@ -9,11 +9,8 @@ module.exports = {
       watch: true,
       watch_options: {
         ignore_watch: [
-          "posts.txt",
-          "queue-items.txt",
-          "modlog.txt",
-          "comments.txt"
-        ]
+          "*.txt"
+        ],
       },
       max_memory_restart: "300M",
       env: {
