@@ -9,6 +9,7 @@ module.exports = {
       watch: true,
       watch_options: {
         ignore_watch: [
+          "logs",
           "*.txt"
         ],
       },

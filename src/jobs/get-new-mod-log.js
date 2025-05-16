@@ -10,8 +10,13 @@ const startTime = new Date() - readBehind * 1000 // When the job was first sched
 let loggedModLogIds = new Set()
 
 const fs = require('fs')
+const path = require('path')
 function saveItemsToFile(item) {
-   const filePath = 'modlog.txt'
+   const dirPath = 'logs'
+   const filePath = path.join(dirPath, 'modlog.txt')
+   if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true })
+   }
    fs.appendFile(filePath, JSON.stringify(item, null, 2) + '\n', (err) => {
       if (err) {
          console.error('Error writing to file:', err)

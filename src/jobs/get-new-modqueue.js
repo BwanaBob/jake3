@@ -9,8 +9,13 @@ let loggedItemIds = new Set()
 const startTime = new Date() - readBehind * 1000 // When the job was first scheduled
 
 const fs = require('fs')
+const path = require('path')
 function saveItemsToFile(item) {
-   const filePath = 'queue-items.txt'
+   const dirPath = 'logs'
+   const filePath = path.join(dirPath, 'queue-items.txt')
+   if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true })
+   }
    fs.appendFile(filePath, JSON.stringify(item, null, 2) + '\n', (err) => {
       if (err) {
          console.error('Error writing to file:', err)

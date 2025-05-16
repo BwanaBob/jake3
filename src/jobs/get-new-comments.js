@@ -10,9 +10,14 @@ const startTime = new Date() - (readBehind * 1000)// When the job was first sche
 
 let loggedCommentIds = new Set()
 const fs = require('fs')
+const path = require('path')
 
 function saveItemsToFile(item) {
-   const filePath = 'comments.txt'
+   const dirPath = 'logs'
+   const filePath = path.join(dirPath, 'comments.txt')
+   if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true })
+   }
    fs.appendFile(filePath, JSON.stringify(item, null, 2) + '\n', (err) => {
       if (err) {
          console.error('Error writing to file:', err)
