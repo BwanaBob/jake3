@@ -3,6 +3,7 @@ module.exports = {
     {
       name: "Jake",
       script: "src/index.js",
+      exec_mode: "fork", 
       instances: 1,
       autorestart: true,
       watch: true,
