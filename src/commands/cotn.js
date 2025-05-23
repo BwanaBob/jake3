@@ -12,14 +12,17 @@ module.exports = {
       .addStringOption((option) =>
          option
             .setName('postid')
-            .setDescription('The post Id')
-            .setRequired(true)
+            .setDescription('The post Id (leave blank for latest post)')
+            .setRequired(false)
       ),
    async execute(interaction) {
+      const postId = interaction.options.getString('postid')
       await interaction.reply({
-         content: 'CotN Command Received. Executing Job',
+         content: postId
+            ? `CotN Command Received. Executing Job for postId: ${postId}`
+            : 'CotN Command Received. Executing Job for latest post',
          ephemeral: false,
       })
-      scheduler.runJobNow('getTopComments')
+      scheduler.runJobNow('getTopComments', postId ? { postId } : {})
    },
 }

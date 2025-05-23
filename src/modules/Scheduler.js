@@ -74,10 +74,10 @@ class Scheduler extends EventEmitter {
       })
    }
 
-   async runJobNow(name) {
+   async runJobNow(name, jobParams = {}) {
       if (this.jobs[name]) {
          try {
-            const result = await this.jobs[name].jobFunction()
+            const result = await this.jobs[name].jobFunction(jobParams)
             this.emit('jobCompleted', name, result)
             return result
          } catch (error) {

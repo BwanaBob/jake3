@@ -48,11 +48,30 @@ module.exports = () => ({
    // cronExpression: '0 * * * * *', // Every 60 seconds (testing)
    cronExpression: '0 0 3 * * SAT,SUN', // Every Saturday and Sunday at 3am (live)
 
-   jobFunction: async () => {
+   jobFunction: async (jobParams = {}) => {
       try {
-         if (searchMode == 'latest') {
-            post = await getLatestPost()
+         let post
+         logger.info({
+            emoji: '🐞',
+            columns: ['Top Comments', 'jobParams', JSON.stringify(jobParams)],
+         })
+         if (jobParams.postId) {
+            logger.info({
+               emoji: '🐞',
+               columns: ['Top Comments', 'Using postId from jobParams', jobParams.postId],
+            })
+            post = await getPostById(jobParams.postId)
+         } else if (searchMode == 'latest') {
+            logger.info({
+               emoji: '🐞',
+               columns: ['Top Comments', 'Using searchMode', 'latest'],
+            })
+            post = await getLatestPost() 
          } else if (searchMode == 'id') {
+            logger.info({
+               emoji: '🐞',
+               columns: ['Top Comments', 'Using searchMode', 'id', searchString],
+            })
             post = await getPostById(searchString)
          }
          if (post) {
