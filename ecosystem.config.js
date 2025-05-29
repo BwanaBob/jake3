@@ -8,7 +8,11 @@ module.exports = {
       autorestart: true,
       watch: true,
       ignore_watch: [
+        "node_modules",
         "logs",
+        "debug",
+        ".git",
+        ".nvm",
         "*.txt"
       ],
       max_memory_restart: "300M",
