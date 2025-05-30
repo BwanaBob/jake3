@@ -101,7 +101,7 @@ class Reddit {
          this.client.defaults.headers.common['User-Agent'] = redditUserAgent // Ensure User-Agent is set
       } catch (error) {
          console.error(
-            'Reddit API: Error fetching OAuth token:',
+            `[${new Date().toISOString()}] Reddit API: Error fetching OAuth token:`,
             error.response ? error.response.data : error.message
          )
          throw error
@@ -165,23 +165,23 @@ class Reddit {
          if (error.response && error.response.status === 401) {
             // Unauthorized error, token might be expired
             console.warn(
-               `Reddit API: 401 Unauthorized error. Retrieving new token.`
+               `[${new Date().toISOString()}] Reddit API: 401 Unauthorized error. Retrieving new token.`
             )
             await this.getOAuthToken()
             return this.apiRequest(endpoint, method, data) // Retry the request
          } else if (error.response && error.response.status === 429) {
             // Rate limit error
-            console.warn(
-               `Reddit API: 429 Rate limit exceeded. Retrying after ${retryAfter} seconds.`
-            )
             const retryAfter = error.response.headers['retry-after']
+            console.warn(
+               `[${new Date().toISOString()}] Reddit API: 429 Rate limit exceeded. Retrying after ${retryAfter} seconds.`
+            )
             await new Promise((resolve) =>
                setTimeout(resolve, retryAfter * 1000)
             ) // Wait and retry
             return this.apiRequest(endpoint, method, data) // Retry the request
          } else {
             console.error(
-               `Reddit API: Error fetching data from ${endpoint}:`,
+               `[${new Date().toISOString()}] Reddit API: Error fetching data from ${endpoint}:`,
                error.response ? error.response.data : error.message
                // error
             )
@@ -217,7 +217,10 @@ class Reddit {
          //   console.log(response);
          return response
       } catch (error) {
-         console.error('Error fetching modmail conversations:', error.message)
+         console.error(
+            `[${new Date().toISOString()}] Error fetching modmail conversations:`,
+            error.message
+         )
          return null
       }
    }
@@ -228,7 +231,7 @@ class Reddit {
    //    //   console.log(conversations['1xjdr2']);
    //      return { conversations, conversationIds };
    //    } catch (error) {
-   //      console.error('Error fetching modmail conversations:', error.message);
+   //      console.error(`[${new Date().toISOString()}] Error fetching modmail conversations:`, error.message);
    //      return { conversations: {}, conversationIds: [] };
    //    }
    //  }
@@ -239,7 +242,7 @@ class Reddit {
    //    //   console.log(conversation)
    //      return conversation.messages || [];
    //    } catch (error) {
-   //      console.error(`Error fetching messages for conversation ${conversationId}:`, error.message);
+   //      console.error(`[${new Date().toISOString()}] Error fetching messages for conversation ${conversationId}:`, error.message);
    //      return [];
    //    }
    //  }
