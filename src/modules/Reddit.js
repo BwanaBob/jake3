@@ -218,7 +218,7 @@ class Reddit {
          return response
       } catch (error) {
          console.error('Error fetching modmail conversations:', error.message)
-         return response
+         return null
       }
    }
 
