@@ -105,7 +105,7 @@ module.exports = {
             }
          }
 
-         if (media.s.u) {
+         if (media.s && media.s.u) {
             const imageURL = decodeURIComponent(
                media.s.u.replace(/&amp;/g, '&')
             )
@@ -118,7 +118,7 @@ module.exports = {
             }
          }
 
-         if (media.s.gif) {
+         if (media.s && media.s.gif) {
             const imageURL = decodeURIComponent(
                media.s.gif.replace(/&amp;/g, '&')
             )
