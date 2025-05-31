@@ -89,7 +89,7 @@ module.exports = () => ({
          })
          return { status: 'success', data: newMessages }
       } catch (error) {
-         console.error('getNewModMail: Error fetching new ModMail:', error)
+         console.error(`[${new Date().toLocaleString()}] [getNewModMail] Error fetching new ModMail:`, error)
          throw error
       }
    },

@@ -191,7 +191,7 @@ module.exports = {
             postEmbed.setThumbnail(post.thumbnail)
          } catch (err) {
             console.error(
-               `[ERROR] Setting Thumbnail ${post.thumbnail} -`,
+               `[${new Date().toLocaleString()}] [ERROR] Setting Thumbnail ${post.thumbnail} -`,
                err.message
             )
          }
@@ -877,7 +877,7 @@ module.exports = {
 
       const channel = await client.channels.cache.get(channelId)
       if (!channel) {
-         console.error(`[ERROR] Channel ${channelId} not found`)
+         console.error(`[${new Date().toLocaleString()}] [sendMessage] Channel ${channelId} not found`)
          return
       }
 
@@ -885,7 +885,7 @@ module.exports = {
          const sentMessage = await channel.send(message)
          // console.log(sentMessage);
       } catch (error) {
-         console.error(`[ERROR] Sending message -`, error)
+         console.error(`[${new Date().toLocaleString()}] [sendMessage] Sending message -`, error)
       }
    },
 

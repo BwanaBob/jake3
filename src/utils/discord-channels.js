@@ -29,7 +29,7 @@ const verifyDiscordServer = async function (discordServer, redditServerName) {
                // archived: { fetchAll: true },
             })
          } catch (error) {
-            console.error('Error fetching threads:', error)
+            console.error(`[${new Date().toLocaleString()}] Error fetching threads:`, error)
          }
          // console.log(fetchedThreads);
 
@@ -74,7 +74,7 @@ const verifyDiscordServer = async function (discordServer, redditServerName) {
 
                   await delay(2000)
                } catch (error) {
-                  console.error('Error creating thread:', error)
+                  console.error(`[${new Date().toLocaleString()}] Error creating thread:`, error)
                }
             }
          }
@@ -82,7 +82,7 @@ const verifyDiscordServer = async function (discordServer, redditServerName) {
          discordServers[discordServer.id].complete = true
          //  console.log(`Discord server: ${discordServer.name} fully defined.`)
       } else {
-         console.error(`Default channel not found:`)
+         console.error(`[${new Date().toLocaleString()}] Default channel not found:`)
          throw error
       }
    }

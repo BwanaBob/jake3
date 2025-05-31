@@ -157,7 +157,7 @@ module.exports = () => ({
             return { status: 'failed' }
          }
       } catch (error) {
-         console.error('Error fetching top comments:', error.message)
+         console.error(`[${new Date().toLocaleString()}] Error fetching top comments:`, error.message)
          throw error
       }
    },

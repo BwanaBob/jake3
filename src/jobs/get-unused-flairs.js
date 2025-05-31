@@ -38,7 +38,7 @@ module.exports = () => ({
 
          // return true;
       } catch (error) {
-         console.error(`Error in getUnusedFlairs job: ${error.message}`)
+         console.error(`[${new Date().toLocaleString()}] Error in getUnusedFlairs job: ${error.message}`)
          throw error
       }
    },

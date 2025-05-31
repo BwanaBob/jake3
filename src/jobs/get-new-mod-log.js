@@ -19,7 +19,7 @@ function saveItemsToFile(item) {
    }
    fs.appendFile(filePath, JSON.stringify(item, null, 2) + '\n', (err) => {
       if (err) {
-         console.error('Error writing to file:', err)
+         console.error(`[${new Date().toLocaleString()}] Error writing to file:`, err)
       } else {
          // console.log('Item saved to', filePath)
       }
@@ -65,7 +65,7 @@ module.exports = () => ({
          })
          return { status: 'success', data: newItems }
       } catch (error) {
-         console.error('getNewModLog: Error fetching new items:', error.message)
+         console.error(`[${new Date().toLocaleString()}] [getNewModLog] Error fetching new items:`, error.message)
          throw error
       }
    },

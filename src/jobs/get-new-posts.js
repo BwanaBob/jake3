@@ -20,7 +20,7 @@ function saveItemsToFile(item) {
    }
    fs.appendFile(filePath, JSON.stringify(item, null, 2) + '\n', (err) => {
       if (err) {
-         console.error('Error writing to file:', err)
+         console.error(`[${new Date().toLocaleString()}] Error writing to file:`, err)
       } else {
          // console.log('Comment saved to', filePath)
       }
@@ -68,7 +68,7 @@ module.exports = () => ({
          })
          return { status: 'success', data: newPosts }
       } catch (error) {
-         console.error('getNewPosts: Error fetching new posts:', error.message)
+         console.error(`[${new Date().toLocaleString()}] [getNewPosts] Error fetching new posts:`, error.message)
          throw error
       }
    },

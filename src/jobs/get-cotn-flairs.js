@@ -34,7 +34,7 @@ module.exports = () => ({
 
          return { status: 'success', subreddit: subreddit, data: cotnFlairs }
       } catch (error) {
-         console.error(`Error in getCotNFlairs job: ${error.message}`)
+         console.error(`[${new Date().toLocaleString()}] Error in getCotNFlairs job: ${error.message}`)
          throw error
       }
    },

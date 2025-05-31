@@ -178,7 +178,7 @@ module.exports = () => ({
          const results = analyzeModlog(allEntries, specificEndTime, logger)
          return { status: 'success', data: results }
       } catch (error) {
-         console.error('Error:', error)
+         console.error(`[${new Date().toLocaleString()}] Error:`, error)
       }
    },
 })

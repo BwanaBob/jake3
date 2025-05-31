@@ -26,7 +26,7 @@ module.exports = () => ({
          })
          return { status: 'success', data: bans }
       } catch (error) {
-         console.error(`Failed to retrieve temporary bans: ${error.message}`)
+         console.error(`[${new Date().toLocaleString()}] Failed to retrieve temporary bans: ${error.message}`)
          throw error
       }
    },

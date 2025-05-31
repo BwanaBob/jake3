@@ -20,7 +20,7 @@ module.exports = () => ({
          })
          return { status: 'success' }
       } catch (error) {
-         console.error('scheduleStart: Error scheduling job:', error.message)
+         console.error(`[${new Date().toLocaleString()}] [scheduleStart] Error scheduling job:`, error.message)
          throw error
       }
    },

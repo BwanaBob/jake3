@@ -19,7 +19,7 @@ module.exports = ({ reddit, logger }) => ({
          console.log(result)
       } catch (error) {
          console.error(
-            'distinguishComment: Error distinguishing comment:',
+            `[${new Date().toLocaleString()}] distinguishComment: Error distinguishing comment:`,
             //  error.response ? error.response.data : error.message
             error.code,
             error.response,

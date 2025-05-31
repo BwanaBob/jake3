@@ -67,7 +67,7 @@ class BlueSky {
          })
 
       } catch (err) {
-         console.error('Failed to create a post:', err)
+         console.error(`[${new Date().toLocaleString()}] Failed to create a post:`, err)
       }
    }
 }

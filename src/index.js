@@ -44,6 +44,6 @@ scheduler.loadJobsFromFolder(jobsFolderPath, { reddit, logger })
    try {
       await discord.login()
    } catch (error) {
-      console.error('Error logging into Discord:', error)
+      console.error(`[${new Date().toLocaleString()}] Error logging into Discord:`, error)
    }
 })()

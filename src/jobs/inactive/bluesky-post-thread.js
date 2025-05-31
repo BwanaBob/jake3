@@ -21,7 +21,7 @@ module.exports = () => ({
          await bluesky.createPostWithImage(postText, imagePath)
          return { status: 'success' }
       } catch (error) {
-         console.error(`Error posting live thread post: ${error.message}`)
+         console.error(`[${new Date().toLocaleString()}] [BluSky Post] Error posting live thread post: ${error.message}`)
          throw error
       }
    },

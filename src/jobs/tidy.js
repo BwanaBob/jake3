@@ -43,7 +43,7 @@ async function getCurrentLiveThread() {
          return null
       }
    } catch (error) {
-      console.error('Tidy Error Locating Live Thread:', error.message)
+      console.error(`[${new Date().toLocaleString()}] [getCurrentLiveThread] Error Locating Live Thread:`, error.message)
    }
 }
 
@@ -63,7 +63,7 @@ async function getTargetFlairId() {
       })
       return targetFlair.id
    } catch (error) {
-      console.error('Tidy Error Locating Target Flair:', error.message)
+      console.error(`[${new Date().toLocaleString()}] [getTargetFlairId] Error Locating Target Flair:`, error.message)
    }
 }
 
@@ -102,7 +102,7 @@ module.exports = () => ({
          }
          return result
       } catch (error) {
-         console.error('Tidy Error:', error.message)
+         console.error(`[${new Date().toLocaleString()}] [Tidy] Error:`, error.message)
       }
    },
 })

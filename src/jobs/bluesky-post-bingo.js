@@ -19,7 +19,7 @@ module.exports = () => ({
          await bluesky.createPostWithImage(postText, singleImage)
          return { status: 'success' }
       } catch (error) {
-         console.error(`Error posting bingo post: ${error.message}`)
+         console.error(`[${new Date().toLocaleString()}] Error posting bingo post: ${error.message}`)
          throw error
       }
    },
