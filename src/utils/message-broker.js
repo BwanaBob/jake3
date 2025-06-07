@@ -1280,10 +1280,13 @@ module.exports = {
 
                   // console.log(mailMessage)
                   if (mailMessage.parentOwnerType == 'subreddit') {
-                     sendChannel =
-                        redditServers[mailMessage.parentOwnerDisplayName][
-                           'Mod Mail'
-                        ]
+                     const subredditConfig = redditServers[mailMessage.parentOwnerDisplayName]
+                     if (subredditConfig && subredditConfig['Mod Mail']) {
+                        sendChannel = subredditConfig['Mod Mail']
+                     } else {
+                        console.warn(`[processDiscordMessage] No 'Mod Mail' channel for subreddit: ${mailMessage.parentOwnerDisplayName}`)
+                        sendChannel = client.params.get('mailChannelId')
+                     }
                   } else {
                      sendChannel = client.params.get('mailChannelId')
                   }
