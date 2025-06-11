@@ -33,10 +33,10 @@ class RssWatcher {
    }
 
    async checkAndNotify() {
-      // console.log("checking feed");
+      logger.info({ emoji: '📰', columns: ['RSS', 'Checking'] });
       const feed = await this.parser.parseURL(this.feedUrl);
       const newItems = [];
-      // console.log(`Items: ${feed.items.length}`);
+      logger.info({ emoji: '📰', columns: ['RSS', 'Total Items', `Found: ${feed.items.length}`] });
       for (const item of feed.items) {
          const guid = item.guid || item.link;
          if (!this.seenGuids.has(guid)) {
@@ -44,8 +44,8 @@ class RssWatcher {
             this.seenGuids.add(guid);
          }
       }
+      logger.info({ emoji: '📰', columns: ['RSS', 'New Items', `Found: ${newItems.length}`] });
       if (newItems.length > 0) {
-         // logger.info({ emoji: '📰', columns: ['RSS', 'New Items', newItems.length] });
          this._saveSeen();
       }
       return newItems;
