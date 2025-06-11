@@ -1251,6 +1251,8 @@ module.exports = {
             break
 
          case 'rssRedditStatus':
+            console.log("[Message Broker] rssRedditStatus job executed")
+            console.log(`[Message Broker] ${response.data.length} items received`)
             if (response.status == 'success') {
                // Only send the latest 3 items
                const items = response.data.slice(0, 3)
@@ -1259,9 +1261,10 @@ module.exports = {
                      .setColor(config.jobOutput.blueSkyPostThread.embedColor)
                      .setTitle(`📰 Reddit Status: ` + item.title || '📰 Reddit Status')
                      .setURL(item.link)
-                     .setDescription('**[' + item.pubDate + ']('+ item.link +')**\n' + (item.contentSnippet || item.content || ''))
+                     .setDescription('**' + item.pubDate + '**\n' + (item.contentSnippet || item.content || ''))
                   message = { embeds: [rssEmbed] }
                   sendChannel = redditServers['OnPatrolLive']['Jobs']
+                  console.log(`[Message Broker] Sending RSS item to channel: ${sendChannel}`)
                   this.sendMessage(client, sendChannel, message)
                }
             }

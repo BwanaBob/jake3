@@ -9,6 +9,7 @@ class RssWatcher {
       this.persistKey = persistKey || this._sanitizeKey(feedUrl);
       this.parser = new Parser();
       this.persistPath = path.join(__dirname, '..', 'logs', `rss-${this.persistKey}.json`);
+      logger.info({ emoji: '📰', columns: ['RSS', 'Persist Path', this.persistPath] });
       this.seenGuids = new Set();
       this._loadSeen();
    }
@@ -29,7 +30,15 @@ class RssWatcher {
    }
 
    _saveSeen() {
-      fs.writeFileSync(this.persistPath, JSON.stringify({ guids: Array.from(this.seenGuids) }, null, 2));
+      const dir = path.dirname(this.persistPath);
+      if (!fs.existsSync(dir)) {
+         fs.mkdirSync(dir, { recursive: true });
+      }
+      try {
+         fs.writeFileSync(this.persistPath, JSON.stringify({ guids: Array.from(this.seenGuids) }, null, 2));
+      } catch (err) {
+         logger.error({ emoji: '📰', columns: ['RSS', 'Error', 'Failed to write persist file', err.message] });
+      }
    }
 
    async checkAndNotify() {
