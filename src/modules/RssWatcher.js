@@ -8,7 +8,7 @@ class RssWatcher {
       this.feedUrl = feedUrl;
       this.persistKey = persistKey || this._sanitizeKey(feedUrl);
       this.parser = new Parser();
-      this.persistPath = path.join(__dirname, '..', 'logs', `rss-${this.persistKey}.json`);
+      this.persistPath = path.join(__dirname, '..', '..', 'logs', `rss-${this.persistKey}.json`);
       logger.info({ emoji: '📰', columns: ['RSS', 'Persist Path', this.persistPath] });
       this.seenGuids = new Set();
       this._loadSeen();
