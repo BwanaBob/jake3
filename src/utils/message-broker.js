@@ -191,7 +191,9 @@ module.exports = {
             postEmbed.setThumbnail(post.thumbnail)
          } catch (err) {
             console.error(
-               `[${new Date().toLocaleString()}] [ERROR] Setting Thumbnail ${post.thumbnail} -`,
+               `[${new Date().toLocaleString()}] [ERROR] Setting Thumbnail ${
+                  post.thumbnail
+               } -`,
                err.message
             )
          }
@@ -877,7 +879,9 @@ module.exports = {
 
       const channel = await client.channels.cache.get(channelId)
       if (!channel) {
-         console.error(`[${new Date().toLocaleString()}] [sendMessage] Channel ${channelId} not found`)
+         console.error(
+            `[${new Date().toLocaleString()}] [sendMessage] Channel ${channelId} not found`
+         )
          return
       }
 
@@ -885,7 +889,10 @@ module.exports = {
          const sentMessage = await channel.send(message)
          // console.log(sentMessage);
       } catch (error) {
-         console.error(`[${new Date().toLocaleString()}] [sendMessage] Sending message -`, error)
+         console.error(
+            `[${new Date().toLocaleString()}] [sendMessage] Sending message -`,
+            error
+         )
       }
    },
 
@@ -1180,15 +1187,14 @@ module.exports = {
                let flairList = ''
 
                // console.log(response.data)
-               response.data.sortedFlairUsage.forEach(flair => {
-                     // flairList += `${flair.flair_text || '<none>'}`
-                     flairList += `${flair.count || '0'}`
-                     flairList += ` - `
-                     flairList += `${flair.css_class || '<none>'}`
-                     flairList += `\n`
-                     // console.log(`${flairUser.user} | ${flairUser.flair_text}`)
-                  }
-               )
+               response.data.sortedFlairUsage.forEach((flair) => {
+                  // flairList += `${flair.flair_text || '<none>'}`
+                  flairList += `${flair.count || '0'}`
+                  flairList += ` - `
+                  flairList += `${flair.css_class || '<none>'}`
+                  flairList += `\n`
+                  // console.log(`${flairUser.user} | ${flairUser.flair_text}`)
+               })
 
                if (flairList) {
                   flairEmbed.setDescription(flairList)
@@ -1221,7 +1227,7 @@ module.exports = {
                this.sendMessage(client, sendChannel, message)
             }
             break
-            
+
          case 'blueSkyPostBingo':
             if (response.status == 'success') {
                const jobEmbed = new EmbedBuilder()
@@ -1243,7 +1249,23 @@ module.exports = {
                this.sendMessage(client, sendChannel, message)
             }
             break
-   
+
+         case 'rssRedditStatus':
+            if (response.status == 'success') {
+               // Only send the latest 3 items
+               const items = response.data.slice(0, 3)
+               for (const item of items) {
+                  const rssEmbed = new EmbedBuilder()
+                     .setColor(config.jobOutput.blueSkyPostThread.embedColor)
+                     .setTitle(`📰 Reddit Status: ` + item.title || '📰 Reddit Status')
+                     .setURL(item.link)
+                     .setDescription('**[' + item.pubDate + ']('+ item.link +')**\n' + (item.contentSnippet || item.content || ''))
+                  message = { embeds: [rssEmbed] }
+                  sendChannel = redditServers['OnPatrolLive']['Jobs']
+                  this.sendMessage(client, sendChannel, message)
+               }
+            }
+            break
 
          case 'getNewModMail':
             if (response.status == 'success') {
@@ -1280,11 +1302,14 @@ module.exports = {
 
                   // console.log(mailMessage)
                   if (mailMessage.parentOwnerType == 'subreddit') {
-                     const subredditConfig = redditServers[mailMessage.parentOwnerDisplayName]
+                     const subredditConfig =
+                        redditServers[mailMessage.parentOwnerDisplayName]
                      if (subredditConfig && subredditConfig['Mod Mail']) {
                         sendChannel = subredditConfig['Mod Mail']
                      } else {
-                        console.warn(`[processDiscordMessage] No 'Mod Mail' channel for subreddit: ${mailMessage.parentOwnerDisplayName}`)
+                        console.warn(
+                           `[processDiscordMessage] No 'Mod Mail' channel for subreddit: ${mailMessage.parentOwnerDisplayName}`
+                        )
                         sendChannel = client.params.get('mailChannelId')
                      }
                   } else {
