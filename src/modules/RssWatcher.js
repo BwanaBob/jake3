@@ -9,7 +9,7 @@ class RssWatcher {
       this.persistKey = persistKey || this._sanitizeKey(feedUrl);
       this.parser = new Parser();
       this.persistPath = path.join(__dirname, '..', '..', 'logs', `rss-${this.persistKey}.json`);
-      logger.info({ emoji: '📰', columns: ['RSS', 'Persist Path', this.persistPath] });
+      // logger.info({ emoji: '📰', columns: ['RSS', 'Persist Path', this.persistPath] });
       this.seenGuids = new Set();
       this._loadSeen();
    }
@@ -42,10 +42,10 @@ class RssWatcher {
    }
 
    async checkAndNotify() {
-      logger.info({ emoji: '📰', columns: ['RSS', 'Checking'] });
+      // logger.info({ emoji: '📰', columns: ['RSS', 'Checking'] });
       const feed = await this.parser.parseURL(this.feedUrl);
       const newItems = [];
-      logger.info({ emoji: '📰', columns: ['RSS', 'Total Items', `Found: ${feed.items.length}`] });
+      // logger.info({ emoji: '📰', columns: ['RSS', 'Total Items', `Found: ${feed.items.length}`] });
       for (const item of feed.items) {
          const guid = item.guid || item.link;
          if (!this.seenGuids.has(guid)) {
@@ -53,7 +53,7 @@ class RssWatcher {
             this.seenGuids.add(guid);
          }
       }
-      logger.info({ emoji: '📰', columns: ['RSS', 'New Items', `Found: ${newItems.length}`] });
+      // logger.info({ emoji: '📰', columns: ['RSS', 'New Items', `Found: ${newItems.length}`] });
       if (newItems.length > 0) {
          this._saveSeen();
       }

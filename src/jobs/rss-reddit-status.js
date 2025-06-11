@@ -18,8 +18,14 @@ module.exports = () => ({
       }
       const watcher = module.exports._watcher
       try {
-         logger.info({ emoji: '📰', columns: ['RSS', 'Reddit Status', 'Checking'] })
+         // logger.info({ emoji: '📰', columns: ['RSS', 'Reddit Status', 'Checking'] })
          const newItems = await watcher.checkAndNotify()
+         newItems.forEach((item) => {
+            logger.info({
+               emoji: '📰',
+               columns: ['RSS', 'Reddit Status', item.title, item.link],
+            })
+         })
          return { status: 'success', data: newItems }
       } catch (err) {
          logger.error({ emoji: '📰', columns: ['RSS', 'Error', err.message] })
