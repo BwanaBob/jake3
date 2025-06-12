@@ -1,11 +1,11 @@
 const config = require('../config')
 const logger = require('../modules/Logger')
 const { Collection, ThreadAutoArchiveDuration } = require('discord.js')
-// const Logger = require('../modules/Logger')
-// const logger = new Logger()
+const threadPersistence = require('./discord-threads')
 let discordServers = {} // temporary. reused when discord server has already been verified
 let redditServers = {} // to be stored in client config and used by message-broker
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+let threadIds = threadPersistence.loadThreadIds()
 
 const verifyDiscordServer = async function (discordServer, redditServerName) {
    if (discordServers[discordServer.id].complete === true) {
@@ -13,10 +13,6 @@ const verifyDiscordServer = async function (discordServer, redditServerName) {
          redditServers[redditServerName],
          discordServers[discordServer.id]
       )
-      // redditServers[redditServerName] = discordServers[discordServer.id]
-      //   console.log(
-      //      `Discord server: ${discordServer.name} already defined. Reusing for reddit server: ${redditServerName}`
-      //   )
    } else {
       currentChannel = await discordServer.channels.cache.find(
          (channel) => channel.name === config.redditChannelName
@@ -26,29 +22,37 @@ const verifyDiscordServer = async function (discordServer, redditServerName) {
          try {
             fetchedThreads = await currentChannel.threads.fetch({
                type: 'GUILD_PUBLIC_THREAD',
-               // archived: { fetchAll: true },
             })
          } catch (error) {
             console.error(`[${new Date().toLocaleString()}] Error fetching threads:`, error)
          }
-         // console.log(fetchedThreads);
-
          for (const threadName of config.redditThreads) {
-            // const findThread = await currentChannel.threads.cache.find(
-            //    (x) => x.name === threadName
-            // )
-            let findThread = fetchedThreads?.threads.find(
-               (x) => x.name === threadName
-            )
-
+            let findThread = null
+            // Try to get threadId from persisted file
+            let persistedId = threadIds[redditServerName]?.[threadName]
+            if (persistedId) {
+               try {
+                  findThread = await currentChannel.threads.fetch(persistedId)
+               } catch (e) {
+                  findThread = null
+               }
+            }
+            // Fallback: search by name in fetched threads
+            if (!findThread) {
+               findThread = fetchedThreads?.threads.find(
+                  (x) => x.name === threadName
+               )
+            }
             if (findThread) {
-               //    console.log(`${threadName} found - joining`)
                if (findThread.joinable) {
                   await findThread.join()
                }
-               // add thread to redditServers
                redditServers[redditServerName][threadName] = findThread.id
                discordServers[discordServer.id][threadName] = findThread.id
+               // Persist the thread ID
+               if (!threadIds[redditServerName]) threadIds[redditServerName] = {}
+               threadIds[redditServerName][threadName] = findThread.id
+               threadPersistence.saveThreadIds(threadIds)
             } else {
                logger.info({
                   emoji: '🧵',
@@ -66,12 +70,13 @@ const verifyDiscordServer = async function (discordServer, redditServerName) {
                      joinable: true,
                      reason: `A separate thread for ${threadName}`,
                   })
-                  await createdThread.setArchived(false) // unarchived
-                  // add thread to redditServers
+                  await createdThread.setArchived(false)
                   redditServers[redditServerName][threadName] = createdThread.id
-                  discordServers[discordServer.id][threadName] =
-                     createdThread.id
-
+                  discordServers[discordServer.id][threadName] = createdThread.id
+                  if (!threadIds[redditServerName])
+                     threadIds[redditServerName] = {}
+                  threadIds[redditServerName][threadName] = createdThread.id
+                  threadPersistence.saveThreadIds(threadIds)
                   await delay(2000)
                } catch (error) {
                   console.error(`[${new Date().toLocaleString()}] Error creating thread:`, error)
@@ -80,10 +85,9 @@ const verifyDiscordServer = async function (discordServer, redditServerName) {
          }
          discordServers[discordServer.id].discordServerId = discordServer.id
          discordServers[discordServer.id].complete = true
-         //  console.log(`Discord server: ${discordServer.name} fully defined.`)
       } else {
          console.error(`[${new Date().toLocaleString()}] Default channel not found:`)
-         throw error
+         throw new Error('Default channel not found')
       }
    }
 }
@@ -93,43 +97,28 @@ const verifyDiscordServer = async function (discordServer, redditServerName) {
 module.exports = {
    async execute(client) {
       client.params = new Collection()
-      //   client.params.set('redditServers', config.subreddits)
-      //   redditServers = client.params.get('redditServers')
       redditServers = config.subreddits
-      //   console.log(redditServers)
 
       for (const redditServerName in redditServers) {
          if (redditServers.hasOwnProperty(redditServerName)) {
-            // console.log(
-            //    `Verifying Discord server for /r/${redditServerName}:  ${redditServers[redditServerName].discordServerId}`
-            // )
             const thisDiscordServer = client.guilds.cache.get(
                redditServers[redditServerName].discordServerId
             )
             if (thisDiscordServer) {
-               //bot is a member of the current guild
-               //    console.log(`Bot is a member of ${thisDiscordServer.name}`)
                if (!discordServers[thisDiscordServer.id]) {
                   discordServers[thisDiscordServer.id] = {}
                }
-               // START FINDING / CREATING CHANNELS AND THREADS
                await verifyDiscordServer(thisDiscordServer, redditServerName)
             } else {
-               //    console.log(
-               //       `Bot is NOT a member of the specified guild: ${redditServers[redditServerName].discordServerId}. Using default channel.`
-               //    )
                redditServers[redditServerName].discordServerId =
                   redditServers['default'].discordServerId
                const defaultDiscordServer = client.guilds.cache.get(
                   redditServers[redditServerName].discordServerId
                )
-               // START FINDING / CREATING CHANNELS AND THREADS
                await verifyDiscordServer(defaultDiscordServer, redditServerName)
             }
          }
       }
-      // console.log(redditServers)
-      // console.log(discordServers)
       client.params.set('redditServers', redditServers)
    },
 }
