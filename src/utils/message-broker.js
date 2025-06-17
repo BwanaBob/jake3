@@ -852,54 +852,55 @@ module.exports = {
 
    async sendMessage(client, channelId, message) {
       // Support per-day quiet hours
-      const now = new Date();
-      const dayOfWeek = now.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+      const now = new Date()
+      const dayOfWeek = now.getDay() // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
       // config.quietHours can be an object: { 0: {start, end}, 1: {start, end}, ... }
-      let quietConfig = config.quietHours;
-      let quietForToday = quietConfig[dayOfWeek] || quietConfig['default'] || quietConfig;
-      let start = quietForToday.start;
-      let end = quietForToday.end;
+      let quietConfig = config.quietHours
+      let quietForToday =
+         quietConfig[dayOfWeek] || quietConfig['default'] || quietConfig
+      let start = quietForToday.start
+      let end = quietForToday.end
 
-      const currentTime = new Date();
-      const startTime = new Date(currentTime);
-      const endTime = new Date(currentTime);
+      const currentTime = new Date()
+      const startTime = new Date(currentTime)
+      const endTime = new Date(currentTime)
 
       // Set startTime and endTime for today
-      const [startHour, startMinute] = start.split(':').map(Number);
-      const [endHour, endMinute] = end.split(':').map(Number);
-      startTime.setHours(startHour, startMinute, 0, 0);
-      endTime.setHours(endHour, endMinute, 0, 0);
+      const [startHour, startMinute] = start.split(':').map(Number)
+      const [endHour, endMinute] = end.split(':').map(Number)
+      startTime.setHours(startHour, startMinute, 0, 0)
+      endTime.setHours(endHour, endMinute, 0, 0)
 
       // If end time is earlier than start time, quiet period spans midnight
       if (endTime <= startTime) {
          if (currentTime < endTime) {
-            startTime.setDate(startTime.getDate() - 1); // start was yesterday
+            startTime.setDate(startTime.getDate() - 1) // start was yesterday
          } else {
-            endTime.setDate(endTime.getDate() + 1); // end is tomorrow
+            endTime.setDate(endTime.getDate() + 1) // end is tomorrow
          }
       }
 
       // Check if current time is within quiet hours
       if (currentTime >= startTime && currentTime <= endTime) {
-         message.flags = [MessageFlagsBitField.Flags.SuppressNotifications];
+         message.flags = [MessageFlagsBitField.Flags.SuppressNotifications]
       }
 
-      const channel = await client.channels.cache.get(channelId);
+      const channel = await client.channels.cache.get(channelId)
       if (!channel) {
          console.error(
             `[${new Date().toLocaleString()}] [sendMessage] Channel ${channelId} not found`
-         );
-         return;
+         )
+         return
       }
 
       try {
-         const sentMessage = await channel.send(message);
+         const sentMessage = await channel.send(message)
          // console.log(sentMessage);
       } catch (error) {
          console.error(
             `[${new Date().toLocaleString()}] [sendMessage] Sending message -`,
             error
-         );
+         )
       }
    },
 
@@ -1266,9 +1267,43 @@ module.exports = {
                for (const item of items) {
                   const rssEmbed = new EmbedBuilder()
                      .setColor(config.jobOutput.blueSkyPostThread.embedColor)
-                     .setTitle(`📰 Reddit Status: ` + item.title || '📰 Reddit Status')
+                     .setTitle(
+                        `📰 Reddit Status: ` + item.title || '📰 Reddit Status'
+                     )
                      .setURL(item.link)
-                     .setDescription('**' + item.pubDate + '**\n' + (item.contentSnippet || item.content || ''))
+                     .setDescription(
+                        '**' +
+                           item.pubDate +
+                           '**\n' +
+                           (item.contentSnippet || item.content || '')
+                     )
+                  message = { embeds: [rssEmbed] }
+                  sendChannel = redditServers['OnPatrolLive']['Jobs']
+                  // console.log(`[Message Broker] Sending RSS item to channel: ${sendChannel}`)
+                  this.sendMessage(client, sendChannel, message)
+               }
+            }
+            break
+
+         case 'rssOpenAIStatus':
+            // console.log("[Message Broker] rssRedditStatus job executed")
+            // console.log(`[Message Broker] ${response.data.length} items received`)
+            if (response.status == 'success') {
+               // Only send the latest 5 items
+               const items = response.data.slice(0, 5)
+               for (const item of items) {
+                  const rssEmbed = new EmbedBuilder()
+                     .setColor(config.jobOutput.blueSkyPostThread.embedColor)
+                     .setTitle(
+                        `📰 OpenAI Status: ` + item.title || '📰 OpenAI Status'
+                     )
+                     .setURL(item.link)
+                     .setDescription(
+                        '**' +
+                           item.pubDate +
+                           '**\n' +
+                           (item.contentSnippet || item.content || '')
+                     )
                   message = { embeds: [rssEmbed] }
                   sendChannel = redditServers['OnPatrolLive']['Jobs']
                   // console.log(`[Message Broker] Sending RSS item to channel: ${sendChannel}`)
