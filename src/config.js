@@ -9,8 +9,10 @@ module.exports = {
    modLogDescriptionSize: 240,
    postSize: 800,
    quietHours: {
-      start: '23:10',
-      end: '08:00',
+      0: { start: '21:00', end: '09:00' }, // Sunday
+      5: { start: '23:10', end: '09:00' }, // Friday
+      6: { start: '23:10', end: '09:00' }, // Saturday
+      default: { start: '21:00', end: '09:00' }, // all other days
    },
    redditChannelName: 'reddit',
    redditThreads: ['Jobs', 'Stream', 'Mod Log', 'Mod Mail', 'Mod Queue'], // threads each server must have to receive messages
