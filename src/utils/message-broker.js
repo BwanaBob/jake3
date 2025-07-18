@@ -1312,6 +1312,30 @@ module.exports = {
             }
             break
 
+         case 'rssTwitterLineup':
+            // console.log("[Message Broker] rssRedditStatus job executed")
+            // console.log(`[Message Broker] ${response.data.length} items received`)
+            if (response.status == 'success') {
+               // Only send the latest 5 items
+               const items = response.data.slice(0, 5)
+               for (const item of items) {
+                  console.log(item)
+                  const rssEmbed = new EmbedBuilder()
+                     .setColor(config.jobOutput.blueSkyPostThread.embedColor)
+                     .setTitle(
+                        `📰 Dan Tweet`
+                     )
+                     // .setURL(item.link)
+                     .setDescription(item.title)
+                  message = { embeds: [rssEmbed] }
+                  // sendChannel = redditServers['default']['Jobs']
+                  sendChannel = redditServers['OnPatrolLive']['Jobs']
+                  // console.log(`[Message Broker] Sending RSS item to channel: ${sendChannel}`)
+                  this.sendMessage(client, sendChannel, message)
+               }
+            }
+            break
+
          case 'getNewModMail':
             if (response.status == 'success') {
                for (const mailMessage of response.data) {
