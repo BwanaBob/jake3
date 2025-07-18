@@ -1313,24 +1313,26 @@ module.exports = {
             break
 
          case 'rssTwitterLineup':
-            // console.log("[Message Broker] rssRedditStatus job executed")
-            // console.log(`[Message Broker] ${response.data.length} items received`)
             if (response.status == 'success') {
                // Only send the latest 5 items
                const items = response.data.slice(0, 5)
                for (const item of items) {
-                  console.log(item)
+                  let imageUrl = null;
+                  if (item.content) {
+                     const imgMatch = item.content.match(/<img[^>]+src=["']([^"'>]+)["']/i);
+                     if (imgMatch && imgMatch[1]) {
+                        imageUrl = imgMatch[1];
+                     }
+                  }
                   const rssEmbed = new EmbedBuilder()
                      .setColor(config.jobOutput.blueSkyPostThread.embedColor)
-                     .setTitle(
-                        `📰 Dan Tweet`
-                     )
-                     // .setURL(item.link)
+                     .setTitle('📰 Dan Tweet')
                      .setDescription(item.title)
+                  if (imageUrl) {
+                     rssEmbed.setImage(imageUrl);
+                  }
                   message = { embeds: [rssEmbed] }
-                  // sendChannel = redditServers['default']['Jobs']
                   sendChannel = redditServers['OnPatrolLive']['Jobs']
-                  // console.log(`[Message Broker] Sending RSS item to channel: ${sendChannel}`)
                   this.sendMessage(client, sendChannel, message)
                }
             }

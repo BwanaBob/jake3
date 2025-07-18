@@ -18,7 +18,7 @@ module.exports = () => ({
       }
       const watcher = module.exports._watcher
       try {
-         // logger.info({ emoji: '📰', columns: ['RSS', 'Twitter Lineup', 'Checking'] })
+         logger.info({ emoji: '📰', columns: ['RSS', 'Twitter Lineup', 'Checking'] })
          const newItems = await watcher.checkAndNotify()
          newItems.forEach((item) => {
             logger.info({
