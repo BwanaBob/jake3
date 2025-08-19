@@ -1305,7 +1305,8 @@ module.exports = {
                            (item.contentSnippet || item.content || '')
                      )
                   message = { embeds: [rssEmbed] }
-                  sendChannel = redditServers['default']['Jobs']
+                  // sendChannel = redditServers['default']['Jobs']
+                  sendChannel = '1407437279940706415';
                   // console.log(`[Message Broker] Sending RSS item to channel: ${sendChannel}`)
                   this.sendMessage(client, sendChannel, message)
                }
