@@ -83,9 +83,7 @@ module.exports = () => ({
       } catch (error) {
          console.error(
             `[${new Date().toLocaleString()}] [getNewModQueue] Error fetching new comments:`,
-            // error.message
-            error.response ? error.response.data : error.message
-            // error
+            error.message
          )
          throw error
       }
