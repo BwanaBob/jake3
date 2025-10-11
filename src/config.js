@@ -24,6 +24,7 @@ module.exports = {
       OnPatrolLive: {
          discordServerId: '325206992413130753',
          notifyRole: '1171955876609937564',
+         bingoModChannel: '1426254019872952390',
       },
       OnPatrolLiveTVShow: {
          discordServerId: '391821567241224192',

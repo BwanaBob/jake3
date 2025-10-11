@@ -1011,7 +1011,8 @@ module.exports = {
                      comment.subreddit == 'OnPatrolLive' &&
                      comment.body.match(bingoExpression)
                   ) {
-                     const bingoModChannel = '1250581630754623549'
+                     // const bingoModChannel = '1426254019872952390' 
+                     const bingoModChannel = config.subreddits['OnPatrolLive']?.bingoModChannel || '1426254019872952390'
                      this.sendMessage(client, bingoModChannel, message)
                      // const bingoPing = '1119713563641118901';
                      // message.content = `<@&${bingoPing}>`
