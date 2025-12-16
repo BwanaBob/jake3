@@ -850,6 +850,26 @@ module.exports = {
       return { embeds: [itemEmbed], files: [thisAttachment] }
    },
 
+   async _ensureThreadActive(channel) {
+      // If the channel is a thread and it's archived, unarchive it
+      if (channel.isThread && channel.archived) {
+         try {
+            await channel.setArchived(false)
+            console.log(
+               `[${new Date().toLocaleString()}] [_ensureThreadActive] Unarchived thread: ${channel.name}`
+            )
+            return true
+         } catch (error) {
+            console.error(
+               `[${new Date().toLocaleString()}] [_ensureThreadActive] Failed to unarchive thread -`,
+               error
+            )
+            return false
+         }
+      }
+      return true
+   },
+
    async sendMessage(client, channelId, message) {
       // Support per-day quiet hours
       const now = new Date()
@@ -890,6 +910,12 @@ module.exports = {
          console.error(
             `[${new Date().toLocaleString()}] [sendMessage] Channel ${channelId} not found`
          )
+         return
+      }
+
+      // Ensure thread is active before sending
+      const threadReady = await this._ensureThreadActive(channel)
+      if (!threadReady) {
          return
       }
 

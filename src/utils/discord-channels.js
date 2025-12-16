@@ -44,6 +44,23 @@ const verifyDiscordServer = async function (discordServer, redditServerName) {
                )
             }
             if (findThread) {
+               // Unarchive thread if it's archived
+               if (findThread.archived) {
+                  try {
+                     await findThread.setArchived(false)
+                     logger.info({
+                        emoji: '🧵',
+                        columns: [
+                           'Threads',
+                           'Unarchived',
+                           discordServer.name,
+                           threadName,
+                        ],
+                     })
+                  } catch (error) {
+                     console.error(`[${new Date().toLocaleString()}] Error unarchiving thread:`, error)
+                  }
+               }
                if (findThread.joinable) {
                   await findThread.join()
                }
