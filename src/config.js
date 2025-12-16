@@ -324,10 +324,8 @@ module.exports = {
       },
       getModLogStats: {
          subreddit: 'OnPatrolLive',
-         startDate: '2024-07-19',
-         startTime: '18:00:00',
-         endDate: '2024-07-21',
-         endTime: '00:30:00',
+         showStartTime: '21:00:00', // Show starts at 9pm ET
+         showEndTime: '00:30:00',   // Show ends at 12:30am ET (next day)
       },
       getTopComments: {
          subreddit: 'OnPatrolLive',

@@ -4,16 +4,31 @@ const logger = require('../modules/Logger') // shared instance
 // const logger = new Logger()
 
 const config = require('../config')
-const { subreddit, startDate, startTime, endDate, endTime } =
+const { subreddit, showStartTime, showEndTime } =
    config.jobs.getModLogStats
 
-// Helper function to get the timestamp for the specified date and time
-const getSpecificTime = (date, time) => {
-   const [year, month, day] = date.split('-').map(Number)
-   const [hours, minutes, seconds] = time.split(':').map(Number)
-   return Math.floor(
-      new Date(year, month - 1, day, hours, minutes, seconds).getTime() / 1000
-   )
+// Helper function to calculate previous night's show times
+// Show airs Friday and Saturday nights from 9pm to 12:30am next day
+const getPreviousNightShowTimes = () => {
+   const now = new Date()
+   
+   // Calculate previous night (yesterday)
+   const startDate = new Date(now)
+   startDate.setDate(startDate.getDate() - 1)
+   const [startHours, startMinutes, startSeconds] = showStartTime.split(':').map(Number)
+   startDate.setHours(startHours, startMinutes, startSeconds, 0)
+
+   // End time is early morning of current day
+   const endDate = new Date(now)
+   const [endHours, endMinutes, endSeconds] = showEndTime.split(':').map(Number)
+   endDate.setHours(endHours, endMinutes, endSeconds, 0)
+
+   return {
+      startTimestamp: Math.floor(startDate.getTime() / 1000),
+      endTimestamp: Math.floor(endDate.getTime() / 1000),
+      startDateStr: startDate.toLocaleString(),
+      endDateStr: endDate.toLocaleString()
+   }
 }
 
 // Function to analyze the modlog entries
@@ -137,13 +152,19 @@ module.exports = () => ({
 
    // cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
    // cronExpression: '0 * * * * *', // Every 1 minute (testing)
-   cronExpression: '0 37 1 * * SUN', // Every Saturday and Sunday at 3am (live)
+   cronExpression: '0 37 1 * * SAT,SUN', // Every Saturday and Sunday at 1:37am (captures Friday and Saturday night shows)
 
    jobFunction: async () => {
-      // logger.info({emoji: '💬', columns: ['getModLog', `Starting`, subreddit]});
       try {
-         const specificStartTime = getSpecificTime(startDate, startTime) // Timestamp for specific start date and time
-         const specificEndTime = getSpecificTime(endDate, endTime) // Timestamp for specific end date and time
+         const { startTimestamp, endTimestamp, startDateStr, endDateStr } = getPreviousNightShowTimes()
+         
+         logger.info({
+            emoji: '📋',
+            columns: ['Mod Log Stats', 'Analyzing', startDateStr, 'to', endDateStr]
+         })
+         
+         const specificStartTime = startTimestamp
+         const specificEndTime = endTimestamp
 
          let after = ''
          let allEntries = []
