@@ -87,15 +87,15 @@ const analyzeModlog = (entries, specificEndTime, logger) => {
          }
 
          if (!acc[ruleDetail]) {
-            acc[ruleDetail] = { approved: 0, removed: 0, ruleCount: 0 }
+            acc[ruleDetail] = { approved: 0, removed: 0, untouched: 0 }
          }
+         // Only count the final state - either approved, removed, or untouched
          if (entry.approved) {
             acc[ruleDetail].approved++
-            acc[ruleDetail].ruleCount++
-         }
-         if (entry.removed) {
+         } else if (entry.removed) {
             acc[ruleDetail].removed++
-            acc[ruleDetail].ruleCount++
+         } else {
+            acc[ruleDetail].untouched++
          }
          return acc
       },
@@ -115,9 +115,10 @@ const analyzeModlog = (entries, specificEndTime, logger) => {
    })
 
    for (const [ruleDetail, counts] of sortedGroupedEntries) {
-      const total = counts.approved + counts.removed
+      const total = counts.approved + counts.removed + counts.untouched
       const approvedPercentage = (counts.approved / total) * 100
       const removedPercentage = (counts.removed / total) * 100
+      const untouchedPercentage = (counts.untouched / total) * 100
       logger.info({
          emoji: '📋',
          columns: [
@@ -125,7 +126,7 @@ const analyzeModlog = (entries, specificEndTime, logger) => {
             {
                min: 3,
                max: 3,
-               text: `${counts.ruleCount}`,
+               text: `${total}`,
             },
             {
                min: 13,
@@ -139,10 +140,14 @@ const analyzeModlog = (entries, specificEndTime, logger) => {
                max: 13,
                text: `⛔ ${counts.removed} (${removedPercentage.toFixed(1)}%)`,
             },
+            {
+               min: 13,
+               max: 13,
+               text: `⏸️ ${counts.untouched} (${untouchedPercentage.toFixed(1)}%)`,
+            },
             ruleDetail,
          ],
       })
-      //   console.log(`✅ ${counts.approved}/${counts.removed} ⛔ (${approvedPercentage.toFixed(2)}% / ${removedPercentage.toFixed(2)}%) - Rule: ${ruleDetail}`);
    }
    return sortedGroupedEntries
 }
@@ -171,9 +176,15 @@ module.exports = () => ({
          let hasMore = true
 
          while (hasMore) {
-            console.log(`Fetching records from API ${after}`)
+            logger.info({
+               emoji: '📋',
+               columns: ['Mod Log Stats', 'Fetching', after || 'initial batch']
+            })
             const modlogEntries = await reddit.getModLog(subreddit, 500, after)
-            console.log(`Fetched ${modlogEntries.size} records from API`)
+            logger.info({
+               emoji: '📋',
+               columns: ['Mod Log Stats', 'Fetched', `${modlogEntries.length} records`]
+            })
             if (modlogEntries.length === 0) {
                hasMore = false
             } else {
@@ -199,7 +210,11 @@ module.exports = () => ({
          const results = analyzeModlog(allEntries, specificEndTime, logger)
          return { status: 'success', data: results }
       } catch (error) {
-         console.error(`[${new Date().toLocaleString()}] Error:`, error)
+         logger.info({
+            emoji: '❌',
+            columns: ['Mod Log Stats', 'Error', error.message]
+         })
+         return { status: 'error', error: error.message }
       }
    },
 })
