@@ -1,11 +1,14 @@
 const { decode } = require('html-entities')
 const reddit = require('../modules/Reddit') // shared instance
 const logger = require('../modules/Logger') // shared instance
-// const logger = new Logger()
 
 const config = require('../config')
 const { subreddit, showStartTime, showEndTime } =
    config.jobs.getModLogStats
+
+// Constants
+const API_BATCH_SIZE = 500
+const AUTOMOD_ACTIONS = ['removecomment', 'spamcomment']
 
 // Helper function to calculate previous night's show times
 // Show airs Friday and Saturday nights from 9pm to 12:30am next day
@@ -32,22 +35,37 @@ const getPreviousNightShowTimes = () => {
 }
 
 // Function to analyze the modlog entries
-const analyzeModlog = (entries, specificEndTime, logger) => {
+const analyzeModlog = (entries, specificEndTime, logger, threadLink = null) => {
    const autoModRemovals = {}
    const sortedEntries = entries.sort(function (a, b) {
       return a.data.created_utc - b.data.created_utc
-   }) // sort activity so that only the latest approval/removal counts
+   })
 
-   // Track AutoModerator removals
+   // Show thread link if available
+   if (threadLink) {
+      logger.info({
+         emoji: '🔗',
+         columns: ['Thread', threadLink]
+      })
+   }
+
+   // Track AutoModerator removals (both removecomment and spamcomment)
    sortedEntries.forEach((entry) => {
+      // Validate entry has required data
+      if (!entry.data || !entry.data.details) {
+         return
+      }
+      
       entry.data.details = decode(entry.data.details)
+      
       if (
          entry.data.mod === 'AutoModerator' &&
-         entry.data.action === 'removecomment' &&
-         entry.data.created_utc <= specificEndTime // filter candidates by end time, but not later approvals and removals
+         AUTOMOD_ACTIONS.includes(entry.data.action) &&
+         entry.data.created_utc <= specificEndTime
       ) {
          autoModRemovals[entry.data.target_fullname] = {
             details: entry.data.details,
+            action: entry.data.action,
             approved: false,
             removed: false,
          }
@@ -79,11 +97,14 @@ const analyzeModlog = (entries, specificEndTime, logger) => {
    const groupedEntries = Object.values(autoModRemovals).reduce(
       (acc, entry) => {
          let ruleDetail = entry.details.toLowerCase()
-         const bracketRegex = /\[(.*?)\]/ // Add a capturing group
+         const bracketRegex = /\[(.*?)\]/
          let match = ruleDetail.match(bracketRegex)
 
          if (match) {
-            ruleDetail = match[1] // match[1] will contain the text inside the brackets
+            ruleDetail = match[1]
+         } else {
+            // Handle malformed removal reasons without brackets
+            ruleDetail = ruleDetail.slice(0, 50) || 'unknown reason'
          }
 
          if (!acc[ruleDetail]) {
@@ -103,22 +124,33 @@ const analyzeModlog = (entries, specificEndTime, logger) => {
    )
 
    const sortedGroupedEntries = Object.entries(groupedEntries).sort((a, b) => {
-      const ruleDetailA = a[0].toUpperCase() // Ignore upper and lowercase
-      const ruleDetailB = b[0].toUpperCase() // Ignore upper and lowercase
+      const ruleDetailA = a[0].toUpperCase()
+      const ruleDetailB = b[0].toUpperCase()
       if (ruleDetailA < ruleDetailB) {
          return -1
       }
       if (ruleDetailA > ruleDetailB) {
          return 1
       }
-      return 0 // names must be equal
+      return 0
    })
 
+   // Calculate and display summary statistics
+   let totalActions = 0
+   let totalApproved = 0
+   let totalRemoved = 0
+   let totalUntouched = 0
+
    for (const [ruleDetail, counts] of sortedGroupedEntries) {
-      const total = counts.approved + counts.removed + counts.untouched
-      const approvedPercentage = (counts.approved / total) * 100
-      const removedPercentage = (counts.removed / total) * 100
-      const untouchedPercentage = (counts.untouched / total) * 100
+      const actionCount = counts.approved + counts.removed + counts.untouched
+      totalActions += actionCount
+      totalApproved += counts.approved
+      totalRemoved += counts.removed
+      totalUntouched += counts.untouched
+      
+      const approvedPercentage = (counts.approved / actionCount) * 100
+      const removedPercentage = (counts.removed / actionCount) * 100
+      const untouchedPercentage = (counts.untouched / actionCount) * 100
       logger.info({
          emoji: '📋',
          columns: [
@@ -126,7 +158,7 @@ const analyzeModlog = (entries, specificEndTime, logger) => {
             {
                min: 3,
                max: 3,
-               text: `${total}`,
+               text: `${actionCount}`,
             },
             {
                min: 13,
@@ -149,6 +181,38 @@ const analyzeModlog = (entries, specificEndTime, logger) => {
          ],
       })
    }
+
+   // Display summary
+   if (totalActions > 0) {
+      const overallApprovalRate = (totalApproved / totalActions) * 100
+      const overallRemovalRate = (totalRemoved / totalActions) * 100
+      const overallUntouchedRate = (totalUntouched / totalActions) * 100
+      
+      logger.info({
+         emoji: '📊',
+         columns: [
+            'Summary',
+            `AutoMod Removed: ${totalActions}`,
+            `✅ Approved: ${totalApproved} (${overallApprovalRate.toFixed(1)}%)`,
+            `⛔ Kept Removed: ${totalRemoved} (${overallRemovalRate.toFixed(1)}%)`,
+            `⏸️ Not Reviewed: ${totalUntouched} (${overallUntouchedRate.toFixed(1)}%)`,
+         ],
+      })
+      
+      // Overall assessment
+      if (overallApprovalRate > 50) {
+         logger.info({
+            emoji: '✅',
+            columns: ['Assessment', `High approval rate - AutoMod may be too aggressive`]
+         })
+      } else if (overallUntouchedRate > 30) {
+         logger.info({
+            emoji: '⚠️',
+            columns: ['Assessment', `Many comments not reviewed - check mod queue`]
+         })
+      }
+   }
+
    return sortedGroupedEntries
 }
 
@@ -163,6 +227,16 @@ module.exports = () => ({
       try {
          const { startTimestamp, endTimestamp, startDateStr, endDateStr } = getPreviousNightShowTimes()
          
+         // Validate timestamps
+         if (startTimestamp >= endTimestamp) {
+            const errorMsg = 'Invalid time range: start time is after end time'
+            logger.info({
+               emoji: '❌',
+               columns: ['Mod Log Stats', 'Error', errorMsg]
+            })
+            return { status: 'error', error: errorMsg }
+         }
+         
          logger.info({
             emoji: '📋',
             columns: ['Mod Log Stats', 'Analyzing', startDateStr, 'to', endDateStr]
@@ -174,40 +248,60 @@ module.exports = () => ({
          let after = ''
          let allEntries = []
          let hasMore = true
+         let batchCount = 0
+         let totalFetched = 0
 
          while (hasMore) {
+            batchCount++
             logger.info({
                emoji: '📋',
-               columns: ['Mod Log Stats', 'Fetching', after || 'initial batch']
+               columns: ['Mod Log Stats', `Batch ${batchCount}`, after || 'initial']
             })
-            const modlogEntries = await reddit.getModLog(subreddit, 500, after)
+            const modlogEntries = await reddit.getModLog(subreddit, API_BATCH_SIZE, after)
+            totalFetched += modlogEntries.length
             logger.info({
                emoji: '📋',
-               columns: ['Mod Log Stats', 'Fetched', `${modlogEntries.length} records`]
+               columns: ['Mod Log Stats', 'Fetched', `${modlogEntries.length} records (${totalFetched} total)`]
             })
+            
             if (modlogEntries.length === 0) {
                hasMore = false
             } else {
-               // Check if we have reached the end time
-               if (
-                  modlogEntries.some(
-                     (entry) => entry.data.created_utc > specificEndTime
-                  )
-               ) {
+               // More efficient stopping condition: stop if oldest entry in batch is newer than end time
+               const oldestEntryTime = modlogEntries[modlogEntries.length - 1].data.created_utc
+               if (oldestEntryTime < specificStartTime) {
                   hasMore = false
                }
-               // Add entries to the list
-               allEntries = allEntries.concat(
-                  modlogEntries.filter(
-                     (entry) => entry.data.created_utc >= specificStartTime
-                     // && entry.data.created_utc <= specificEndTime
-                  )
+               
+               // Add entries within the time range
+               const entriesInRange = modlogEntries.filter(
+                  (entry) => entry.data.created_utc >= specificStartTime && entry.data.created_utc <= specificEndTime
                )
+               allEntries = allEntries.concat(entriesInRange)
                after = modlogEntries[modlogEntries.length - 1].data.id
             }
          }
-         // console.log(allEntries)
-         const results = analyzeModlog(allEntries, specificEndTime, logger)
+         
+         logger.info({
+            emoji: '📋',
+            columns: ['Mod Log Stats', 'Processing', `${allEntries.length} entries in range`]
+         })
+         
+         // Try to find the live thread link from the entries
+         let threadLink = null
+         const liveThreadEntry = allEntries.find(entry => {
+            return entry.data.target_title && 
+                   entry.data.target_title.toLowerCase().includes('live thread')
+         })
+         
+         if (liveThreadEntry && liveThreadEntry.data.target_permalink) {
+            threadLink = `https://reddit.com${liveThreadEntry.data.target_permalink}`
+         } else if (liveThreadEntry && liveThreadEntry.data.target_fullname) {
+            // Fallback: construct link from subreddit
+            threadLink = `https://reddit.com/r/${subreddit}`
+         }
+         
+         const results = analyzeModlog(allEntries, specificEndTime, logger, threadLink)
          return { status: 'success', data: results }
       } catch (error) {
          logger.info({
