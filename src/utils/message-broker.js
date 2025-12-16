@@ -1420,24 +1420,39 @@ module.exports = {
             break
          case 'getModLogStats':
             if (response.status == 'success') {
-               // console.log(response.data)
-               // console.log('getModLogStats ran')
                let statsDetail = ''
+               let totalAll = 0, totalApproved = 0, totalRemoved = 0, totalUntouched = 0
+               
                for (const [ruleDetail, counts] of response.data) {
-                  const total = counts.approved + counts.removed
+                  const total = counts.approved + counts.removed + counts.untouched
+                  totalAll += total
+                  totalApproved += counts.approved
+                  totalRemoved += counts.removed
+                  totalUntouched += counts.untouched
+                  
                   const approvedPercentage = (counts.approved / total) * 100
                   const removedPercentage = (counts.removed / total) * 100
-                  statsDetail += `${counts.ruleCount} | ✅ ${
-                     counts.approved
-                  } (${approvedPercentage.toFixed(1)}%) | ⛔ ${
-                     counts.removed
-                  } (${removedPercentage.toFixed(1)}%) | ${ruleDetail}\n`
+                  const untouchedPercentage = (counts.untouched / total) * 100
+                  
+                  // Truncate rule detail if too long
+                  const maxRuleLen = 35
+                  const truncatedRule = ruleDetail.length > maxRuleLen 
+                     ? ruleDetail.substring(0, maxRuleLen - 3) + '...' 
+                     : ruleDetail
+                  
+                  statsDetail += `**${total}** | ✅ ${counts.approved} (${approvedPercentage.toFixed(1)}%) | ⛔ ${counts.removed} (${removedPercentage.toFixed(1)}%) | ⏸️ ${counts.untouched} (${untouchedPercentage.toFixed(1)}%)\n${truncatedRule}\n\n`
                }
+               
+               // Add summary
+               const overallAppPct = ((totalApproved / totalAll) * 100).toFixed(1)
+               const overallRemPct = ((totalRemoved / totalAll) * 100).toFixed(1)
+               const overallUntPct = ((totalUntouched / totalAll) * 100).toFixed(1)
+               statsDetail += `**=== SUMMARY ===**\n**${totalAll}** | ✅ ${totalApproved} (${overallAppPct}%) | ⛔ ${totalRemoved} (${overallRemPct}%) | ⏸️ ${totalUntouched} (${overallUntPct}%)`
 
                const statsEmbed = new EmbedBuilder()
                   .setColor(config.jobOutput.modLogStats.embedColor)
                   .setTitle('Mod Log Stats')
-                  .setDescription(`\`\`\`${statsDetail}\`\`\``)
+                  .setDescription(statsDetail.substring(0, 4096)) // Limit to embed description max
 
                message = { embeds: [statsEmbed] }
                sendChannel = redditServers['default']['Jobs']

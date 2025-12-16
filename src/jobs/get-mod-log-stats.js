@@ -14,15 +14,27 @@ const AUTOMOD_ACTIONS = ['removecomment', 'spamcomment']
 // Show airs Friday and Saturday nights from 9pm to 12:30am next day
 const getPreviousNightShowTimes = () => {
    const now = new Date()
+   const dayOfWeek = now.getDay() // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
    
-   // Calculate previous night (yesterday)
+   let daysBack
+   if (dayOfWeek === 6) {
+      // Saturday morning - analyze Friday night's show (yesterday)
+      daysBack = 1
+   } else {
+      // Any other day - analyze previous Saturday night's show
+      // Sunday = 1 day back, Monday = 2 days, ..., Friday = 6 days
+      daysBack = dayOfWeek === 0 ? 1 : dayOfWeek + 1
+   }
+   
+   // Calculate start date (Saturday night at 9pm)
    const startDate = new Date(now)
-   startDate.setDate(startDate.getDate() - 1)
+   startDate.setDate(startDate.getDate() - daysBack)
    const [startHours, startMinutes, startSeconds] = showStartTime.split(':').map(Number)
    startDate.setHours(startHours, startMinutes, startSeconds, 0)
 
-   // End time is early morning of current day
-   const endDate = new Date(now)
+   // End time is early next morning (Sunday morning at 12:30am)
+   const endDate = new Date(startDate)
+   endDate.setDate(endDate.getDate() + 1)
    const [endHours, endMinutes, endSeconds] = showEndTime.split(':').map(Number)
    endDate.setHours(endHours, endMinutes, endSeconds, 0)
 
@@ -52,19 +64,23 @@ const analyzeModlog = (entries, specificEndTime, logger, threadLink = null) => {
    // Track AutoModerator removals (both removecomment and spamcomment)
    sortedEntries.forEach((entry) => {
       // Validate entry has required data
-      if (!entry.data || !entry.data.details) {
+      if (!entry.data) {
          return
       }
-      
-      entry.data.details = decode(entry.data.details)
       
       if (
          entry.data.mod === 'AutoModerator' &&
          AUTOMOD_ACTIONS.includes(entry.data.action) &&
          entry.data.created_utc <= specificEndTime
       ) {
+         // Decode and validate details
+         let details = 'unknown reason'
+         if (entry.data.details && entry.data.details.trim() !== '') {
+            details = decode(entry.data.details)
+         }
+         
          autoModRemovals[entry.data.target_fullname] = {
-            details: entry.data.details,
+            details: details,
             action: entry.data.action,
             approved: false,
             removed: false,
@@ -96,15 +112,26 @@ const analyzeModlog = (entries, specificEndTime, logger, threadLink = null) => {
    // Group and display results
    const groupedEntries = Object.values(autoModRemovals).reduce(
       (acc, entry) => {
+         // Safely handle missing or empty details
+         if (!entry.details || entry.details.trim() === '') {
+            entry.details = 'unknown reason'
+         }
+         
          let ruleDetail = entry.details.toLowerCase()
+         console.log('DEBUG - Original details:', entry.details)
+         console.log('DEBUG - Lowercase ruleDetail:', ruleDetail)
+         
          const bracketRegex = /\[(.*?)\]/
          let match = ruleDetail.match(bracketRegex)
+         console.log('DEBUG - Regex match result:', match)
 
-         if (match) {
-            ruleDetail = match[1]
+         if (match && match[1] && match[1].trim() !== '') {
+            ruleDetail = match[1].trim()
+            console.log('DEBUG - Extracted from brackets:', ruleDetail)
          } else {
             // Handle malformed removal reasons without brackets
-            ruleDetail = ruleDetail.slice(0, 50) || 'unknown reason'
+            ruleDetail = ruleDetail.slice(0, 50).trim() || 'unknown reason'
+            console.log('DEBUG - No brackets, using slice:', ruleDetail)
          }
 
          if (!acc[ruleDetail]) {
@@ -192,10 +219,10 @@ const analyzeModlog = (entries, specificEndTime, logger, threadLink = null) => {
          emoji: '📊',
          columns: [
             'Summary',
-            `AutoMod Removed: ${totalActions}`,
-            `✅ Approved: ${totalApproved} (${overallApprovalRate.toFixed(1)}%)`,
-            `⛔ Kept Removed: ${totalRemoved} (${overallRemovalRate.toFixed(1)}%)`,
-            `⏸️ Not Reviewed: ${totalUntouched} (${overallUntouchedRate.toFixed(1)}%)`,
+            `Total: ${totalActions}`,
+            `✅ ${totalApproved} (${overallApprovalRate.toFixed(1)}%)`,
+            `⛔ ${totalRemoved} (${overallRemovalRate.toFixed(1)}%)`,
+            `⏸️ ${totalUntouched} (${overallUntouchedRate.toFixed(1)}%)`,
          ],
       })
       
@@ -220,7 +247,7 @@ module.exports = () => ({
    name: 'getModLogStats',
 
    // cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
-   // cronExpression: '0 * * * * *', // Every 1 minute (testing)
+   // cronExpression: '0 */5 * * * *', // Every 5 minutes (testing) - TESTING ENABLED
    cronExpression: '0 37 1 * * SAT,SUN', // Every Saturday and Sunday at 1:37am (captures Friday and Saturday night shows)
 
    jobFunction: async () => {
