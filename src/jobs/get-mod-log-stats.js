@@ -26,15 +26,14 @@ const getPreviousNightShowTimes = () => {
       daysBack = dayOfWeek === 0 ? 1 : dayOfWeek + 1
    }
    
-   // Calculate start date (Saturday night at 9pm)
+   // Calculate start date (Saturday night at 8pm CST)
    const startDate = new Date(now)
    startDate.setDate(startDate.getDate() - daysBack)
    const [startHours, startMinutes, startSeconds] = showStartTime.split(':').map(Number)
    startDate.setHours(startHours, startMinutes, startSeconds, 0)
 
-   // End time is early next morning (Sunday morning at 12:30am)
+   // End time is same day at 11pm CST
    const endDate = new Date(startDate)
-   endDate.setDate(endDate.getDate() + 1)
    const [endHours, endMinutes, endSeconds] = showEndTime.split(':').map(Number)
    endDate.setHours(endHours, endMinutes, endSeconds, 0)
 
@@ -247,8 +246,8 @@ module.exports = () => ({
    name: 'getModLogStats',
 
    // cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
-   // cronExpression: '0 */5 * * * *', // Every 5 minutes (testing) - TESTING ENABLED
-   cronExpression: '0 37 1 * * SAT,SUN', // Every Saturday and Sunday at 1:37am (captures Friday and Saturday night shows)
+   cronExpression: '0 */2 * * * *', // Every 5 minutes (testing) - TESTING ENABLED
+   // cronExpression: '0 37 1 * * SAT,SUN', // Every Saturday and Sunday at 1:37am (captures Friday and Saturday night shows)
 
    jobFunction: async () => {
       try {
