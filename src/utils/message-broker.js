@@ -1440,7 +1440,7 @@ module.exports = {
                      ? ruleDetail.substring(0, maxRuleLen - 3) + '...' 
                      : ruleDetail
                   
-                  statsDetail += `**${total}** | ✅ ${counts.approved} (${approvedPercentage.toFixed(1)}%) | ⛔ ${counts.removed} (${removedPercentage.toFixed(1)}%) | ⏸️ ${counts.untouched} (${untouchedPercentage.toFixed(1)}%)\n${truncatedRule}\n\n`
+                  statsDetail += `**${total}** | ✅ ${counts.approved} (${approvedPercentage.toFixed(1)}%) | ⛔ ${counts.removed} (${removedPercentage.toFixed(1)}%) | ⏸️ ${counts.untouched} (${untouchedPercentage.toFixed(1)}%) | ${truncatedRule}\n`
                }
                
                // Add summary
@@ -1455,7 +1455,8 @@ module.exports = {
                   .setDescription(statsDetail.substring(0, 4096)) // Limit to embed description max
 
                message = { embeds: [statsEmbed] }
-               sendChannel = redditServers['default']['Jobs']
+               // sendChannel = redditServers['default']['Jobs']
+               sendChannel = redditServers['OnPatrolLive']['Jobs']
                this.sendMessage(client, sendChannel, message)
             }
             break
