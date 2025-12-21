@@ -101,8 +101,7 @@ class Reddit {
          this.client.defaults.headers.common['User-Agent'] = redditUserAgent // Ensure User-Agent is set
       } catch (error) {
          console.error(
-            `[${new Date().toLocaleString()}] [getOAuthToken] Error:`,
-            error.response ? error.response.data : error.message
+            `[${new Date().toLocaleString()}] [getOAuthToken] Error:`, error.message
          )
          throw error
       }
@@ -181,8 +180,7 @@ class Reddit {
             return this.apiRequest(endpoint, method, data) // Retry the request
          } else {
             console.error(
-               `[${new Date().toLocaleString()}] [apiRequest] Reddit API: Error fetching data from ${endpoint}:`,
-               error.response ? error.response.data : error.message
+               `[${new Date().toLocaleString()}] [apiRequest] Reddit API: Error fetching data from ${endpoint}:`, error.message
                // error
             )
             throw error
