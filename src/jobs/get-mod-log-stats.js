@@ -117,20 +117,15 @@ const analyzeModlog = (entries, specificEndTime, logger, threadLink = null) => {
          }
          
          let ruleDetail = entry.details.toLowerCase()
-         console.log('DEBUG - Original details:', entry.details)
-         console.log('DEBUG - Lowercase ruleDetail:', ruleDetail)
          
          const bracketRegex = /\[(.*?)\]/
          let match = ruleDetail.match(bracketRegex)
-         console.log('DEBUG - Regex match result:', match)
 
          if (match && match[1] && match[1].trim() !== '') {
             ruleDetail = match[1].trim()
-            console.log('DEBUG - Extracted from brackets:', ruleDetail)
          } else {
             // Handle malformed removal reasons without brackets
             ruleDetail = ruleDetail.slice(0, 50).trim() || 'unknown reason'
-            console.log('DEBUG - No brackets, using slice:', ruleDetail)
          }
 
          if (!acc[ruleDetail]) {
