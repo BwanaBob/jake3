@@ -8,7 +8,7 @@ module.exports = {
       .setName('slow')
       .setDescription('Activate the slow API schedule')
       .setDMPermission(false)
-      .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
+      .setDefaultMemberPermissions(PermissionFlagsBits.MentionEveryone),
    async execute(interaction) {
       await interaction.reply({
          content: 'Slow command received. Modifying schedule.',

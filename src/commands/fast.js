@@ -8,7 +8,7 @@ module.exports = {
       .setName('fast')
       .setDescription('Activate the fast API schedule')
       .setDMPermission(false)
-      .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
+      .setDefaultMemberPermissions(PermissionFlagsBits.MentionEveryone),
    async execute(interaction) {
       await interaction.reply({
          content: 'Fast command received. Modifying schedule.',

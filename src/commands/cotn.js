@@ -8,7 +8,7 @@ module.exports = {
       .setName('cotn')
       .setDescription('Returns the top comments for a post')
       .setDMPermission(false)
-      .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
+      .setDefaultMemberPermissions(PermissionFlagsBits.MentionEveryone)
       .addStringOption((option) =>
          option
             .setName('postid')
