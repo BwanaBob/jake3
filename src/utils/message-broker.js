@@ -1462,8 +1462,8 @@ module.exports = {
                statsDetail += `=== SUMMARY ===\n${fmtCount(totalAll)} ✅${fmtCount(totalApproved)} (${overallAppPct}) ⛔${fmtCount(totalRemoved)} (${overallRemPct}) ⏸️${fmtCount(totalUntouched)} (${overallUntPct})`
 
                // Build the V2 message component
-               const title = `Mod Log Stats`
-               const thumbnailUrl = 'https://i.imgur.com/gQIJYrw.jpeg'
+               const title = `# Mod Log Stats`
+               const thumbnailUrl = 'https://i.imgur.com/vIUWnIe.png'
                const thumb = new ThumbnailBuilder({ media: { url: thumbnailUrl } });
                const titleText = new TextDisplayBuilder().setContent(`${title}`);
                const details =new TextDisplayBuilder().setContent(`\`\`\`${statsDetail.substring(0, 3094)}\`\`\``);
