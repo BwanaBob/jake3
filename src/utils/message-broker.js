@@ -1423,52 +1423,56 @@ module.exports = {
             if (response.status == 'success') {
                let statsDetail = ''
                let totalAll = 0, totalApproved = 0, totalRemoved = 0, totalUntouched = 0
-               
+
+               // Fixed-width formatters
+               const fmtCount = (n) => String(n).padStart(2, ' ')
+               const fmtPct = (n, d) => {
+                  if (!d) return '0.0%'.padStart(5, ' ')
+                  const val = (n / d) * 100
+                  const roundedOne = Math.round(val * 10) / 10
+                  const numStr = roundedOne === 100 ? '100' : val.toFixed(1)
+                  return numStr.padStart(4, ' ') + '%'
+               }
+
                for (const [ruleDetail, counts] of response.data) {
                   const total = counts.approved + counts.removed + counts.untouched
                   totalAll += total
                   totalApproved += counts.approved
                   totalRemoved += counts.removed
                   totalUntouched += counts.untouched
-                  
-                  const approvedPercentage = (counts.approved / total) * 100
-                  const removedPercentage = (counts.removed / total) * 100
-                  const untouchedPercentage = (counts.untouched / total) * 100
-                  
+
                   // Truncate rule detail if too long
-                  const maxRuleLen = 35
+                  const maxRuleLen = 22
                   const truncatedRule = ruleDetail.length > maxRuleLen 
                      ? ruleDetail.substring(0, maxRuleLen - 3) + '...' 
                      : ruleDetail
-                  
-                  statsDetail += `${total} | ✅ ${counts.approved} (${approvedPercentage.toFixed(1)}%) | ⛔ ${counts.removed} (${removedPercentage.toFixed(1)}%) | ⏸️ ${counts.untouched} (${untouchedPercentage.toFixed(1)}%) | ${truncatedRule}\n`
+
+                  const totalStr = fmtCount(total)
+                  const appStr = `${fmtCount(counts.approved)} (${fmtPct(counts.approved, total)})`
+                  const rejStr = `${fmtCount(counts.removed)} (${fmtPct(counts.removed, total)})`
+                  const penStr = `${fmtCount(counts.untouched)} (${fmtPct(counts.untouched, total)})`
+
+                  statsDetail += `${totalStr} ✅${appStr} ⛔${rejStr} ⏸️${penStr}|${truncatedRule}\n`
                }
-               
+
                // Add summary
-               const overallAppPct = ((totalApproved / totalAll) * 100).toFixed(1)
-               const overallRemPct = ((totalRemoved / totalAll) * 100).toFixed(1)
-               const overallUntPct = ((totalUntouched / totalAll) * 100).toFixed(1)
-               statsDetail += `**=== SUMMARY ===**\n**${totalAll}** | ✅ ${totalApproved} (${overallAppPct}%) | ⛔ ${totalRemoved} (${overallRemPct}%) | ⏸️ ${totalUntouched} (${overallUntPct}%)`
+               const overallAppPct = fmtPct(totalApproved, totalAll)
+               const overallRemPct = fmtPct(totalRemoved, totalAll)
+               const overallUntPct = fmtPct(totalUntouched, totalAll)
+               statsDetail += `=== SUMMARY ===\n${fmtCount(totalAll)} ✅${fmtCount(totalApproved)} (${overallAppPct}) ⛔${fmtCount(totalRemoved)} (${overallRemPct}) ⏸️${fmtCount(totalUntouched)} (${overallUntPct})`
 
-               // const statsEmbed = new EmbedBuilder()
-               //    .setColor(config.jobOutput.modLogStats.embedColor)
-               //    .setTitle('Mod Log Stats')
-               //    .setDescription(statsDetail.substring(0, 4096)) // Limit to embed description max
-
-               // message = { embeds: [statsEmbed] }
-               // // sendChannel = redditServers['default']['Jobs']
-               // sendChannel = redditServers['OnPatrolLive']['Jobs']
-               // this.sendMessage(client, sendChannel, message)
+               // Build the V2 message component
                const title = `Mod Log Stats`
                const thumbnailUrl = 'https://i.imgur.com/gQIJYrw.jpeg'
                const thumb = new ThumbnailBuilder({ media: { url: thumbnailUrl } });
                const titleText = new TextDisplayBuilder().setContent(`${title}`);
-               const details =new TextDisplayBuilder().setContent(`\`\`\`${statsDetail.substring(0, 4000)}\`\`\``);
+               const details =new TextDisplayBuilder().setContent(`\`\`\`${statsDetail.substring(0, 3094)}\`\`\``);
                const header = new SectionBuilder().addTextDisplayComponents(titleText).setThumbnailAccessory(thumb);
                const body = new ContainerBuilder().addTextDisplayComponents(details);
                sendChannel = redditServers['OnPatrolLive']['Jobs']
                // await sendChannel.send({ components: [header, body], flags: MessageFlags.IsComponentsV2 });
                message = { components: [header, body], flags: MessageFlags.IsComponentsV2 }
+
                this.sendMessage(client, sendChannel, message)
             }
             break
