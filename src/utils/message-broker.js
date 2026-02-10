@@ -2,6 +2,7 @@ const {
    EmbedBuilder,
    AttachmentBuilder,
    MessageFlagsBitField,
+   MessageFlags, TextDisplayBuilder, SectionBuilder, ContainerBuilder, ThumbnailBuilder, 
 } = require('discord.js')
 const config = require('../config')
 const attachmentAvatarDefault = new AttachmentBuilder(
@@ -1440,7 +1441,7 @@ module.exports = {
                      ? ruleDetail.substring(0, maxRuleLen - 3) + '...' 
                      : ruleDetail
                   
-                  statsDetail += `**${total}** | ✅ ${counts.approved} (${approvedPercentage.toFixed(1)}%) | ⛔ ${counts.removed} (${removedPercentage.toFixed(1)}%) | ⏸️ ${counts.untouched} (${untouchedPercentage.toFixed(1)}%) | ${truncatedRule}\n`
+                  statsDetail += `${total} | ✅ ${counts.approved} (${approvedPercentage.toFixed(1)}%) | ⛔ ${counts.removed} (${removedPercentage.toFixed(1)}%) | ⏸️ ${counts.untouched} (${untouchedPercentage.toFixed(1)}%) | ${truncatedRule}\n`
                }
                
                // Add summary
@@ -1449,14 +1450,25 @@ module.exports = {
                const overallUntPct = ((totalUntouched / totalAll) * 100).toFixed(1)
                statsDetail += `**=== SUMMARY ===**\n**${totalAll}** | ✅ ${totalApproved} (${overallAppPct}%) | ⛔ ${totalRemoved} (${overallRemPct}%) | ⏸️ ${totalUntouched} (${overallUntPct}%)`
 
-               const statsEmbed = new EmbedBuilder()
-                  .setColor(config.jobOutput.modLogStats.embedColor)
-                  .setTitle('Mod Log Stats')
-                  .setDescription(statsDetail.substring(0, 4096)) // Limit to embed description max
+               // const statsEmbed = new EmbedBuilder()
+               //    .setColor(config.jobOutput.modLogStats.embedColor)
+               //    .setTitle('Mod Log Stats')
+               //    .setDescription(statsDetail.substring(0, 4096)) // Limit to embed description max
 
-               message = { embeds: [statsEmbed] }
-               // sendChannel = redditServers['default']['Jobs']
+               // message = { embeds: [statsEmbed] }
+               // // sendChannel = redditServers['default']['Jobs']
+               // sendChannel = redditServers['OnPatrolLive']['Jobs']
+               // this.sendMessage(client, sendChannel, message)
+               const title = `Mod Log Stats`
+               const thumbnailUrl = 'https://i.imgur.com/gQIJYrw.jpeg'
+               const thumb = new ThumbnailBuilder({ media: { url: thumbnailUrl } });
+               const titleText = new TextDisplayBuilder().setContent(`${title}`);
+               const details =new TextDisplayBuilder().setContent(`\`\`\`${statsDetail.substring(0, 4000)}\`\`\``);
+               const header = new SectionBuilder().addTextDisplayComponents(titleText).setThumbnailAccessory(thumb);
+               const body = new ContainerBuilder().addTextDisplayComponents(details);
                sendChannel = redditServers['OnPatrolLive']['Jobs']
+               // await sendChannel.send({ components: [header, body], flags: MessageFlags.IsComponentsV2 });
+               message = { components: [header, body], flags: MessageFlags.IsComponentsV2 }
                this.sendMessage(client, sendChannel, message)
             }
             break
