@@ -903,7 +903,12 @@ module.exports = {
 
       // Check if current time is within quiet hours
       if (currentTime >= startTime && currentTime <= endTime) {
-         message.flags = [MessageFlagsBitField.Flags.SuppressNotifications]
+         const suppressFlag = MessageFlagsBitField.Flags.SuppressNotifications
+         if (message.flags) {
+            message.flags = new MessageFlagsBitField(message.flags).add(suppressFlag).bitfield
+         } else {
+            message.flags = suppressFlag
+         }
       }
 
       const channel = await client.channels.cache.get(channelId)
@@ -1112,7 +1117,7 @@ module.exports = {
                      if (ban.note && ban.note !== '') {
                         banList += ` - ${ban.note.slice(0, 50)}`
                      }
-                     banList += `\n`1
+                     banList += `\n`
                   }
                   // send message with ban list
                   bansEmbed.setDescription(banList)
