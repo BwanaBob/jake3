@@ -242,7 +242,7 @@ module.exports = () => ({
 
    // cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
    // cronExpression: '0 */2 * * * *', // Every 5 minutes (testing) - TESTING ENABLED
-   cronExpression: '0 37 1 * * SAT,SUN', // Every Saturday and Sunday at 1:37am (captures Friday and Saturday night shows)
+   cronExpression: '0 0 1 * * SAT,SUN', // Every Saturday and Sunday at 1:00am (captures Friday and Saturday night shows)
 
    jobFunction: async () => {
       try {

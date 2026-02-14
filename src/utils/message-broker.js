@@ -1112,15 +1112,16 @@ module.exports = {
                      if (ban.note && ban.note !== '') {
                         banList += ` - ${ban.note.slice(0, 50)}`
                      }
-                     banList += `\n`
+                     banList += `\n`1
                   }
+                  // send message with ban list
+                  bansEmbed.setDescription(banList)
+                  message = { embeds: [bansEmbed] }
+                  sendChannel = client.params.get('jobsChannelId')
+                  this.sendMessage(client, sendChannel, message)
                } else {
                   banList = 'None'
                }
-               bansEmbed.setDescription(banList)
-               message = { embeds: [bansEmbed] }
-               sendChannel = client.params.get('jobsChannelId')
-               this.sendMessage(client, sendChannel, message)
             }
             break
 
