@@ -3,7 +3,7 @@ const reddit = require('../modules/Reddit') // shared instance
 const logger = require('../modules/Logger') // shared instance
 
 const config = require('../config')
-const { subreddit, showStartTime, showEndTime } =
+const { subreddit, showStartTime, showEndTime, directRemovalRules = [] } =
    config.jobs.getModLogStats
 
 // Constants
@@ -45,8 +45,18 @@ const getPreviousNightShowTimes = () => {
    }
 }
 
+// Extract the rule detail label from an automod details string (same logic as grouping)
+const extractRuleDetail = (details) => {
+   const lower = details.toLowerCase()
+   const match = lower.match(/\[(.*?)\]/)
+   if (match && match[1] && match[1].trim() !== '') {
+      return match[1].trim()
+   }
+   return lower.slice(0, 50).trim() || 'unknown reason'
+}
+
 // Function to analyze the modlog entries
-const analyzeModlog = (entries, specificEndTime, logger, threadLink = null) => {
+const analyzeModlog = (entries, specificEndTime, logger, threadLink = null, removalRules = []) => {
    const autoModRemovals = {}
    const sortedEntries = entries.sort(function (a, b) {
       return a.data.created_utc - b.data.created_utc
@@ -77,12 +87,21 @@ const analyzeModlog = (entries, specificEndTime, logger, threadLink = null) => {
          if (entry.data.details && entry.data.details.trim() !== '') {
             details = decode(entry.data.details)
          }
-         
+
+         const ruleDetail = extractRuleDetail(details)
+         const detailsLower = details.toLowerCase()
+         const isDirectRemoval = removalRules.some((r) => {
+            const rLower = r.toLowerCase()
+            // Match either the extracted bracket label or the start of the raw details string
+            // (handles formats like "Rule Name - [/u/username]" where brackets hold dynamic content)
+            return ruleDetail === rLower || detailsLower.startsWith(rLower)
+         })
+
          autoModRemovals[entry.data.target_fullname] = {
             details: details,
             action: entry.data.action,
             approved: false,
-            removed: false,
+            removed: isDirectRemoval,
          }
       }
    })
@@ -241,8 +260,8 @@ module.exports = () => ({
    name: 'getModLogStats',
 
    // cronExpression: '0 0 12 1 1 *', // noon 1/1 (Park It)
-   // cronExpression: '0 */2 * * * *', // Every 5 minutes (testing) - TESTING ENABLED
-   cronExpression: '0 0 1 * * SAT,SUN', // Every Saturday and Sunday at 1:00am (captures Friday and Saturday night shows)
+   cronExpression: '0 */2 * * * *', // Every 5 minutes (testing) - TESTING ENABLED
+   // cronExpression: '0 0 1 * * SAT,SUN', // Every Saturday and Sunday at 1:00am (captures Friday and Saturday night shows)
 
    jobFunction: async () => {
       try {
@@ -322,7 +341,7 @@ module.exports = () => ({
             threadLink = `https://reddit.com/r/${subreddit}`
          }
          
-         const results = analyzeModlog(allEntries, specificEndTime, logger, threadLink)
+         const results = analyzeModlog(allEntries, specificEndTime, logger, threadLink, directRemovalRules)
          return { status: 'success', data: results }
       } catch (error) {
          logger.info({

@@ -330,6 +330,9 @@ module.exports = {
          subreddit: 'OnPatrolLive',
          showStartTime: '20:00:00', // Show starts at 8pm CST
          showEndTime: '23:00:00',   // Show ends at 11pm CST
+         // Rule names (bracket content from automod details) that directly remove
+         // content without queuing — these count as "removed" without human action
+         directRemovalRules: ["User Shadow Banned via Flair", "Unapproved Youtube Channel", "Link to Facebook", "Forbidden Website", "Text post with no text", "Link post with incorrect type", "Bad Bot Comment", "Bad Bot (Do Not Approve)"],
       },
       getTopComments: {
          subreddit: 'OnPatrolLive',
