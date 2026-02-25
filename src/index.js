@@ -4,6 +4,7 @@ const reddit = require('./modules/Reddit')
 const { channel } = require('diagnostics_channel')
 const logger = require('./modules/Logger')
 const Discord = require('./modules/Discord')
+const { Events } = require('discord.js')
 
 const { discordToken } = require('./credentials')
 // const scheduler = new Scheduler()
@@ -39,10 +40,14 @@ scheduler.on('jobCompleted', (name, result) => {
 })
 
 const jobsFolderPath = path.join(__dirname, 'jobs')
-scheduler.loadJobsFromFolder(jobsFolderPath, { reddit, logger })
 ;(async () => {
    try {
       await discord.login()
+      // Ensure the client is fully ready and any ready handlers have run
+      await new Promise((resolve) => discord.client.once(Events.ClientReady, resolve))
+
+      // Load and schedule jobs after Discord is ready so `client.params` is initialized
+      scheduler.loadJobsFromFolder(jobsFolderPath, { reddit, logger })
    } catch (error) {
       console.error(`[${new Date().toLocaleString()}] Error logging into Discord:`, error)
    }
